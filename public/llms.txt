@@ -1,0 +1,48 @@
+# ETEREO
+
+> ETEREO (legal name ETEREO s.r.o.) is a Slovakia-based software house that rebuilds the systems established companies already run on. Founded in 2026 by Patrik Klimko and Matej Kučera, ETEREO delivers legacy modernisation, custom software, SaaS products, and mobile & web engineering with one accountable team — strategy, architecture and delivery together. Remote-first, based in Bratislava, working across Slovakia, Central Europe and internationally, in English and Slovak.
+
+## What ETEREO does
+
+- **Digital transformation** — legacy platforms replatformed in slices, with the business running the whole way through (no big-bang cutovers).
+- **Custom software** — line-of-business systems built around how an operation actually works.
+- **SaaS products** — multi-tenant products from zero: billing, entitlements, admin, telemetry.
+- **Mobile engineering** — iOS, Android and cross-platform apps with offline behaviour and release automation.
+- **Web platforms** — sites, portals and commerce fronts engineered for performance and accessibility (WCAG 2.2).
+- **Cloud & platform** — infrastructure as code, CI/CD, observability and cost control.
+
+## How ETEREO works
+
+A five-phase, evidence-first process: Audit → Architect → Build → Harden → Hand over. Each phase ends in something inspectable — a risk register, decision records, a working release, an evidence pack, and a full ownership hand-over to the client's team.
+
+## Industries
+
+Financial services, healthcare, logistics & mobility, energy & utilities, retail & commerce, and public sector — regulated, operational, high-consequence domains.
+
+## Technology
+
+TypeScript, React / Next.js, Astro; Go, Python, .NET; PostgreSQL, ClickHouse, Kafka; Swift/SwiftUI, Kotlin/Compose, React Native; AWS, Azure, GCP, Kubernetes, Terraform, OpenTelemetry.
+
+## Ways to engage
+
+- **Assessment** — fixed fee, 2–3 weeks: a written read on the system before committing to a programme.
+- **Delivery squad** — 3–18 months: a full accountable team shipping in two-week increments.
+- **Embedded engineers** — rolling monthly: senior specialists inside existing teams.
+
+## Contact
+
+- Email: hello@etereo.sk
+- Location: Bratislava, Slovakia (remote-first, CET)
+- Website: https://www.etereo.sk/
+
+## O firme (slovensky)
+
+ETEREO (ETEREO s.r.o.) je slovenská softvérová firma so sídlom v Bratislave. Prestavujeme systémy, na ktorých etablované firmy denne bežia: modernizácia starších platforiem, softvér na mieru, SaaS produkty a mobilný aj webový vývoj. Stratégia, architektúra a dodanie pod jednou strechou — jeden tím, ktorý za výsledok ručí. Pracujeme na diaľku, v slovenčine aj angličtine, pre klientov na Slovensku aj v zahraničí.
+
+- Služby: digitálna transformácia a modernizácia systémov, softvér na mieru, SaaS produkty, mobilný vývoj (iOS, Android), webové platformy, cloud a DevOps.
+- Odvetvia: financie, zdravotníctvo, logistika, energetika, retail a verejný sektor.
+- Kontakt: hello@etereo.sk · Bratislava, Slovensko.
+
+## Notes
+
+- Founded 2026. As a new company, ETEREO does not claim historical project counts or client rosters; case studies shown on the website are labelled illustrative until real client work is published.

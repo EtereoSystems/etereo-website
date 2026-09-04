@@ -1,0 +1,18 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.log
+
+# local env (contains your domain; copy from .env.example)
+.env
+.env.*.local
+
+# scratch / archives (not part of the project)
+*.tar.gz
+_to_delete/
+Claude outputs/
