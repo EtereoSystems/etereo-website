@@ -16,3 +16,6 @@ dist-ssr
 *.tar.gz
 _to_delete/
 Claude outputs/
+public/robots.txt
+public/sitemap.xml
+public/llms.txt
