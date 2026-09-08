@@ -8,6 +8,16 @@ export function ProjectPanel() {
   const [st, setSt] = useState<ShowState>({ index: 0, side: "right", active: false });
   const prev = useRef<ShowState>({ index: -1, side: "right", active: false });
 
+  // below 900px the panel is pinned beneath the (centred) laptop rather than beside it
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 899.98px)");
+    const on = () => setMobile(mq.matches);
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+
   // drive the panel from scroll progress on its own rAF (independent of the 3D loop)
   useEffect(() => {
     let raf = 0;
@@ -29,7 +39,7 @@ export function ProjectPanel() {
   const proj = PROJECTS[i];
 
   return (
-    <div className={"project-panel " + st.side + (st.active ? " on" : "")} aria-hidden>
+    <div className={"project-panel " + (mobile ? "mobile " : "") + st.side + (st.active ? " on" : "")} aria-hidden>
       <div className="project-panel__inner" key={st.active ? i : "idle"}>
         <div className="project-panel__eyebrow">
           Project {proj.id} <span>/ 0{PROJECT_COUNT}</span>

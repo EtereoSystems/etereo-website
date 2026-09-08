@@ -329,23 +329,118 @@ body[data-scrolled="true"] .nav {
   border-top: 1px solid var(--line-soft);
 }
 @media (max-width: 900px) {
-  .project-panel {
-    display: none;
+  /* Mobile hero: the laptop is centred + lifted into the upper half by the 3D layer,
+     so all text lives in the lower half, centred, and never overlaps the model. */
+  .hero__glow {
+    left: 50%;
+    top: 30%;
   }
+
+  /* splash wordmark / tagline / CTA, pinned to the lower half */
   .hero__overlay {
+    align-items: flex-end;
     justify-content: center;
-    padding: 80px 24px 0;
+    padding: 0 22px calc(78px + env(safe-area-inset-bottom, 0px));
   }
   .hero__col {
     align-items: center;
     text-align: center;
-    max-width: 560px;
+    max-width: 480px;
+    width: 100%;
+  }
+  .hero__badge {
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    padding: 7px 13px;
+  }
+  .hero__wordmark {
+    font-size: clamp(40px, 12vw, 66px);
+    margin-top: 12px;
+  }
+  .hero__tag {
+    font-size: clamp(19px, 5.2vw, 26px);
+    max-width: 20ch;
+    margin: 12px auto 0;
+  }
+  /* keep the splash short so it never crowds the laptop — the full pitch lives in the sections below */
+  .hero__sub {
+    display: none;
   }
   .hero__cta {
     justify-content: center;
+    width: 100%;
+    margin-top: 20px;
   }
-  .hero__glow {
+  .hero__cta .btn--primary {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+  .hero__cta .btn--ghost {
+    display: none;
+  }
+  .hero__hint {
+    display: none;
+  }
+
+  /* project description: a centred glass card pinned beneath the laptop */
+  .project-panel.mobile {
+    display: block;
+    top: auto;
+    bottom: calc(30px + env(safe-area-inset-bottom, 0px));
     left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(460px, 89vw);
+    text-align: center;
+  }
+  .project-panel.mobile.left,
+  .project-panel.mobile.right {
+    left: 50%;
+    right: auto;
+  }
+  .project-panel.mobile .project-panel__inner {
+    background: rgba(10, 12, 24, 0.62);
+    border: 1px solid var(--line-soft);
+    border-radius: 20px;
+    padding: 20px 20px 22px;
+    backdrop-filter: blur(16px) saturate(130%);
+    -webkit-backdrop-filter: blur(16px) saturate(130%);
+    box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.8);
+  }
+  .project-panel.mobile .project-panel__eyebrow {
+    font-size: 11px;
+  }
+  .project-panel.mobile .project-panel__name {
+    font-size: clamp(24px, 6.6vw, 32px);
+    margin: 8px 0 12px;
+  }
+  .project-panel.mobile .project-panel__tags {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .project-panel.mobile .project-panel__blurb {
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .project-panel.mobile .project-panel__metrics {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px 26px;
+    margin: 18px 0 16px;
+  }
+  .project-panel.mobile .project-panel__val {
+    font-size: 24px;
+  }
+  .project-panel.mobile .project-panel__lbl {
+    font-size: 12px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .project-panel.mobile .project-panel__stack {
+    padding-top: 14px;
+    font-size: 11px;
   }
 }
 
