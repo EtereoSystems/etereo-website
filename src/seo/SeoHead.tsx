@@ -1,10 +1,18 @@
 import { useEffect } from "react";
 import { SITE, langUrl } from "../config";
 import { useUI, type Lang } from "../store";
-import { keywords, structuredData } from "./structuredData";
+import { keywords, structuredData, type Page } from "./structuredData";
 
-/** Per-language title + meta description. Kept tight for the SERP snippet. */
-const META: Record<Lang, { title: string; description: string; ogLocale: string }> = {
+const PATHS: Record<Page, string> = {
+  home: "/",
+  projects: "/projects/",
+  about: "/about/",
+  blog: "/blog/",
+};
+
+/** Per-page, per-language title + meta description. Kept tight for the SERP snippet. */
+const META: Record<Page, Record<Lang, { title: string; description: string; ogLocale: string }>> = {
+  home: {
   en: {
     title: "ETEREO — Software Development & Digital Transformation | Slovakia",
     description:
@@ -16,6 +24,49 @@ const META: Record<Lang, { title: string; description: string; ogLocale: string 
     description:
       "ETEREO je slovenská softvérová firma: modernizácia systémov, softvér na mieru, SaaS produkty a mobilný aj webový vývoj. Stratégia, architektúra, dodanie — jeden zodpovedný tím.",
     ogLocale: "sk_SK",
+  },
+  },
+  projects: {
+    en: {
+      title: "Case studies — ETEREO | Software Development & Digital Transformation",
+      description:
+        "Three ETEREO programmes described in full: a core banking replatform with no planned downtime, a dispatch SaaS taken from zero to 40 enterprise tenants, and an offline-first clinician app on a compliance-first platform.",
+      ogLocale: "en_GB",
+    },
+    sk: {
+      title: "Prípadové štúdie — ETEREO | Vývoj softvéru a digitálna transformácia",
+      description:
+        "Tri programy ETEREO popísané celé: prestavba jadra banky bez plánovaného výpadku, dispečerský SaaS od nuly po 40 firemných zákazníkov a offline-first aplikácia pre lekárov na platforme so súladom od prvého dňa.",
+      ogLocale: "sk_SK",
+    },
+  },
+  about: {
+    en: {
+      title: "About us — ETEREO | Software house in Bratislava, Slovakia",
+      description:
+        "ETEREO s.r.o. is a Slovak software house founded in 2026 by Patrik Klimko and Matej Kučera. Remote-first, based in Bratislava, working in English and Slovak — the people who scope the work are the people who ship it.",
+      ogLocale: "en_GB",
+    },
+    sk: {
+      title: "O nás — ETEREO | Softvérová firma v Bratislave",
+      description:
+        "ETEREO s.r.o. je slovenská softvérová firma, ktorú v roku 2026 založili Patrik Klimko a Matej Kučera. Remote-first, so sídlom v Bratislave, pracujeme slovensky aj anglicky — ľudia, ktorí prácu nacenia, ju aj dodajú.",
+      ogLocale: "sk_SK",
+    },
+  },
+  blog: {
+    en: {
+      title: "Notes from inside the work — ETEREO",
+      description:
+        "Write-ups from live software programmes: strangler patterns that survive a real business, what a two-week audit should produce, and cutting cloud spend without a migration freeze.",
+      ogLocale: "en_GB",
+    },
+    sk: {
+      title: "Poznámky priamo z práce — ETEREO",
+      description:
+        "Zápisky z bežiacich programov: strangler vzory, ktoré prežijú stret s reálnou firmou, čo má priniesť dvojtýždňový audit, a ako znížiť cloudové náklady bez zmrazenia migrácie.",
+      ogLocale: "sk_SK",
+    },
   },
 };
 
@@ -49,12 +100,13 @@ function link(rel: string, href: string, hreflang?: string) {
  * Runs entirely at runtime so a language switch updates every signal without a reload,
  * while index.html carries a full static copy for crawlers that never run JS.
  */
-export function SeoHead() {
+export function SeoHead({ page = "home" }: { page?: Page }) {
   const lang = useUI((s) => s.lang);
 
   useEffect(() => {
-    const m = META[lang];
-    const canonical = langUrl(lang);
+    const m = META[page][lang];
+    const path = PATHS[page];
+    const canonical = langUrl(lang, path);
     const ogImageAbs = `${SITE.url}${SITE.ogImage}`;
 
     document.documentElement.lang = lang;
@@ -65,9 +117,9 @@ export function SeoHead() {
 
     // canonical + hreflang alternates (single-page site → ?lang variants)
     link("canonical", canonical);
-    link("alternate", langUrl("en"), "en");
-    link("alternate", langUrl("sk"), "sk");
-    link("alternate", `${SITE.url}/`, "x-default");
+    link("alternate", langUrl("en", path), "en");
+    link("alternate", langUrl("sk", path), "sk");
+    link("alternate", `${SITE.url}${path}`, "x-default");
 
     // Open Graph
     meta("property", "og:type", "website");
@@ -94,8 +146,8 @@ export function SeoHead() {
       script.id = ID;
       document.head.appendChild(script);
     }
-    script.textContent = JSON.stringify(structuredData(lang));
-  }, [lang]);
+    script.textContent = JSON.stringify(structuredData(lang, page));
+  }, [lang, page]);
 
   return null;
 }

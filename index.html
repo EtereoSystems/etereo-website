@@ -47,12 +47,20 @@
     />
     <meta name="twitter:image" content="%VITE_SITE_URL%/og.svg" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Inline so it applies during parse: a stylesheet cannot paint the background
+         before it has loaded, and waiting on one is what flashed white between pages.
+         Literal hex on purpose — --bg lives in the very file we are not waiting for. -->
+    <style>
+      html {
+        background: #060811;
+        color-scheme: dark;
+      }
+    </style>
+
+    <!-- Fonts are self-hosted (see scripts/fonts.mjs); these two carry the body and
+         every heading, so start them in parallel with the CSS rather than after it. -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/inter-latin.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/space-grotesk-latin.woff2" />
 
     <!-- Structured data: static copy so engines that never run JS still get the full graph.
          The React app injects a language-aware version at runtime on top of this. -->
@@ -66,7 +74,7 @@
             "name": "ETEREO",
             "legalName": "ETEREO s.r.o.",
             "url": "%VITE_SITE_URL%/",
-            "email": "hello@etereo.sk",
+            "email": "info@etereo.sk",
             "slogan": "We rebuild the systems your business already runs on.",
             "description": "ETEREO is a Slovak software house delivering legacy modernisation, custom software, SaaS products, and mobile & web engineering — strategy, architecture and delivery in one accountable team.",
             "logo": { "@type": "ImageObject", "url": "%VITE_SITE_URL%/favicon.svg" },
@@ -149,7 +157,7 @@
         </section>
         <section>
           <h2 style="font-family:'Space Grotesk',sans-serif;color:#fff">Contact</h2>
-          <p>Email <a style="color:#8b78ff" href="mailto:hello@etereo.sk">hello@etereo.sk</a> · Bratislava, Slovakia · remote-first, CET.</p>
+          <p>Email <a style="color:#8b78ff" href="mailto:info@etereosystems.com">info@etereosystems.com</a> · Bratislava, Slovakia · remote-first, CET.</p>
         </section>
       </div>
     </div>

@@ -61,13 +61,20 @@ Sitemap: ${SITE_URL}/sitemap.xml
 writeFileSync(resolve(pub, "robots.txt"), robots);
 
 // ── sitemap.xml (single-page site with EN + SK variants) ─────────────────────────
-const pages = [
-  { loc: `${SITE_URL}/`, priority: "1.0" },
-  { loc: `${SITE_URL}/?lang=sk`, priority: "0.9" },
+const paths = [
+  { path: "/", priority: "1.0" },
+  { path: "/projects/", priority: "0.8" },
+  { path: "/about/", priority: "0.8" },
+  { path: "/blog/", priority: "0.7" },
 ];
-const alt = `    <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}/"/>
-    <xhtml:link rel="alternate" hreflang="sk" href="${SITE_URL}/?lang=sk"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}/"/>`;
+// every page ships an EN and an SK variant; SK ranks a notch below its EN twin
+const pages = paths.flatMap(({ path, priority }) => [
+  { loc: `${SITE_URL}${path}`, path, priority },
+  { loc: `${SITE_URL}${path}?lang=sk`, path, priority: (Number(priority) - 0.1).toFixed(1) },
+]);
+const alt = (path) => `    <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}${path}"/>
+    <xhtml:link rel="alternate" hreflang="sk" href="${SITE_URL}${path}?lang=sk"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${path}"/>`;
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -78,7 +85,7 @@ ${pages
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>${p.priority}</priority>
-${alt}
+${alt(p.path)}
   </url>`
   )
   .join("\n")}
@@ -118,11 +125,18 @@ TypeScript, React / Next.js, Astro; Go, Python, .NET; PostgreSQL, ClickHouse, Ka
 - **Delivery squad** — 3–18 months: a full accountable team shipping in two-week increments.
 - **Embedded engineers** — rolling monthly: senior specialists inside existing teams.
 
+## Case studies
+
+Three programmes are described in full at ${SITE_URL}/projects/ — a core banking replatform migrated with zero planned downtime, a dispatch SaaS taken from zero to 40 enterprise tenants, and an offline-first clinician app on a compliance-first platform. Illustrative until real client work is published.
+
 ## Contact
 
-- Email: hello@etereo.sk
+- Email: info@etereosystems.com
 - Location: Bratislava, Slovakia (remote-first, CET)
 - Website: ${SITE_URL}/
+- About ETEREO: ${SITE_URL}/about/
+- Case studies: ${SITE_URL}/projects/
+- Blog: ${SITE_URL}/blog/
 
 ## O firme (slovensky)
 
@@ -130,7 +144,7 @@ ETEREO (ETEREO s.r.o.) je slovenská softvérová firma so sídlom v Bratislave.
 
 - Služby: digitálna transformácia a modernizácia systémov, softvér na mieru, SaaS produkty, mobilný vývoj (iOS, Android), webové platformy, cloud a DevOps.
 - Odvetvia: financie, zdravotníctvo, logistika, energetika, retail a verejný sektor.
-- Kontakt: hello@etereo.sk · Bratislava, Slovensko.
+- Kontakt: info@etereosystems.com · Bratislava, Slovensko.
 
 ## Notes
 

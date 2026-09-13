@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
-import { useUI } from "../store";
+import { motionPref, useUI } from "../store";
 import { makeScreenTexture } from "./screenTexture";
 import { PROJECT_COUNT } from "../i18n/projects";
 import { INTRO_END, SHOW_END, LX, lerp, seg, clamp, interpArr, currentProgress } from "./choreo";
@@ -84,13 +84,16 @@ export function Macbook() {
     const t = state.clock.elapsedTime;
     const root = document.documentElement.style;
     const mobile = state.size.width < MOBILE_MAX;
+    // Under prefers-reduced-motion the laptop holds wherever the scroll put it:
+    // the choreography is the user's own scrolling, the float/sway is not.
+    const idle = motionPref.reduced ? 0 : 1;
 
     if (p < INTRO_END) {
       // splash. Desktop: laptop rests on the LEFT (LX[0]) with the wordmark on the
       // right. Mobile: laptop is centred and lifted, with the wordmark below it.
       // Either way this is exactly project 0's pose, so the hand-off needs no jump.
       const settle = seg(p, 0, INTRO_END); // sway eases out as we approach the showcase
-      const sway = 1 - settle;
+      const sway = (1 - settle) * idle;
       g.rotation.x = 0.12 + Math.sin(t * 0.5) * 0.02 * sway;
       g.rotation.z = 0;
       if (mobile) {
@@ -119,19 +122,19 @@ export function Macbook() {
       const proj = Math.min(PROJECT_COUNT - 1, Math.round(beatFloat));
 
       g.rotation.y = -beatFloat * TWO_PI; // faces (y≡0) at each integer beat, back between
-      g.rotation.x = 0.12 + Math.sin(t * 0.6) * 0.02;
+      g.rotation.x = 0.12 + Math.sin(t * 0.6) * 0.02 * idle;
       g.rotation.z = 0;
 
       const facing = (Math.cos(beatFloat * TWO_PI) + 1) / 2; // 1 while presenting, 0 back-on
       if (mobile) {
         // stay centred; spin in place to reveal each project — the description sits beneath (CSS)
         g.position.x = 0;
-        g.position.y = MOBILE_Y + Math.sin(t * 0.7) * 0.025;
+        g.position.y = MOBILE_Y + Math.sin(t * 0.7) * 0.025 * idle;
         g.position.z = facing * 0.3;
         g.scale.setScalar(fit.current * (MOBILE_SCALE - 0.05 + facing * 0.05));
       } else {
         g.position.x = interpArr(LX, beatFloat);
-        g.position.y = -0.04 + Math.sin(t * 0.7) * 0.03;
+        g.position.y = -0.04 + Math.sin(t * 0.7) * 0.03 * idle;
         g.position.z = facing * 0.55; // breathing zoom: closer while presenting, back while spinning
         g.scale.setScalar(fit.current * (0.5 + facing * 0.2));
       }

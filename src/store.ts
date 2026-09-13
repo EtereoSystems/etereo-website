@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { detectLang, rememberLang } from "./i18n/lang";
 
 export type Lang = "en" | "sk";
 
@@ -13,8 +14,12 @@ interface UIState {
 }
 
 export const useUI = create<UIState>((set) => ({
-  lang: "en",
-  setLang: (lang) => set({ lang }),
+  lang: detectLang(),
+  setLang: (lang) => {
+    // only reachable from the language switcher, so this is always an explicit choice
+    rememberLang(lang);
+    set({ lang });
+  },
   menuOpen: false,
   setMenuOpen: (menuOpen) => set({ menuOpen }),
   entered: false,
@@ -27,3 +32,17 @@ export const useUI = create<UIState>((set) => ({
  * zoomed into the MacBook screen.
  */
 export const heroScroll = { progress: 0 };
+
+/**
+ * Mirror of `prefers-reduced-motion`, kept outside React like `heroScroll` so the
+ * frame loop can read it every frame. Gates the autonomous idle float/sway only.
+ */
+export const motionPref = { reduced: false };
+
+if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
+  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  motionPref.reduced = mq.matches;
+  mq.addEventListener("change", (e) => {
+    motionPref.reduced = e.matches;
+  });
+}

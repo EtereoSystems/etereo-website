@@ -3,9 +3,11 @@ import { Canvas } from "@react-three/fiber";
 import { Environment, Lightformer, ContactShadows } from "@react-three/drei";
 import { Macbook } from "./Macbook";
 
-export function Scene() {
+/** `running` false parks the render loop entirely — see Hero. */
+export default function Scene({ running }: { running: boolean }) {
   return (
     <Canvas
+      frameloop={running ? "always" : "never"}
       camera={{ position: [0, 0.15, 6.4], fov: 34, near: 0.1, far: 100 }}
       dpr={[1, 1.8]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}

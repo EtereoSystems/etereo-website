@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { useContent } from "../i18n";
 
-function Eyebrow({ children, left = false }: { children: React.ReactNode; left?: boolean }) {
-  return <div className={"eyebrow" + (left ? " eyebrow--left" : "")}>{children}</div>;
-}
-
 export function Services() {
   const c = useContent();
   return (
     <section id="services" className="section">
       <div className="container">
         <div className="section-head reveal">
-          <Eyebrow>{c.services.eyebrow}</Eyebrow>
           <h2>{c.services.title}</h2>
           <p>{c.services.sub}</p>
         </div>
@@ -42,7 +37,6 @@ export function Process() {
     <section id="process" className="section">
       <div className="container">
         <div className="section-head reveal">
-          <Eyebrow>{c.process.eyebrow}</Eyebrow>
           <h2>{c.process.title}</h2>
           <p>{c.process.sub}</p>
         </div>
@@ -69,7 +63,6 @@ export function Tech() {
     <section id="tech" className="section">
       <div className="container">
         <div className="section-head reveal">
-          <Eyebrow>{c.tech.eyebrow}</Eyebrow>
           <h2>{c.tech.title}</h2>
           <p>{c.tech.sub}</p>
         </div>
@@ -105,7 +98,7 @@ export function Work() {
     <section id="work" className="section">
       <div className="container">
         <div className="section-head reveal">
-          <Eyebrow>{c.work.eyebrow}</Eyebrow>
+          <div className="eyebrow">{c.work.eyebrow}</div>
           <h2>{c.work.title}</h2>
           <p>{c.work.note}</p>
         </div>
@@ -115,15 +108,11 @@ export function Work() {
               <div className="work__left">
                 <div className="work__meta">
                   <span className="chip">{w.tag}</span>
-                  <span className="chip">{w.kind}</span>
-                  <span className="work__dur">{w.duration}</span>
                 </div>
                 <h3>{w.title}</h3>
-                <p>{w.body}</p>
-                <div className="work__stack">{w.stack}</div>
               </div>
               <div className="work__stats">
-                {w.stats.map((st) => (
+                {w.stats.slice(0, 2).map((st) => (
                   <div className="work__stat" key={st.label}>
                     <div className="work__val">{st.value}</div>
                     <div className="work__lbl">{st.label}</div>
@@ -132,6 +121,11 @@ export function Work() {
               </div>
             </article>
           ))}
+        </div>
+        <div className="work-more">
+          <a href="/projects/" className="btn btn--ghost">
+            {c.work.all}
+          </a>
         </div>
       </div>
     </section>
@@ -144,7 +138,6 @@ export function Industries() {
     <section id="industries" className="section">
       <div className="container">
         <div className="section-head reveal">
-          <Eyebrow>{c.industries.eyebrow}</Eyebrow>
           <h2>{c.industries.title}</h2>
         </div>
         <div className="ind-grid reveal">
@@ -167,7 +160,6 @@ export function Engage() {
     <section id="engage" className="section">
       <div className="container">
         <div className="section-head reveal">
-          <Eyebrow>{c.engage.eyebrow}</Eyebrow>
           <h2>{c.engage.title}</h2>
         </div>
         <div className="engage-grid">
@@ -201,7 +193,7 @@ export function Voices() {
     <section className="section section--tight">
       <div className="container">
         <div className="section-head reveal">
-          <Eyebrow>{c.voices.eyebrow}</Eyebrow>
+          <h2>{c.voices.title}</h2>
         </div>
         <div className="voices">
           {c.voices.items.map((v, i) => (
@@ -228,7 +220,6 @@ export function Team() {
     <section id="team" className="section">
       <div className="container">
         <div className="section-head reveal">
-          <Eyebrow>{c.team.eyebrow}</Eyebrow>
           <h2>{c.team.title}</h2>
         </div>
         <div className="team-grid">
@@ -237,40 +228,13 @@ export function Team() {
               <div className="person__av">{p.initials}</div>
               <h4>{p.name}</h4>
               <div className="person__role">{p.role}</div>
-              <p>{p.body}</p>
             </article>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-export function Insights() {
-  const c = useContent();
-  return (
-    <section id="insights" className="section">
-      <div className="container">
-        <div className="insights-head reveal">
-          <div>
-            <Eyebrow left>{c.insights.eyebrow}</Eyebrow>
-            <h2>{c.insights.title}</h2>
-          </div>
-          <a href="#" className="btn btn--ghost">
-            {c.insights.all}
+        <div className="team-more">
+          <a href="/about/" className="btn btn--ghost">
+            {c.team.all}
           </a>
-        </div>
-        <div className="insights-grid">
-          {c.insights.items.map((a, i) => (
-            <article className="card article reveal" style={{ transitionDelay: `${i * 70}ms` }} key={a.title}>
-              <div className="article__meta">
-                <span className="chip">{a.tag}</span>
-                <span className="article__read">{a.read}</span>
-              </div>
-              <h3>{a.title}</h3>
-              <p>{a.body}</p>
-            </article>
-          ))}
         </div>
       </div>
     </section>
@@ -284,7 +248,7 @@ export function Faq() {
     <section id="faq" className="section section--tight">
       <div className="container container--narrow">
         <div className="section-head reveal">
-          <Eyebrow>{c.faq.eyebrow}</Eyebrow>
+          <h2>{c.faq.title}</h2>
         </div>
         <div className="faq reveal">
           {c.faq.items.map((f, i) => (

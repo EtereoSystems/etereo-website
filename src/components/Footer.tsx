@@ -15,8 +15,8 @@ export function Footer() {
             <div className="footer__col-title">{col.title}</div>
             <ul>
               {col.links.map((l) => (
-                <li key={l}>
-                  <a href="#">{l}</a>
+                <li key={l.label}>
+                  <a href={l.href}>{l.label}</a>
                 </li>
               ))}
             </ul>

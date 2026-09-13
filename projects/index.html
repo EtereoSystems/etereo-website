@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#060811" />
+
+    <title>Case studies — ETEREO | Software Development &amp; Digital Transformation</title>
+    <meta
+      name="description"
+      content="Three ETEREO programmes described in full: a core banking replatform with no planned downtime, a dispatch SaaS taken from zero to 40 enterprise tenants, and an offline-first clinician app on a compliance-first platform."
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+
+    <!-- Canonical + language alternates (domain comes from VITE_SITE_URL in .env) -->
+    <link rel="canonical" href="%VITE_SITE_URL%/projects/" />
+    <link rel="alternate" hreflang="en" href="%VITE_SITE_URL%/projects/" />
+    <link rel="alternate" hreflang="sk" href="%VITE_SITE_URL%/projects/?lang=sk" />
+    <link rel="alternate" hreflang="x-default" href="%VITE_SITE_URL%/projects/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ETEREO" />
+    <meta property="og:title" content="Case studies — ETEREO" />
+    <meta
+      property="og:description"
+      content="Three programmes described in full — the problem, what we did, and where it landed."
+    />
+    <meta property="og:url" content="%VITE_SITE_URL%/projects/" />
+    <meta property="og:image" content="%VITE_SITE_URL%/og.svg" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:locale:alternate" content="sk_SK" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Case studies — ETEREO" />
+    <meta
+      name="twitter:description"
+      content="Three programmes described in full — the problem, what we did, and where it landed."
+    />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/og.svg" />
+
+    <!-- Inline so it applies during parse: a stylesheet cannot paint the background
+         before it has loaded, and waiting on one is what flashed white between pages.
+         Literal hex on purpose — --bg lives in the very file we are not waiting for. -->
+    <style>
+      html {
+        background: #060811;
+        color-scheme: dark;
+      }
+    </style>
+
+    <!-- Fonts are self-hosted (see scripts/fonts.mjs); these two carry the body and
+         every heading, so start them in parallel with the CSS rather than after it. -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/inter-latin.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/space-grotesk-latin.woff2" />
+  </head>
+  <body>
+    <!-- The React app replaces #root on mount. Until then (and for crawlers that do
+         not execute JavaScript) this static copy carries the same three case studies
+         the rendered page shows. Keep it in sync with content.ts work.items. -->
+    <div id="root">
+      <div style="max-width:820px;margin:0 auto;padding:64px 24px;font-family:Inter,system-ui,sans-serif;color:#c7cde0;background:#060811;min-height:100vh">
+        <p><a style="color:#8b78ff" href="/">ETEREO</a></p>
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:36px;color:#fff;margin:0 0 10px">Three programmes, described in full</h1>
+        <p style="margin:0 0 8px">Each of these ran as one accountable team from audit to hand-over. The numbers are the ones the client measured.</p>
+        <p style="margin:0 0 32px;color:#737d96;font-size:14px">Illustrative case studies for this draft — swap in your real client names and metrics.</p>
+
+        <article>
+          <h2 style="font-family:'Space Grotesk',sans-serif;color:#fff">A 22-year-old core banking stack, migrated without a single planned outage</h2>
+          <p>Banking · Core replatform · 18 months · Go, PostgreSQL, Kafka, Kubernetes, AWS</p>
+          <p><strong>The problem</strong> — the core had accreted 22 years of undocumented behaviour, and the nightly batch no longer fit in a night. Every previous attempt had been planned as one cutover weekend, and every one had been called off.</p>
+          <p><strong>What we did</strong> — six weeks of audit produced a dependency map and a risk register; the monolith was sliced along domain boundaries, old and new ran in parallel for eleven weeks with nightly ledger reconciliation, and 4.1M customer records moved in reversible nightly batches.</p>
+          <p><strong>Where it landed</strong> — zero planned downtime hours, releases up from twelve a week to thirty-one, and infrastructure cost down 71%.</p>
+        </article>
+
+        <article>
+          <h2 style="font-family:'Space Grotesk',sans-serif;color:#fff">A dispatch product built from zero to 40 enterprise tenants</h2>
+          <p>Logistics · SaaS product · 9 months · TypeScript, Next.js, ClickHouse, Terraform</p>
+          <p><strong>The problem</strong> — the client sold dispatch software to single-depot operators and could not move upmarket. Every enterprise deal stalled on tenant isolation, per-seat billing and a missing audit trail.</p>
+          <p><strong>What we did</strong> — multi-tenancy went into the data layer before any feature work, billing and entitlements were built as a product surface, three generations of in-cab hardware were integrated across 6,000 vehicles, and route telemetry landed in ClickHouse.</p>
+          <p><strong>Where it landed</strong> — 40 enterprise tenants in the first year, 18% lower fuel spend, and 99.98% uptime through two peak seasons.</p>
+        </article>
+
+        <article>
+          <h2 style="font-family:'Space Grotesk',sans-serif;color:#fff">Clinician mobile app on a compliance-first data platform</h2>
+          <p>Healthcare · Mobile + platform · 12 months · Swift, Kotlin, Go, PostgreSQL</p>
+          <p><strong>The problem</strong> — field clinicians worked where connectivity dropped for hours and the existing app lost data when it did, while the platform could not evidence where patient records physically lived.</p>
+          <p><strong>What we did</strong> — the app became offline-first by default with conflicts surfaced to the clinician, the audit trail moved into the write path, data residency was enforced at the storage layer with per-region keys, and iOS and Android shipped from a shared domain core.</p>
+          <p><strong>Where it landed</strong> — 34 minutes back per clinician per day, complete audit coverage across five live regions, and zero data-residency findings in two external reviews.</p>
+        </article>
+
+        <p><a style="color:#8b78ff" href="/#contact">Book a discovery call</a> · info@etereosystems.com · Bratislava, Slovakia</p>
+      </div>
+    </div>
+    <script type="module" src="/src/projects.tsx"></script>
+  </body>
+</html>

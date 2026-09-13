@@ -3,7 +3,7 @@ import { useUI } from "../store";
 import { PANELS, PROJECTS, PROJECT_COUNT } from "../i18n/projects";
 import { computeShow, currentProgress, type ShowState } from "../three/choreo";
 
-export function ProjectPanel() {
+export function ProjectPanel({ running }: { running: boolean }) {
   const lang = useUI((s) => s.lang);
   const [st, setSt] = useState<ShowState>({ index: 0, side: "right", active: false });
   const prev = useRef<ShowState>({ index: -1, side: "right", active: false });
@@ -20,6 +20,7 @@ export function ProjectPanel() {
 
   // drive the panel from scroll progress on its own rAF (independent of the 3D loop)
   useEffect(() => {
+    if (!running) return;
     let raf = 0;
     const loop = () => {
       const s = computeShow(currentProgress());
@@ -32,7 +33,7 @@ export function ProjectPanel() {
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [running]);
 
   const i = Math.max(0, Math.min(PROJECT_COUNT - 1, st.index));
   const panel = PANELS[lang][i];

@@ -2,23 +2,24 @@ import { useContent } from "../i18n";
 import { useUI } from "../store";
 import { Wordmark } from "./Wordmark";
 
-export function Nav() {
+/** `base` prefixes the in-page anchors: "" on the home page, "/" on a subpage. */
+export function Nav({ base = "" }: { base?: string }) {
   const c = useContent();
   const { lang, setLang, menuOpen, setMenuOpen } = useUI();
 
   const links: [string, string][] = [
-    [c.nav.services, "#services"],
-    [c.nav.process, "#process"],
-    [c.nav.work, "#work"],
-    [c.nav.industries, "#industries"],
-    [c.nav.team, "#team"],
-    [c.nav.insights, "#insights"],
+    [c.nav.services, `${base}#services`],
+    [c.nav.process, `${base}#process`],
+    [c.nav.work, "/projects/"],
+    [c.nav.industries, `${base}#industries`],
+    [c.nav.about, "/about/"],
+    [c.nav.insights, "/blog/"],
   ];
 
   return (
     <header className="nav">
       <div className="nav__inner">
-        <a href="#top" className="nav__brand" aria-label="ETEREO home">
+        <a href={`${base}#top`} className="nav__brand" aria-label="ETEREO home">
           <Wordmark className="nav__logo" />
         </a>
 
@@ -40,7 +41,7 @@ export function Nav() {
               SK
             </button>
           </div>
-          <a href="#contact" className="btn btn--primary nav__cta">
+          <a href={`${base}#contact`} className="btn btn--primary nav__cta">
             {c.nav.start}
           </a>
           <button
