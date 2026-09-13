@@ -30,7 +30,7 @@ src/
     Macbook.tsx          # model load + scroll choreography (spin / approach / zoom)
     screenTexture.ts     # draws the ETEREO console UI onto the laptop screen
   components/            # Nav, Hero, Wordmark, Contact, Footer, useReveal
-  sections/Sections.tsx  # Services, Process, Tech, Work, Industries, Engage, Voices, Team, Insights, FAQ
+  sections/Sections.tsx  # Services, Process, Tech, Work, Industries, Engage, Voices, Team, Blog, FAQ
   i18n/content.ts        # ALL copy, EN + SK — edit here
   store.ts               # language + hero scroll progress
   styles/                # global.css (design tokens) + components.css
@@ -45,7 +45,7 @@ src/
 ## Notes / honest-content reminders
 
 - The stats, case studies ("Selected work") and testimonials are **illustrative placeholders** for a newly founded company — replace with real numbers/clients before launch, or reframe. They're clearly labelled in the copy.
-- Contact details (`hello@etereo.sk`, address) and the footer legal line are placeholders — fill in your real IČO / DIČ / registered seat.
+- Contact details (`info@etereosystems.com`, address) and the footer legal line are placeholders — fill in your real IČO / DIČ / registered seat.
 - The contact form is front-end only (simulated submit). Wire it to your email/CRM/endpoint when ready.
 
 ## 3D model

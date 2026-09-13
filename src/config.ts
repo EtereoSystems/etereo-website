@@ -21,7 +21,7 @@ export const SITE = {
   legalName: "ETEREO s.r.o.",
   /** one-liner used as a default meta description fallback */
   slogan: "Software engineering & digital transformation",
-  email: "hello@etereo.sk",
+  email: "info@etereosystems.com",
   /** founders — used in Organization structured data */
   founders: ["Patrik Klimko", "Matej Kučera"],
   address: {
@@ -46,7 +46,8 @@ export const SITE = {
   langs: ["en", "sk"] as const,
 } as const;
 
-/** Absolute URL for a given language variant of the single-page site. */
-export function langUrl(lang: "en" | "sk"): string {
-  return lang === SITE.langs[0] ? `${SITE.url}/` : `${SITE.url}/?lang=${lang}`;
+/** Absolute URL for a language variant of a page ("/" or "/projects/"). */
+export function langUrl(lang: "en" | "sk", path = "/"): string {
+  const p = path.endsWith("/") ? path : `${path}/`;
+  return lang === SITE.langs[0] ? `${SITE.url}${p}` : `${SITE.url}${p}?lang=${lang}`;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Lenis from "lenis";
 import { Nav } from "./components/Nav";
 import { Hero } from "./components/Hero";
@@ -13,39 +13,16 @@ import {
   Engage,
   Voices,
   Team,
-  Insights,
   Faq,
 } from "./sections/Sections";
 import { useReveal } from "./components/useReveal";
+import { useLangSync } from "./components/useLangSync";
 import { SeoHead } from "./seo/SeoHead";
-import { heroScroll, useUI, type Lang } from "./store";
+import { heroScroll } from "./store";
 
 export default function App() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const lang = useUI((s) => s.lang);
-  const setLang = useUI((s) => s.setLang);
   useReveal();
-
-  // Pick the initial language from ?lang=…, then the browser, defaulting to English.
-  useEffect(() => {
-    const param = new URLSearchParams(window.location.search).get("lang");
-    if (param === "sk" || param === "en") {
-      setLang(param as Lang);
-    } else if (navigator.language?.toLowerCase().startsWith("sk")) {
-      setLang("sk");
-    }
-    // run once on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Reflect the active language into the URL so each variant is shareable + crawlable.
-  useEffect(() => {
-    document.documentElement.lang = lang;
-    const url = new URL(window.location.href);
-    if (lang === "en") url.searchParams.delete("lang");
-    else url.searchParams.set("lang", lang);
-    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
-  }, [lang]);
+  useLangSync();
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -64,6 +41,7 @@ export default function App() {
 
     let lenis: Lenis | null = null;
     let raf = 0;
+    let stop: () => void;
 
     if (!reduce) {
       lenis = new Lenis({ duration: 1.1, smoothWheel: true, touchMultiplier: 1.4 });
@@ -73,24 +51,33 @@ export default function App() {
         raf = requestAnimationFrame(loop);
       };
       raf = requestAnimationFrame(loop);
+      stop = () => {
+        cancelAnimationFrame(raf);
+        lenis?.destroy();
+      };
     } else {
       const onScroll = () => update();
       window.addEventListener("scroll", onScroll, { passive: true });
-      update();
-      return () => window.removeEventListener("scroll", onScroll);
+      stop = () => window.removeEventListener("scroll", onScroll);
+    }
+
+    // The browser resolves a #hash while parsing, when #root still holds the static
+    // fallback and the real sections do not exist yet — so arriving from a subpage's
+    // nav landed at the top. Jump now that they are mounted.
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    const target = id ? document.getElementById(id) : null;
+    if (target) {
+      if (lenis) lenis.scrollTo(target, { immediate: true });
+      else target.scrollIntoView();
     }
 
     window.addEventListener("resize", update);
     update();
     return () => {
-      cancelAnimationFrame(raf);
-      lenis?.destroy();
+      stop();
       window.removeEventListener("resize", update);
     };
   }, []);
-
-  // suppress unused ref warning while keeping API for future targeting
-  void heroRef;
 
   return (
     <>
@@ -106,7 +93,6 @@ export default function App() {
         <Engage />
         <Voices />
         <Team />
-        <Insights />
         <Faq />
         <Contact />
       </main>

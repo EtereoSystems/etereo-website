@@ -133,10 +133,123 @@ function webPage(lang: Lang) {
   };
 }
 
-/** Full JSON-LD graph for the current language. */
-export function structuredData(lang: Lang) {
+export type Page = "home" | "projects" | "about" | "blog";
+
+const CASES = "/projects/";
+const ABOUT = "/about/";
+const BLOG = "/blog/";
+
+function casesPage(lang: Lang) {
+  const c = content[lang];
+  const url = langUrl(lang, CASES);
   return {
-    "@context": "https://schema.org",
-    "@graph": [professionalService(lang), webSite(lang), webPage(lang), faqPage(lang)],
+    "@type": "CollectionPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: c.casePage.title,
+    description: c.casePage.intro,
+    inLanguage: lang,
+    isPartOf: { "@id": `${SITE.url}/#website` },
+    about: { "@id": `${SITE.url}/#organization` },
+    breadcrumb: { "@id": `${url}#breadcrumb` },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: c.work.items.map((w, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: w.title,
+        description: w.body,
+      })),
+    },
   };
+}
+
+function breadcrumb(lang: Lang) {
+  const c = content[lang];
+  return {
+    "@type": "BreadcrumbList",
+    "@id": `${langUrl(lang, CASES)}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: SITE.name, item: langUrl(lang) },
+      { "@type": "ListItem", position: 2, name: c.casePage.title, item: langUrl(lang, CASES) },
+    ],
+  };
+}
+
+function aboutPage(lang: Lang) {
+  const c = content[lang];
+  const url = langUrl(lang, ABOUT);
+  return {
+    "@type": "AboutPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: c.aboutPage.title,
+    description: c.aboutPage.intro,
+    inLanguage: lang,
+    isPartOf: { "@id": `${SITE.url}/#website` },
+    about: { "@id": `${SITE.url}/#organization` },
+    breadcrumb: { "@id": `${url}#breadcrumb` },
+  };
+}
+
+function aboutBreadcrumb(lang: Lang) {
+  const c = content[lang];
+  return {
+    "@type": "BreadcrumbList",
+    "@id": `${langUrl(lang, ABOUT)}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: SITE.name, item: langUrl(lang) },
+      { "@type": "ListItem", position: 2, name: c.aboutPage.title, item: langUrl(lang, ABOUT) },
+    ],
+  };
+}
+
+function blogPage(lang: Lang) {
+  const c = content[lang];
+  const url = langUrl(lang, BLOG);
+  return {
+    "@type": "Blog",
+    "@id": `${url}#webpage`,
+    url,
+    name: c.blogPage.title,
+    description: c.blogPage.intro,
+    inLanguage: lang,
+    isPartOf: { "@id": `${SITE.url}/#website` },
+    publisher: { "@id": `${SITE.url}/#organization` },
+    breadcrumb: { "@id": `${url}#breadcrumb` },
+    blogPost: c.insights.items.map((a) => ({
+      "@type": "BlogPosting",
+      headline: a.title,
+      description: a.body,
+      articleSection: a.tag,
+      inLanguage: lang,
+      author: { "@id": `${SITE.url}/#organization` },
+    })),
+  };
+}
+
+function blogBreadcrumb(lang: Lang) {
+  const c = content[lang];
+  return {
+    "@type": "BreadcrumbList",
+    "@id": `${langUrl(lang, BLOG)}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: SITE.name, item: langUrl(lang) },
+      { "@type": "ListItem", position: 2, name: c.blogPage.title, item: langUrl(lang, BLOG) },
+    ],
+  };
+}
+
+/** Full JSON-LD graph for the current page + language. */
+export function structuredData(lang: Lang, page: Page = "home") {
+  const base = [professionalService(lang), webSite(lang)];
+  const graph =
+    page === "projects"
+      ? [...base, casesPage(lang), breadcrumb(lang)]
+      : page === "about"
+        ? [...base, aboutPage(lang), aboutBreadcrumb(lang)]
+        : page === "blog"
+          ? [...base, blogPage(lang), blogBreadcrumb(lang)]
+          : [...base, webPage(lang), faqPage(lang)];
+  return { "@context": "https://schema.org", "@graph": graph };
 }
