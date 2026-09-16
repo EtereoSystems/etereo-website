@@ -48,7 +48,16 @@
         background: #060811;
         color-scheme: dark;
       }
+      /* Hide the crawler fallback the instant JS is confirmed, so real visitors go
+         straight from the dark ground to the app — no flash of the static list, and
+         nothing for a view-transition to hold on screen. No-JS crawlers still get it. */
+      html[data-js] #root > .boot {
+        display: none;
+      }
     </style>
+    <script>
+      document.documentElement.setAttribute("data-js", "");
+    </script>
 
     <!-- Fonts are self-hosted (see scripts/fonts.mjs); these two carry the body and
          every heading, so start them in parallel with the CSS rather than after it. -->
@@ -60,7 +69,7 @@
          not execute JavaScript) this static copy carries the same posts the rendered
          page shows. Keep it in sync with content.ts insights.items. -->
     <div id="root">
-      <div style="max-width:820px;margin:0 auto;padding:64px 24px;font-family:Inter,system-ui,sans-serif;color:#c7cde0;background:#060811;min-height:100vh">
+      <div class="boot" style="max-width:820px;margin:0 auto;padding:64px 24px;font-family:Inter,system-ui,sans-serif;color:#c7cde0;background:#060811;min-height:100vh">
         <p><a style="color:#8b78ff" href="/">ETEREO</a></p>
         <h1 style="font-family:'Space Grotesk',sans-serif;font-size:36px;color:#fff;margin:0 0 12px">Notes from inside the work</h1>
         <p style="font-size:18px;color:#fff;margin:0 0 8px">Write-ups from live programmes — what held, what we would sequence differently, and the parts that matter more than they sound like they should.</p>

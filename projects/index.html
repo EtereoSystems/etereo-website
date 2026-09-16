@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#060811" />
 
-    <title>Case studies — ETEREO | Software Development &amp; Digital Transformation</title>
+    <title>Projects — ETEREO | Selected software work</title>
     <meta
       name="description"
-      content="Three ETEREO programmes described in full: a core banking replatform with no planned downtime, a dispatch SaaS taken from zero to 40 enterprise tenants, and an offline-first clinician app on a compliance-first platform."
+      content="Real systems ETEREO's founders have designed, built and shipped — confidential government and defence platforms, a Schneider Electric DCIM platform, an offline AI assistant for BEUMER Group, and Aperia in the app stores."
     />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
 
@@ -22,10 +22,10 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="ETEREO" />
-    <meta property="og:title" content="Case studies — ETEREO" />
+    <meta property="og:title" content="Projects — ETEREO" />
     <meta
       property="og:description"
-      content="Three programmes described in full — the problem, what we did, and where it landed."
+      content="Selected software work — government and defence platforms, a DCIM platform, an offline AI assistant, and consumer products live in the app stores."
     />
     <meta property="og:url" content="%VITE_SITE_URL%/projects/" />
     <meta property="og:image" content="%VITE_SITE_URL%/og.svg" />
@@ -33,10 +33,10 @@
     <meta property="og:locale:alternate" content="sk_SK" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Case studies — ETEREO" />
+    <meta name="twitter:title" content="Projects — ETEREO" />
     <meta
       name="twitter:description"
-      content="Three programmes described in full — the problem, what we did, and where it landed."
+      content="Selected software work — government and defence platforms, a DCIM platform, an offline AI assistant, and consumer products live in the app stores."
     />
     <meta name="twitter:image" content="%VITE_SITE_URL%/og.svg" />
 
@@ -48,7 +48,16 @@
         background: #060811;
         color-scheme: dark;
       }
+      /* Hide the crawler fallback the instant JS is confirmed, so real visitors go
+         straight from the dark ground to the app — no flash of the static list, and
+         nothing for a view-transition to hold on screen. No-JS crawlers still get it. */
+      html[data-js] #root > .boot {
+        display: none;
+      }
     </style>
+    <script>
+      document.documentElement.setAttribute("data-js", "");
+    </script>
 
     <!-- Fonts are self-hosted (see scripts/fonts.mjs); these two carry the body and
          every heading, so start them in parallel with the CSS rather than after it. -->
@@ -57,38 +66,23 @@
   </head>
   <body>
     <!-- The React app replaces #root on mount. Until then (and for crawlers that do
-         not execute JavaScript) this static copy carries the same three case studies
-         the rendered page shows. Keep it in sync with content.ts work.items. -->
+         not execute JavaScript) this static copy lists the same projects the rendered
+         page shows. Keep it in sync with PANELS.en in src/i18n/projects.ts. -->
     <div id="root">
-      <div style="max-width:820px;margin:0 auto;padding:64px 24px;font-family:Inter,system-ui,sans-serif;color:#c7cde0;background:#060811;min-height:100vh">
+      <div class="boot" style="max-width:820px;margin:0 auto;padding:64px 24px;font-family:Inter,system-ui,sans-serif;color:#c7cde0;background:#060811;min-height:100vh">
         <p><a style="color:#8b78ff" href="/">ETEREO</a></p>
-        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:36px;color:#fff;margin:0 0 10px">Three programmes, described in full</h1>
-        <p style="margin:0 0 8px">Each of these ran as one accountable team from audit to hand-over. The numbers are the ones the client measured.</p>
-        <p style="margin:0 0 32px;color:#737d96;font-size:14px">Illustrative case studies for this draft — swap in your real client names and metrics.</p>
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:36px;color:#fff;margin:0 0 10px">Selected work</h1>
+        <p style="margin:0 0 32px">Real systems we've designed, built and shipped — from confidential government and defence platforms to consumer products live in the app stores.</p>
 
-        <article>
-          <h2 style="font-family:'Space Grotesk',sans-serif;color:#fff">A 22-year-old core banking stack, migrated without a single planned outage</h2>
-          <p>Banking · Core replatform · 18 months · Go, PostgreSQL, Kafka, Kubernetes, AWS</p>
-          <p><strong>The problem</strong> — the core had accreted 22 years of undocumented behaviour, and the nightly batch no longer fit in a night. Every previous attempt had been planned as one cutover weekend, and every one had been called off.</p>
-          <p><strong>What we did</strong> — six weeks of audit produced a dependency map and a risk register; the monolith was sliced along domain boundaries, old and new ran in parallel for eleven weeks with nightly ledger reconciliation, and 4.1M customer records moved in reversible nightly batches.</p>
-          <p><strong>Where it landed</strong> — zero planned downtime hours, releases up from twelve a week to thirty-one, and infrastructure cost down 71%.</p>
-        </article>
-
-        <article>
-          <h2 style="font-family:'Space Grotesk',sans-serif;color:#fff">A dispatch product built from zero to 40 enterprise tenants</h2>
-          <p>Logistics · SaaS product · 9 months · TypeScript, Next.js, ClickHouse, Terraform</p>
-          <p><strong>The problem</strong> — the client sold dispatch software to single-depot operators and could not move upmarket. Every enterprise deal stalled on tenant isolation, per-seat billing and a missing audit trail.</p>
-          <p><strong>What we did</strong> — multi-tenancy went into the data layer before any feature work, billing and entitlements were built as a product surface, three generations of in-cab hardware were integrated across 6,000 vehicles, and route telemetry landed in ClickHouse.</p>
-          <p><strong>Where it landed</strong> — 40 enterprise tenants in the first year, 18% lower fuel spend, and 99.98% uptime through two peak seasons.</p>
-        </article>
-
-        <article>
-          <h2 style="font-family:'Space Grotesk',sans-serif;color:#fff">Clinician mobile app on a compliance-first data platform</h2>
-          <p>Healthcare · Mobile + platform · 12 months · Swift, Kotlin, Go, PostgreSQL</p>
-          <p><strong>The problem</strong> — field clinicians worked where connectivity dropped for hours and the existing app lost data when it did, while the platform could not evidence where patient records physically lived.</p>
-          <p><strong>What we did</strong> — the app became offline-first by default with conflicts surfaced to the clinician, the audit trail moved into the write path, data residency was enforced at the storage layer with per-region keys, and iOS and Android shipped from a shared domain core.</p>
-          <p><strong>Where it landed</strong> — 34 minutes back per clinician per day, complete audit coverage across five live regions, and zero data-residency findings in two external reviews.</p>
-        </article>
+        <article><h2 style="font-family:'Space Grotesk',sans-serif;color:#fff;font-size:20px;margin:0 0 4px">A Nordic defence agency <span style="color:#737d96;font-size:14px">· Defence</span></h2><p style="margin:0 0 22px">A secure internal application for a defence agency, built to run on-premise with no external dependencies.</p></article>
+        <article><h2 style="font-family:'Space Grotesk',sans-serif;color:#fff;font-size:20px;margin:0 0 4px">A Danish regional government <span style="color:#737d96;font-size:14px">· Public sector</span></h2><p style="margin:0 0 22px">Internal administration systems for a Danish regional government — the back-office workflows a region runs on.</p></article>
+        <article><h2 style="font-family:'Space Grotesk',sans-serif;color:#fff;font-size:20px;margin:0 0 4px">A Danish regional authority <span style="color:#737d96;font-size:14px">· Public sector</span></h2><p style="margin:0 0 22px">An internal system for a Danish regional authority, replacing manual process with a single operational view.</p></article>
+        <article><h2 style="font-family:'Space Grotesk',sans-serif;color:#fff;font-size:20px;margin:0 0 4px">A national defence force <span style="color:#737d96;font-size:14px">· Defence · Mobile</span></h2><p style="margin:0 0 22px">A native mobile app for a national defence force, built for reliability in the field.</p></article>
+        <article><h2 style="font-family:'Space Grotesk',sans-serif;color:#fff;font-size:20px;margin:0 0 4px">EcoStruxure IT Expert <span style="color:#737d96;font-size:14px">· Data centres · DCIM</span></h2><p style="margin:0 0 22px">A large-scale DCIM platform by Schneider Electric for real-time data-centre monitoring. Backend work on field-service, licensing and device-lifecycle features.</p></article>
+        <article><h2 style="font-family:'Space Grotesk',sans-serif;color:#fff;font-size:20px;margin:0 0 4px">BEUMER Group LocalChat <span style="color:#737d96;font-size:14px">· Intralogistics · Offline AI</span></h2><p style="margin:0 0 22px">A fully offline desktop assistant that answers service engineers' questions from confidential manuals — nothing leaves the machine. Built the model measurement and evaluation layer.</p></article>
+        <article><h2 style="font-family:'Space Grotesk',sans-serif;color:#fff;font-size:20px;margin:0 0 4px">Aperia <span style="color:#737d96;font-size:14px">· Consumer health · Mobile</span></h2><p style="margin:0 0 22px">A hormone-aware skincare app linking AI skin analysis to the menstrual cycle. Solo-built end to end and shipped to both app stores.</p></article>
+        <article><h2 style="font-family:'Space Grotesk',sans-serif;color:#fff;font-size:20px;margin:0 0 4px">Restaurant chain platform <span style="color:#737d96;font-size:14px">· Hospitality</span></h2><p style="margin:0 0 22px">An ordering and operations platform for a restaurant chain, with a hierarchical overview for the owner across every location.</p></article>
+        <article><h2 style="font-family:'Space Grotesk',sans-serif;color:#fff;font-size:20px;margin:0 0 4px">Client websites <span style="color:#737d96;font-size:14px">· Web &amp; brand</span></h2><p style="margin:0 0 22px">Design-led websites for founders and studios — UGC creators, home-services installers, and architecture portfolios.</p></article>
 
         <p><a style="color:#8b78ff" href="/#contact">Book a discovery call</a> · info@etereosystems.com · Bratislava, Slovakia</p>
       </div>
