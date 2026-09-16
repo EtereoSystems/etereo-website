@@ -217,14 +217,21 @@ function blogPage(lang: Lang) {
     isPartOf: { "@id": `${SITE.url}/#website` },
     publisher: { "@id": `${SITE.url}/#organization` },
     breadcrumb: { "@id": `${url}#breadcrumb` },
-    blogPost: c.insights.items.map((a) => ({
-      "@type": "BlogPosting",
-      headline: a.title,
-      description: a.body,
-      articleSection: a.tag,
-      inLanguage: lang,
-      author: { "@id": `${SITE.url}/#organization` },
-    })),
+    blogPost: c.insights.items.map((a) => {
+      const postUrl = langUrl(lang, `/blog/${a.slug}/`);
+      return {
+        "@type": "BlogPosting",
+        headline: a.title,
+        description: a.body,
+        articleSection: a.tag,
+        inLanguage: lang,
+        datePublished: a.date,
+        dateModified: a.date,
+        url: postUrl,
+        mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
+        author: { "@id": `${SITE.url}/#organization` },
+      };
+    }),
   };
 }
 

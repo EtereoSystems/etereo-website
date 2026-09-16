@@ -84,6 +84,8 @@ export interface Article {
   read: string;
   title: string;
   body: string;
+  slug: string;
+  date: string;
 }
 
 export interface Content {
@@ -234,9 +236,12 @@ const en: Content = {
   insights: {
     title: "Notes from inside the work",
     items: [
-      { tag: "Architecture", read: "9 min", title: "Strangler patterns that survive contact with a real business", body: "Why incremental cutovers fail on the org chart before they fail on the code — and how to sequence around it." },
-      { tag: "Delivery", read: "6 min", title: "What a two-week audit should actually produce", body: "The four artefacts we hand over, and how clients use them to get budget approved." },
-      { tag: "Platform", read: "7 min", title: "Cutting cloud spend 70% without a migration freeze", body: "The unglamorous checklist: right-sizing, data lifecycle, and killing the staging estate nobody uses." },
+      { slug: "offline-first-and-on-premise", date: "2026-09-02", tag: "Engineering", read: "8 min", title: "Offline-first and on-premise: software for disconnected, regulated worlds", body: "Cloud-by-default has a blind spot: the field, the factory floor, the classified network, the regulator. What it takes to build software — and AI — that runs where the data must stay." },
+      { slug: "saas-on-a-legacy-core", date: "2026-07-29", tag: "Integration", read: "9 min", title: "Shipping a SaaS product on top of a legacy core", body: "The core system that runs the business is rarely the one you get to replace. The integration patterns for building modern product on top of it — and the trap to avoid." },
+      { slug: "rewrite-replatform-or-refactor", date: "2026-06-24", tag: "Strategy", read: "8 min", title: "Rewrite, replatform, or refactor? Choosing a modernization strategy", body: "Three modernization strategies, three different risk profiles. A framework for matching the approach to the system — and the true cost of reaching for a rewrite too early." },
+      { slug: "cut-cloud-costs-without-a-freeze", date: "2026-05-20", tag: "Platform", read: "8 min", title: "Cutting cloud costs 40-70% without a migration freeze", body: "Cloud bills quietly grow to two or three times what the workload needs. The practical, incremental checklist for taking a third off — without a migration freeze." },
+      { slug: "two-week-software-audit", date: "2026-04-15", tag: "Delivery", read: "7 min", title: "What a two-week software audit should actually deliver", body: "Most audits end in a slide deck nobody acts on. The four concrete artefacts a two-week assessment should hand over — and how clients turn them into approved budget." },
+      { slug: "strangler-fig-legacy-migration", date: "2026-03-04", tag: "Architecture", read: "9 min", title: "Replacing a legacy system without a big-bang rewrite", body: "Why incremental cutovers fail on the org chart before they fail on the code — and how to sequence a replacement so the business keeps running throughout." },
     ],
   },
   faq: {
@@ -308,7 +313,7 @@ const en: Content = {
   blogPage: {
     title: "Notes from inside the work",
     intro: "Write-ups from live programmes — what held, what we would sequence differently, and the parts that matter more than they sound like they should.",
-    note: "Placeholder posts for this draft. None of them link anywhere yet — swap in real articles when you start publishing.",
+    note: "Practical field notes on legacy modernization, delivery, and cost — written from inside live programmes, not from the outside looking in.",
     back: "Back to the site",
   },
   footer: {
@@ -420,9 +425,12 @@ const sk: Content = {
   insights: {
     title: "Poznámky priamo z práce",
     items: [
-      { tag: "Architektúra", read: "9 min", title: "Strangler vzory, ktoré prežijú stret s reálnou firmou", body: "Prečo postupné migrácie zlyhávajú skôr na organizačnej štruktúre než na kóde — a ako podľa toho zoradiť kroky." },
-      { tag: "Dodávka", read: "6 min", title: "Čo má dvojtýždňový audit reálne priniesť", body: "Štyri výstupy, ktoré odovzdávame, a ako ich klienti používajú na schválenie rozpočtu." },
-      { tag: "Platforma", read: "7 min", title: "Ako znížiť cloudové náklady o 70 % bez zmrazenia migrácie", body: "Nezáživný zoznam úloh: right-sizing, životný cyklus dát a zrušenie staging prostredia, ktoré nikto nepoužíva." },
+      { slug: "offline-first-and-on-premise", date: "2026-09-02", tag: "Inžinierstvo", read: "8 min", title: "Offline-first a on-premise: softvér pre odpojené a regulované prostredia", body: "Cloud ako predvoľba má slepé miesto: terén, výrobnú halu, utajovanú sieť, regulátora. Čo treba na softvér — a AI — ktorý beží tam, kde dáta musia zostať." },
+      { slug: "saas-on-a-legacy-core", date: "2026-07-29", tag: "Integrácia", read: "9 min", title: "Ako postaviť SaaS produkt na legacy jadre", body: "Jadrový systém, na ktorom firma beží, je zriedka ten, ktorý smiete vymeniť. Integračné vzory na stavbu moderného produktu nad ním — a pasca, ktorej sa treba vyhnúť." },
+      { slug: "rewrite-replatform-or-refactor", date: "2026-06-24", tag: "Stratégia", read: "8 min", title: "Rewrite, replatform, alebo refaktoring? Ako vybrať stratégiu modernizácie", body: "Tri stratégie modernizácie, tri rôzne rizikové profily. Rámec, ako zladiť prístup so systémom — a skutočná cena za to, keď po rewrite siahnete priskoro." },
+      { slug: "cut-cloud-costs-without-a-freeze", date: "2026-05-20", tag: "Platforma", read: "8 min", title: "Ako znížiť náklady na cloud o 40-70 % bez zmrazenia vývoja", body: "Cloudové účty potichu narastú na dvoj- až trojnásobok toho, čo záťaž potrebuje. Praktický, inkrementálny checklist, ako z toho zložiť tretinu — bez zmrazenia vývoja." },
+      { slug: "two-week-software-audit", date: "2026-04-15", tag: "Dodávka", read: "7 min", title: "Čo má dvojtýždňový softvérový audit naozaj priniesť", body: "Väčšina auditov skončí prezentáciou, na ktorú nikto nekoná. Štyri konkrétne výstupy dvojtýždňového posúdenia — a ako z nich klienti spravia schválený rozpočet." },
+      { slug: "strangler-fig-legacy-migration", date: "2026-03-04", tag: "Architektúra", read: "9 min", title: "Ako vymeniť legacy systém bez veľkého rewrite", body: "Prečo inkrementálne prechody zlyhajú skôr na organizačnej štruktúre než na kóde — a ako naplánovať výmenu tak, aby biznis bežal celý čas." },
     ],
   },
   faq: {
@@ -494,7 +502,7 @@ const sk: Content = {
   blogPage: {
     title: "Poznámky priamo z práce",
     intro: "Zápisky z bežiacich programov — čo vydržalo, čo by sme zoradili inak, a tie časti, na ktorých záleží viac, než to znie.",
-    note: "Ukážkové príspevky pre tento návrh. Zatiaľ nikam nevedú — nahradíte ich skutočnými článkami, keď začnete publikovať.",
+    note: "Praktické poznámky z terénu o modernizácii legacy systémov, dodávke a nákladoch — písané zvnútra bežiacich programov, nie z pohľadu zvonka.",
     back: "Späť na stránku",
   },
   footer: {

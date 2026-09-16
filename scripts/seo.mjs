@@ -8,6 +8,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { POSTS } from "./blog-posts.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
@@ -66,6 +67,8 @@ const paths = [
   { path: "/projects/", priority: "0.8" },
   { path: "/about/", priority: "0.8" },
   { path: "/blog/", priority: "0.7" },
+  // one clean-path entry per blog article (both EN and SK variants added below)
+  ...POSTS.map((p) => ({ path: `/blog/${p.slug}/`, priority: "0.6" })),
 ];
 // every page ships an EN and an SK variant; SK ranks a notch below its EN twin
 const pages = paths.flatMap(({ path, priority }) => [
@@ -137,6 +140,12 @@ Three programmes are described in full at ${SITE_URL}/projects/ — a core banki
 - About ETEREO: ${SITE_URL}/about/
 - Case studies: ${SITE_URL}/projects/
 - Blog: ${SITE_URL}/blog/
+
+## Articles
+
+Long-form, practical writing on legacy modernisation and delivery. Each is available in English and Slovak (append ?lang=sk).
+
+${POSTS.map((p) => `- ${p.title.en} (${p.tag.en}, ${p.date}) — ${SITE_URL}/blog/${p.slug}/\n  ${p.excerpt.en}`).join("\n")}
 
 ## O firme (slovensky)
 

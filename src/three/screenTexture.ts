@@ -8,6 +8,10 @@ import { PROJECTS, type ScreenSpec } from "../i18n/projects";
  */
 
 const SIZE = 1200;
+// Supersample: the canvas is SS× the logical SIZE so the screenshot is rasterised at ~its
+// native resolution instead of being downscaled to ~900px and then blown back up on the
+// laptop screen. All drawing stays in the 1200 logical space (draw() pre-scales by SS).
+const SS = 2;
 const CANVAS_ROT = (3 * Math.PI) / 2;
 const MIRROR = true;
 const FIT = 0.72;
@@ -29,11 +33,17 @@ function hexA(hex: string, a: number) {
   return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
 }
 
-export function makeScreenTexture(): { texture: THREE.CanvasTexture; draw: (idx: number | "final") => void } {
+export function makeScreenTexture(): {
+  texture: THREE.CanvasTexture;
+  draw: (idx: number | "final") => void;
+  drawTerminal: (t: number, reduced: boolean) => void;
+} {
   const canvas = document.createElement("canvas");
-  canvas.width = SIZE;
-  canvas.height = SIZE;
+  canvas.width = SIZE * SS;
+  canvas.height = SIZE * SS;
   const ctx = canvas.getContext("2d")!;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
 
   let texture: THREE.CanvasTexture | undefined;
   let currentIdx: number | "final" = 0;
@@ -368,6 +378,87 @@ export function makeScreenTexture(): { texture: THREE.CanvasTexture; draw: (idx:
     opsTemplate(s);
   }
 
+  // ── splash terminal: types a welcome line, holds with a blinking cursor, deletes,
+  // types the next line, loops. Old-terminal feel: monospace, block cursor, phosphor glow.
+  const TERM_A = "Welcome to ETEREO.";
+  const TERM_B = "Let's build something together!";
+  function terminalState(t: number): { text: string; cursorOn: boolean } {
+    const CT = 0.075; // seconds per typed char
+    const CD = 0.04; // seconds per deleted char
+    const HOLD = 3.0; // idle pause once a line is complete
+    const tA = TERM_A.length * CT;
+    const dA = TERM_A.length * CD;
+    const tB = TERM_B.length * CT;
+    const dB = TERM_B.length * CD;
+    const cycle = tA + HOLD + dA + tB + HOLD + dB;
+    let u = t % cycle;
+    let text = "";
+    let typing = true; // cursor is solid while typing/deleting, blinks while idle
+    if (u < tA) text = TERM_A.slice(0, Math.min(TERM_A.length, Math.floor(u / CT) + 1));
+    else if ((u -= tA) < HOLD) ((text = TERM_A), (typing = false));
+    else if ((u -= HOLD) < dA) text = TERM_A.slice(0, Math.max(0, TERM_A.length - Math.floor(u / CD) - 1));
+    else if ((u -= dA) < tB) text = TERM_B.slice(0, Math.min(TERM_B.length, Math.floor(u / CT) + 1));
+    else if ((u -= tB) < HOLD) ((text = TERM_B), (typing = false));
+    else ((u -= HOLD), (text = TERM_B.slice(0, Math.max(0, TERM_B.length - Math.floor(u / CD) - 1))));
+    return { text, cursorOn: typing ? true : t % 1 < 0.5 };
+  }
+
+  function renderTerminal(st: { text: string; cursorOn: boolean }) {
+    bg("#6d54f0");
+    ctx.save();
+    ctx.translate(0, OY);
+    const { x, y, w, h } = SCREEN;
+    // window panel
+    rr(x, y, w, h, 24);
+    const g = ctx.createLinearGradient(x, y, x, y + h);
+    g.addColorStop(0, "#0a0e1c");
+    g.addColorStop(1, "#06090f");
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(124,123,255,0.16)";
+    ctx.stroke();
+    // header: traffic dots + label + divider
+    const dy = y + 40;
+    ["#ff5f57", "#febc2e", "#28c840"].forEach((c, i) => {
+      ctx.beginPath();
+      ctx.arc(x + 46 + i * 34, dy, 9, 0, Math.PI * 2);
+      ctx.fillStyle = c;
+      ctx.fill();
+    });
+    ctx.font = "500 27px monospace";
+    ctx.fillStyle = "rgba(190,196,220,0.5)";
+    ctx.textAlign = "center";
+    ctx.fillText("welcome — etereo", x + w / 2, dy + 10);
+    ctx.textAlign = "left";
+    ctx.strokeStyle = "rgba(255,255,255,0.06)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x + 30, y + 80);
+    ctx.lineTo(x + w - 30, y + 80);
+    ctx.stroke();
+    // prompt + typed text, vertically centred, with a soft phosphor glow
+    const cy = y + h / 2 + 24;
+    const pxp = x + 76;
+    ctx.font = "700 50px monospace";
+    ctx.shadowColor = "rgba(124,123,255,0.45)";
+    ctx.shadowBlur = 14;
+    ctx.fillStyle = "#7c7bff";
+    const prompt = "› ";
+    ctx.fillText(prompt, pxp, cy);
+    const pw = ctx.measureText(prompt).width;
+    ctx.fillStyle = "#f2f4fd";
+    ctx.fillText(st.text, pxp + pw, cy);
+    const tw = ctx.measureText(st.text).width;
+    if (st.cursorOn) {
+      const cw = ctx.measureText("0").width * 0.62;
+      ctx.fillStyle = "#7c7bff";
+      ctx.fillRect(pxp + pw + tw + 6, cy - 40, cw, 50);
+    }
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+
   function render(idx: number | "final") {
     const accent = idx === "final" ? "#6d54f0" : PROJECTS[idx % PROJECTS.length].screen.accent;
     bg(accent);
@@ -393,28 +484,45 @@ export function makeScreenTexture(): { texture: THREE.CanvasTexture; draw: (idx:
     ctx.restore();
   }
 
-  function draw(idx: number | "final") {
-    currentIdx = idx;
+  function paint(renderFn: () => void) {
     const wd = window as unknown as { __CROT?: number; __CMIR?: boolean; __FIT?: number };
     const rot = typeof wd.__CROT === "number" ? wd.__CROT : CANVAS_ROT;
     const mir = typeof wd.__CMIR === "boolean" ? wd.__CMIR : MIRROR;
     const fit = typeof wd.__FIT === "number" ? wd.__FIT : FIT;
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.setTransform(SS, 0, 0, SS, 0, 0);
     ctx.clearRect(0, 0, SIZE, SIZE);
     ctx.translate(SIZE / 2, SIZE / 2);
     ctx.rotate(rot);
     if (mir) ctx.scale(-1, 1);
     ctx.scale(fit, fit);
     ctx.translate(-SIZE / 2, -SIZE / 2);
-    render(idx);
+    renderFn();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     if (texture) texture.needsUpdate = true;
+  }
+
+  function draw(idx: number | "final") {
+    currentIdx = idx;
+    paint(() => render(idx));
+  }
+
+  // Splash typewriter. Called every frame during the intro; repaints only when the visible
+  // frame changes. currentIdx = -1 keeps a late image onload from painting over it.
+  let termSig = "";
+  function drawTerminal(t: number, reduced: boolean) {
+    const wasImage = currentIdx !== -1;
+    currentIdx = -1;
+    const st = reduced ? { text: TERM_A, cursorOn: true } : terminalState(t);
+    const sig = st.text + (st.cursorOn ? "|1" : "|0");
+    if (!wasImage && sig === termSig) return;
+    termSig = sig;
+    paint(() => renderTerminal(st));
   }
 
   draw(0);
   texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 8;
+  texture.anisotropy = 16;
   texture.needsUpdate = true;
-  return { texture, draw };
+  return { texture, draw, drawTerminal };
 }

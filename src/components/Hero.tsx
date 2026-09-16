@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { ProjectPanel } from "./ProjectPanel";
+import { Wordmark } from "./Wordmark";
 import { useContent } from "../i18n";
 
 // three.js is ~800 kB of the bundle; keep it out of the critical path. Until it
@@ -41,7 +42,9 @@ export function Hero() {
             <div className="hero__badge">
               <span className="dot" /> {c.hero.badge}
             </div>
-            <h1 className="hero__wordmark">ETEREO</h1>
+            <h1 className="hero__wordmark">
+              <Wordmark dot={false} gradient />
+            </h1>
             <p className="hero__tag">{c.hero.tagline}</p>
             <p className="hero__sub">{c.hero.sub}</p>
             <div className="hero__cta">

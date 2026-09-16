@@ -26,7 +26,7 @@ export function Macbook() {
   const fit = useRef(1);
   const drawn = useRef<number | "final" | null>(null);
 
-  const { model, screenTex, draw } = useMemo(() => {
+  const { model, screenTex, draw, drawTerminal } = useMemo(() => {
     const src = scene.clone(true);
     const box = new THREE.Box3().setFromObject(src);
     const size = new THREE.Vector3();
@@ -38,7 +38,7 @@ export function Macbook() {
     const wrap = new THREE.Group();
     wrap.add(src);
 
-    const { texture, draw } = makeScreenTexture();
+    const { texture, draw, drawTerminal } = makeScreenTexture();
 
     src.traverse((o) => {
       const mesh = o as THREE.Mesh;
@@ -64,7 +64,7 @@ export function Macbook() {
         mat.envMapIntensity = 1.1;
       }
     });
-    return { model: wrap, screenTex: texture, draw };
+    return { model: wrap, screenTex: texture, draw, drawTerminal };
   }, [scene]);
 
   useEffect(() => () => screenTex.dispose(), [screenTex]);
@@ -109,7 +109,10 @@ export function Macbook() {
         g.position.z = 0.55;
         g.scale.setScalar(fit.current * 0.7);
       }
-      setScreen(0);
+      // splash shows an animated terminal, not a project screen; null so the carousel
+      // re-draws the real project when we leave the intro
+      drawTerminal(t, motionPref.reduced);
+      drawn.current = null;
       camera.position.set(0, 0.12, 6.4);
       camera.lookAt(0, 0.05, 0);
       root.setProperty("--hero-fade", (1 - seg(p, INTRO_END * 0.55, INTRO_END)).toFixed(3));
