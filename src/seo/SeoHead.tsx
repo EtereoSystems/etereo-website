@@ -28,15 +28,15 @@ const META: Record<Page, Record<Lang, { title: string; description: string; ogLo
   },
   projects: {
     en: {
-      title: "Case studies — ETEREO | Software Development & Digital Transformation",
+      title: "Projects — ETEREO | Selected software work",
       description:
-        "Three ETEREO programmes described in full: a core banking replatform with no planned downtime, a dispatch SaaS taken from zero to 40 enterprise tenants, and an offline-first clinician app on a compliance-first platform.",
+        "Real systems ETEREO's founders have designed, built and shipped — confidential government and defence platforms, a Schneider Electric DCIM platform, an offline AI assistant for BEUMER Group, and Aperia in the app stores.",
       ogLocale: "en_GB",
     },
     sk: {
-      title: "Prípadové štúdie — ETEREO | Vývoj softvéru a digitálna transformácia",
+      title: "Projekty — ETEREO | Vybraná softvérová práca",
       description:
-        "Tri programy ETEREO popísané celé: prestavba jadra banky bez plánovaného výpadku, dispečerský SaaS od nuly po 40 firemných zákazníkov a offline-first aplikácia pre lekárov na platforme so súladom od prvého dňa.",
+        "Reálne systémy, ktoré zakladatelia ETEREO navrhli, postavili a dodali — dôverné vládne a obranné platformy, DCIM platforma Schneider Electric, offline AI asistent pre BEUMER Group a Aperia v obchodoch s aplikáciami.",
       ogLocale: "sk_SK",
     },
   },

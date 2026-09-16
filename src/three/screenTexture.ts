@@ -11,6 +11,10 @@ const SIZE = 1200;
 const CANVAS_ROT = (3 * Math.PI) / 2;
 const MIRROR = true;
 const FIT = 0.72;
+// The visible laptop screen, in the draw-space coordinates used by render() (measured with
+// a coordinate-grid overlay at a facing beat). A real screenshot is cover-fit into this so
+// it fills the panel edge-to-edge instead of floating in the smaller drawn-UI frame.
+const SCREEN = { x: -240, y: 385, w: 1255, h: 805 };
 
 // logical landscape drawing area, centred in the square canvas
 const W = 1200;
@@ -30,6 +34,37 @@ export function makeScreenTexture(): { texture: THREE.CanvasTexture; draw: (idx:
   canvas.width = SIZE;
   canvas.height = SIZE;
   const ctx = canvas.getContext("2d")!;
+
+  let texture: THREE.CanvasTexture | undefined;
+  let currentIdx: number | "final" = 0;
+
+  // Real product screens (public/screens/screen-<slug>.png). Each replaces its drawn
+  // fallback once loaded; a slow or missing image keeps the drawn template showing.
+  const shots = PROJECTS.map((p, i) => {
+    const im = new Image();
+    im.src = `/screens/screen-${p.slug}.png`;
+    im.onload = () => {
+      if (currentIdx === i && texture) draw(currentIdx);
+    };
+    return im;
+  });
+
+  function drawImageCover(img: HTMLImageElement, dx: number, dy: number, dw: number, dh: number) {
+    const ir = img.naturalWidth / img.naturalHeight;
+    const br = dw / dh;
+    let sw = img.naturalWidth;
+    let sh = img.naturalHeight;
+    let sx = 0;
+    let sy = 0;
+    if (ir > br) {
+      sw = sh * br;
+      sx = (img.naturalWidth - sw) / 2;
+    } else {
+      sh = sw / br;
+      sy = (img.naturalHeight - sh) / 2;
+    }
+    ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+  }
 
   function rr(x: number, y: number, w: number, h: number, r: number) {
     ctx.beginPath();
@@ -341,16 +376,25 @@ export function makeScreenTexture(): { texture: THREE.CanvasTexture; draw: (idx:
     if (idx === "final") {
       finalConsole();
     } else {
-      const s = PROJECTS[idx % PROJECTS.length].screen;
-      if (s.template === "ops") opsTemplate(s);
-      else if (s.template === "analytics") analyticsTemplate(s);
-      else if (s.template === "mobile") mobileTemplate(s);
-      else mapTemplate(s);
+      const i = idx % PROJECTS.length;
+      const img = shots[i];
+      if (img.complete && img.naturalWidth > 0) {
+        // cover-fit the screenshot into the visible screen rectangle (measured in this
+        // draw space with a coordinate-grid overlay — see git history)
+        drawImageCover(img, SCREEN.x, SCREEN.y, SCREEN.w, SCREEN.h);
+      } else {
+        const s = PROJECTS[i].screen;
+        if (s.template === "ops") opsTemplate(s);
+        else if (s.template === "analytics") analyticsTemplate(s);
+        else if (s.template === "mobile") mobileTemplate(s);
+        else mapTemplate(s);
+      }
     }
     ctx.restore();
   }
 
   function draw(idx: number | "final") {
+    currentIdx = idx;
     const wd = window as unknown as { __CROT?: number; __CMIR?: boolean; __FIT?: number };
     const rot = typeof wd.__CROT === "number" ? wd.__CROT : CANVAS_ROT;
     const mir = typeof wd.__CMIR === "boolean" ? wd.__CMIR : MIRROR;
@@ -364,10 +408,11 @@ export function makeScreenTexture(): { texture: THREE.CanvasTexture; draw: (idx:
     ctx.translate(-SIZE / 2, -SIZE / 2);
     render(idx);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (texture) texture.needsUpdate = true;
   }
 
   draw(0);
-  const texture = new THREE.CanvasTexture(canvas);
+  texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
   texture.needsUpdate = true;

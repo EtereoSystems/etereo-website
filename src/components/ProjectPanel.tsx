@@ -38,6 +38,9 @@ export function ProjectPanel({ running }: { running: boolean }) {
   const i = Math.max(0, Math.min(PROJECT_COUNT - 1, st.index));
   const panel = PANELS[lang][i];
   const proj = PROJECTS[i];
+  // TODO: move this label into content.ts alongside the /projects/ detail copy
+  const readMore = lang === "sk" ? "Zobraziť projekt" : "Read more";
+  const href = `/projects/?p=${proj.slug}${lang === "sk" ? "&lang=sk" : ""}`;
 
   return (
     <div className={"project-panel " + (mobile ? "mobile " : "") + st.side + (st.active ? " on" : "")} aria-hidden>
@@ -52,17 +55,25 @@ export function ProjectPanel({ running }: { running: boolean }) {
           </span>
         </div>
         <p className="project-panel__blurb">{panel.blurb}</p>
-        <div className="project-panel__metrics">
-          {panel.metrics.map((m) => (
-            <div key={m.l}>
-              <div className="project-panel__val" style={{ color: proj.screen.accent }}>
-                {m.v}
+        {panel.metrics.length > 0 && (
+          <div className="project-panel__metrics">
+            {panel.metrics.map((m) => (
+              <div key={m.l}>
+                <div className="project-panel__val" style={{ color: proj.screen.accent }}>
+                  {m.v}
+                </div>
+                <div className="project-panel__lbl">{m.l}</div>
               </div>
-              <div className="project-panel__lbl">{m.l}</div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
         <div className="project-panel__stack">{proj.stack}</div>
+        {/* tabIndex -1: the panel is decorative + aria-hidden, the accessible route to
+            the portfolio is the nav "Work" link. This is a pointer convenience. */}
+        <a className="project-panel__more" href={href} tabIndex={-1} style={{ color: proj.screen.accent }}>
+          {readMore}
+          <span aria-hidden> →</span>
+        </a>
       </div>
     </div>
   );

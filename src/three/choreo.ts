@@ -3,8 +3,11 @@ import { PROJECT_COUNT } from "../i18n/projects";
 
 export const INTRO_END = 0.08;
 export const SHOW_END = 0.86;
-// laptop position per project (beats 0..7): alternates sides each project (zig-zag), last centred
-export const LX = [-1.2, 1.2, -1.2, 1.2, -1.2, 1.2, -1.2, 0.0];
+// laptop x per project (one per beat): zig-zags left/right, last centred so the
+// final zoom is on-axis. Generated from PROJECT_COUNT so adding a project needs no edit here.
+export const LX = Array.from({ length: PROJECT_COUNT }, (_, i) =>
+  i === PROJECT_COUNT - 1 ? 0 : i % 2 === 0 ? -1.2 : 1.2,
+);
 
 export const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;

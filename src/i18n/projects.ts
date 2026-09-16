@@ -12,170 +12,381 @@ export interface ScreenSpec {
 }
 
 export interface Project {
+  /** display number, e.g. "01" */
   id: string;
+  /** url key on /projects/?p=<slug> */
+  slug: string;
+  /** language-neutral tech list */
   stack: string;
+  /** true → sensitive client, shown anonymised (defence / government) */
+  confidential?: boolean;
+  links?: { label: string; href: string }[];
   screen: ScreenSpec;
 }
 
 export interface PanelText {
   name: string;
   sector: string;
+  /** 1–2 sentence teaser (hero panel + card) */
   blurb: string;
+  /** headline numbers — only real, verifiable figures; empty when we have none yet */
   metrics: { v: string; l: string }[];
+  // ── long form, rendered on /projects/?p=<slug> (optional until written) ──
+  role?: string;
+  challenge?: string;
+  approach?: string[];
+  outcome?: string;
+  stage?: string;
+  /** true → copy is a placeholder awaiting real details */
+  draft?: boolean;
 }
 
-/** Screen + technical data (language-neutral — product UIs render in English). */
+/**
+ * Real ETEREO portfolio. Screen specs are language-neutral (the fake product UI
+ * on the MacBook renders in English); translated prose lives in PANELS[lang].
+ * Defence / government clients are shown anonymised (confidential: true).
+ */
 export const PROJECTS: Project[] = [
   {
     id: "01",
-    stack: "Go · PostgreSQL · Kafka · Kubernetes",
+    slug: "nordic-defence",
+    confidential: true,
+    stack: "Secure on-prem · internal systems",
     screen: {
       template: "ops",
-      accent: "#6d54f0",
-      title: "Corebank Migration",
-      subtitle: "Core replatform · live",
+      accent: "#5b74ff",
+      title: "Operations Console",
+      subtitle: "Secure · on-premise",
       kpis: [
-        { v: "0", l: "Downtime hrs" },
-        { v: "4.1M", l: "Records" },
-        { v: "31/wk", l: "Releases" },
+        { v: "100%", l: "On-prem" },
+        { v: "0", l: "External calls" },
+        { v: "24/7", l: "Availability" },
       ],
-      rows: ["Ledger service", "Payments cutover", "Fraud stream", "Legacy shadow"],
+      rows: ["Access control", "Audit log", "Case workflow", "Offline sync"],
     },
   },
   {
     id: "02",
-    stack: "TypeScript · Next.js · ClickHouse",
+    slug: "danish-region-admin",
+    confidential: true,
+    stack: "Internal administration systems",
     screen: {
       template: "analytics",
       accent: "#3f8cff",
-      title: "Fleet Intelligence",
-      subtitle: "Dispatch analytics",
+      title: "Administration",
+      subtitle: "Regional back office",
       kpis: [
-        { v: "6,000", l: "Vehicles" },
-        { v: "18%", l: "Fuel saved" },
-        { v: "99.98%", l: "Uptime" },
+        { v: "12", l: "Departments" },
+        { v: "1", l: "Source of truth" },
+        { v: "99.9%", l: "Uptime" },
       ],
-      rows: ["Route load", "Idle time", "On-time %", "Cost / km"],
+      rows: ["Intake", "Routing", "Approvals", "Archive"],
     },
   },
   {
     id: "03",
-    stack: "Swift · Kotlin · Offline-first",
+    slug: "danish-region-capital",
+    confidential: true,
+    stack: "Internal regional platform",
     screen: {
-      template: "mobile",
+      template: "ops",
       accent: "#19c8b0",
-      title: "Clinic Field App",
-      subtitle: "Offline records",
+      title: "Regional System",
+      subtitle: "Internal platform",
       kpis: [
-        { v: "34m", l: "Saved / day" },
-        { v: "100%", l: "Audit trail" },
-        { v: "5", l: "Regions" },
+        { v: "1", l: "Unified view" },
+        { v: "Live", l: "Status" },
+        { v: "SSO", l: "Access" },
       ],
-      rows: ["Patient intake", "Vitals sync", "Care plan", "e-Signature"],
+      rows: ["Registry", "Workflow", "Reporting", "Integrations"],
     },
   },
   {
     id: "04",
-    stack: "Python · Terraform · Grafana",
+    slug: "defence-field-app",
+    confidential: true,
+    stack: "Native mobile · offline-first",
     screen: {
-      template: "map",
-      accent: "#37c871",
-      title: "Grid Operations",
-      subtitle: "Asset telemetry",
+      template: "mobile",
+      accent: "#7c7bff",
+      title: "Field App",
+      subtitle: "Native · offline",
       kpis: [
-        { v: "12k", l: "Sensors" },
-        { v: "-41%", l: "Outage time" },
-        { v: "24/7", l: "Monitoring" },
+        { v: "iOS", l: "Native" },
+        { v: "Offline", l: "By default" },
+        { v: "0", l: "External calls" },
       ],
-      rows: ["North grid", "Substation 7", "Meter mesh", "Fault replay"],
+      rows: ["Briefing", "Checklist", "Report", "Sync"],
     },
   },
   {
     id: "05",
-    stack: "React · GraphQL · Stripe",
+    slug: "ecostruxure-it",
+    stack: "Java 21 · Spring Boot · Kubernetes · Kafka · PostgreSQL · Angular",
     screen: {
-      template: "analytics",
-      accent: "#f0a63c",
-      title: "Commerce Console",
-      subtitle: "Omnichannel",
+      template: "map",
+      accent: "#37c871",
+      title: "EcoStruxure IT",
+      subtitle: "DCIM · data centres",
       kpis: [
-        { v: "1.2M", l: "Orders / mo" },
-        { v: "+27%", l: "Conversion" },
-        { v: "120ms", l: "TTFB" },
+        { v: "24/7", l: "Monitoring" },
+        { v: "4", l: "Datastores" },
+        { v: "µsvc", l: "On Kubernetes" },
       ],
-      rows: ["Checkout", "Inventory truth", "Returns", "Loyalty"],
+      rows: ["Power", "Cooling", "Alarms", "Discovery"],
     },
   },
   {
     id: "06",
-    stack: ".NET · Azure · Service Bus",
+    slug: "beumer-localchat",
+    stack: "Electron · React 19 · Python · FastAPI · FAISS · llama.cpp",
     screen: {
-      template: "ops",
-      accent: "#f0567a",
-      title: "Claims Engine",
-      subtitle: "Insurance ops",
+      template: "analytics",
+      accent: "#f0a63c",
+      title: "Model Benchmark",
+      subtitle: "Offline evaluation",
       kpis: [
-        { v: "3.4d", l: "→ 6h cycle" },
-        { v: "92%", l: "Auto-triage" },
-        { v: "0", l: "Escapes" },
+        { v: "100%", l: "Offline" },
+        { v: "0", l: "External calls" },
+        { v: "~195", l: "Tests" },
       ],
-      rows: ["Intake", "Risk score", "Adjuster queue", "Payout"],
+      rows: ["Load time", "First token", "Tokens / s", "Peak memory"],
     },
   },
   {
     id: "07",
-    stack: "React Native · Rust · WebSocket",
+    slug: "aperia",
+    links: [{ label: "aperiaskin.com", href: "https://aperiaskin.com" }],
+    stack: ".NET 9 · PostgreSQL · React Native · Expo · Claude API",
     screen: {
       template: "mobile",
-      accent: "#7c7bff",
-      title: "Trader Companion",
-      subtitle: "Real-time app",
+      accent: "#f0567a",
+      title: "Aperia",
+      subtitle: "Skin intelligence",
       kpis: [
-        { v: "48ms", l: "Tick latency" },
-        { v: "1.8M", l: "Users" },
-        { v: "4.9★", l: "Store" },
+        { v: "7", l: "Languages" },
+        { v: "60+", l: "Endpoints" },
+        { v: "2", l: "App stores" },
       ],
-      rows: ["Watchlist", "Live quotes", "Alerts", "Portfolio"],
+      rows: ["Skin score", "Cycle phase", "Scan", "Insights"],
     },
   },
   {
     id: "08",
-    stack: "Go · Postgres · OpenTelemetry",
+    slug: "restaurant-platform",
+    stack: "Web · mobile ordering · multi-location",
+    screen: {
+      template: "analytics",
+      accent: "#ff9d5c",
+      title: "Restaurant Platform",
+      subtitle: "Chain operations",
+      kpis: [
+        { v: "Live", l: "Orders" },
+        { v: "Multi", l: "Location" },
+        { v: "1", l: "Owner view" },
+      ],
+      rows: ["Orders", "Kitchen", "Locations", "Revenue"],
+    },
+  },
+  {
+    id: "09",
+    slug: "client-sites",
+    stack: "Design-led marketing sites",
     screen: {
       template: "map",
       accent: "#4bb8ff",
-      title: "Port Logistics",
-      subtitle: "Container flow",
+      title: "Client Websites",
+      subtitle: "Web & brand",
       kpis: [
-        { v: "38k", l: "TEU / wk" },
-        { v: "-23%", l: "Dwell time" },
-        { v: "6", l: "Terminals" },
+        { v: "UGC", l: "Creators" },
+        { v: "Home", l: "Services" },
+        { v: "Studios", l: "Architecture" },
       ],
-      rows: ["Gate in", "Yard plan", "Crane cycle", "Customs"],
+      rows: ["Design", "Build", "Content", "Launch"],
     },
   },
 ];
 
+/**
+ * Translated project copy, parallel to PROJECTS. Long-form fields (role /
+ * challenge / approach / outcome) are English-only for now on the three named
+ * projects; the Slovak long form lands with the /projects/ detail pages.
+ */
 export const PANELS: Record<Lang, PanelText[]> = {
   en: [
-    { name: "Corebank", sector: "Banking", blurb: "A 22-year-old core banking stack sliced into domain services and migrated with zero planned downtime.", metrics: [{ v: "0", l: "Planned downtime hours" }, { v: "-71%", l: "Infrastructure cost" }] },
-    { name: "Fleetwise", sector: "Logistics", blurb: "Multi-tenant routing and telemetry across a 6,000-vehicle fleet, with the billing layer that moved sales upmarket.", metrics: [{ v: "40", l: "Enterprise tenants" }, { v: "18%", l: "Fuel reduction" }] },
-    { name: "Caresync", sector: "Healthcare", blurb: "An offline-first clinician app on a compliance-first platform with a full audit trail and data-residency controls.", metrics: [{ v: "34 min", l: "Saved per clinician / day" }, { v: "100%", l: "Audit coverage" }] },
-    { name: "Gridwatch", sector: "Energy", blurb: "Field operations and asset telemetry for a regional grid — turning 12k sensors into a single operational view.", metrics: [{ v: "-41%", l: "Outage duration" }, { v: "12k", l: "Live sensors" }] },
-    { name: "Marketframe", sector: "Retail", blurb: "An omnichannel commerce platform engineered for peak-day performance budgets and honest inventory.", metrics: [{ v: "+27%", l: "Conversion" }, { v: "1.2M", l: "Orders / month" }] },
-    { name: "Claimflow", sector: "Insurance", blurb: "A claims engine that cut cycle time from days to hours with automated triage — and zero quality escapes.", metrics: [{ v: "3.4d → 6h", l: "Cycle time" }, { v: "92%", l: "Auto-triaged" }] },
-    { name: "Tradepal", sector: "Fintech", blurb: "A real-time trading companion app with sub-50ms tick latency and offline-resilient sync for 1.8M users.", metrics: [{ v: "48 ms", l: "Tick latency" }, { v: "4.9★", l: "App store" }] },
-    { name: "Portgrid", sector: "Mobility", blurb: "Container-flow orchestration across six terminals, cutting dwell time with live yard and crane planning.", metrics: [{ v: "-23%", l: "Dwell time" }, { v: "38k", l: "TEU / week" }] },
+    {
+      name: "A Nordic defence agency",
+      sector: "Defence",
+      blurb: "A secure internal application for a defence agency, built to run on-premise with no external dependencies.",
+      metrics: [],
+      draft: true,
+    },
+    {
+      name: "A Danish regional government",
+      sector: "Public sector",
+      blurb: "Internal administration systems for a Danish regional government — the back-office workflows a region runs on.",
+      metrics: [],
+      draft: true,
+    },
+    {
+      name: "A Danish regional authority",
+      sector: "Public sector",
+      blurb: "An internal system for a Danish regional authority, replacing manual process with a single operational view.",
+      metrics: [],
+      draft: true,
+    },
+    {
+      name: "A national defence force",
+      sector: "Defence · Mobile",
+      blurb: "A native mobile app for a national defence force, built for reliability in the field.",
+      metrics: [],
+      draft: true,
+    },
+    {
+      name: "EcoStruxure IT Expert",
+      sector: "Data centres · DCIM",
+      blurb: "A large-scale DCIM platform by Schneider Electric for real-time data-centre monitoring. Backend work on field-service, licensing and device-lifecycle features.",
+      metrics: [
+        { v: "24/7", l: "Remote monitoring" },
+        { v: "4", l: "Datastores" },
+      ],
+      role: "Backend engineer on the platform team.",
+      challenge:
+        "EcoStruxure IT Expert gives data-centre operators real-time visibility into power, cooling and alarms across their estate — a large Java platform mid-migration from a legacy backend to a modern microservice architecture, with data spread across four datastores and integrations into a Salesforce-based back office.",
+      approach: [
+        "Built and maintained field-service features — hardware refresh, service visits, support cases — and their integrations with the back-office APIs.",
+        "Added subscription and license-coverage tracking (used vs. remaining nodes) surfaced in the customer app, plus device end-of-service flags for equipment nearing obsolescence.",
+        "Worked to a strictly enforced architecture (ArchUnit) with OpenAPI-first contracts and full unit and integration testing (JUnit 5, Mockito, Testcontainers).",
+      ],
+      outcome:
+        "Shipped customer-facing capabilities into a live DCIM platform and ran production data investigations that quantified coverage and drove product decisions.",
+    },
+    {
+      name: "BEUMER Group LocalChat",
+      sector: "Intralogistics · Offline AI",
+      blurb: "A fully offline desktop assistant that answers service engineers' questions from confidential manuals — nothing leaves the machine. I built the model measurement and evaluation layer.",
+      metrics: [
+        { v: "100%", l: "Offline" },
+        { v: "~195", l: "Tests" },
+      ],
+      role: "Measurement and evaluation layer — which model to ship, and whether it actually works.",
+      challenge:
+        "Service engineers need answers from confidential commissioning manuals and control-logic specs — often on airport and industrial sites with no internet. An assistant that uploads that documentation to a cloud API is unusable regardless of answer quality, so the whole system runs offline: an Electron + React 19 client over a local Python FastAPI service, retrieval in FAISS, generation via local quantised GGUF models (llama.cpp), behind a strict offline mode that blocks and counts every outbound request.",
+      approach: [
+        "Built a benchmarking suite from scratch in hand-written SVG (no charting library): grouped columns, time series, log-scale speedup bars, and a speed-vs-memory scatter with memory-ceiling bands.",
+        "Model and embedding benchmarks measure every model on every device — load time, time-to-first-token, generation speed and peak memory — against questions of rising complexity, so a model that is only fast on the easy one cannot hide.",
+        "A retrieval-evaluation view replays a hand-labelled 45-question set through the real index, showing hit-rate by difficulty with expected and actual answers side by side — because the automated judge grades its own family and cannot be trusted alone.",
+      ],
+      outcome:
+        "Cross-platform hardware detection (NVIDIA, Apple Silicon, CPU-only) makes results from different machines comparable, and a CSV merge tool refuses to export silently-wrong data. Evaluated against real BEUMER technical documentation across three manuals.",
+      stage: "Prototype, evaluated against real BEUMER documentation.",
+    },
+    {
+      name: "Aperia",
+      sector: "Consumer health · Mobile",
+      blurb: "A hormone-aware skincare app linking AI skin analysis to the menstrual cycle. Solo-built end to end and shipped to both app stores.",
+      metrics: [
+        { v: "7", l: "Languages" },
+        { v: "60+", l: "API endpoints" },
+      ],
+      role: "Solo — backend, mobile app, infrastructure and store delivery.",
+      challenge:
+        "Skin shifts with hormones across the menstrual cycle, with the products people use and with what they eat — but no mainstream app ties those together. Aperia answers “why” with data: AI skin analysis from a selfie (face detection only, never recognition), a cycle tracker, and a correlation engine that turns noisy daily logs into plain-language patterns.",
+      approach: [
+        "A .NET 9 backend in clean, layered architecture — 60+ REST endpoints, PostgreSQL, EF Core, background jobs — with a React Native / Expo app in strict TypeScript.",
+        "Developed an AI model for skin analysis and a lighter model for insight narration; encrypted photo storage on Cloudflare R2, RevenueCat billing, and timezone-aware push with quiet hours.",
+        "Privacy and GDPR from day one — explicit Article 9 consent for health data, in-app export and deletion, and language that frames a skin score as a moment, never a diagnosis.",
+      ],
+      outcome:
+        "Localised into seven languages and shipped to both app stores as a solo developer, including Apple's face-data review and Google Play closed testing. Live subscription billing is wired and validated end to end.",
+      stage: "In closed beta ahead of public launch.",
+    },
+    {
+      name: "Restaurant chain platform",
+      sector: "Hospitality",
+      blurb: "An ordering and operations platform for a restaurant chain, with a hierarchical overview for the owner across every location.",
+      metrics: [],
+      draft: true,
+    },
+    {
+      name: "Client websites",
+      sector: "Web & brand",
+      blurb: "Design-led websites for founders and studios — UGC creators, home-services installers, and architecture portfolios.",
+      metrics: [],
+      draft: true,
+    },
   ],
   sk: [
-    { name: "Corebank", sector: "Bankovníctvo", blurb: "22-ročné jadro bankového systému rozdelené na doménové služby a migrované bez plánovaného výpadku.", metrics: [{ v: "0", l: "Hodín plánovaného výpadku" }, { v: "-71%", l: "Náklady na infraštruktúru" }] },
-    { name: "Fleetwise", sector: "Logistika", blurb: "Multi-tenant routing a telemetria naprieč 6 000 vozidlami, s fakturačnou vrstvou, ktorá posunula predaj vyššie.", metrics: [{ v: "40", l: "Firemných tenantov" }, { v: "18%", l: "Úspora paliva" }] },
-    { name: "Caresync", sector: "Zdravotníctvo", blurb: "Offline-first aplikácia pre lekárov na compliance-first platforme s plnou auditnou stopou a rezidenciou dát.", metrics: [{ v: "34 min", l: "Ušetrených na lekára / deň" }, { v: "100%", l: "Pokrytie auditom" }] },
-    { name: "Gridwatch", sector: "Energetika", blurb: "Terénne operácie a telemetria aktív pre regionálnu sieť — 12-tisíc senzorov v jednom prehľade.", metrics: [{ v: "-41%", l: "Trvanie výpadkov" }, { v: "12k", l: "Živých senzorov" }] },
-    { name: "Marketframe", sector: "Retail", blurb: "Omnichannel e-commerce platforma navrhnutá na výkon v špičke a presné zásoby.", metrics: [{ v: "+27%", l: "Konverzia" }, { v: "1,2M", l: "Objednávok / mesiac" }] },
-    { name: "Claimflow", sector: "Poisťovníctvo", blurb: "Systém na likvidáciu škôd, ktorý skrátil cyklus z dní na hodiny automatickým triedením — bez únikov kvality.", metrics: [{ v: "3,4d → 6h", l: "Čas cyklu" }, { v: "92%", l: "Auto-triage" }] },
-    { name: "Tradepal", sector: "Fintech", blurb: "Real-time obchodná aplikácia s latenciou pod 50 ms a offline-odolnou synchronizáciou pre 1,8M používateľov.", metrics: [{ v: "48 ms", l: "Latencia" }, { v: "4,9★", l: "App store" }] },
-    { name: "Portgrid", sector: "Mobilita", blurb: "Orchestrácia toku kontajnerov naprieč šiestimi terminálmi so živým plánovaním skladu a žeriavov.", metrics: [{ v: "-23%", l: "Čas zdržania" }, { v: "38k", l: "TEU / týždeň" }] },
+    {
+      name: "Severská obranná agentúra",
+      sector: "Obrana",
+      blurb: "Bezpečná interná aplikácia pre obrannú agentúru, navrhnutá na prevádzku on-premise bez externých závislostí.",
+      metrics: [],
+      draft: true,
+    },
+    {
+      name: "Dánska regionálna vláda",
+      sector: "Verejný sektor",
+      blurb: "Interné administratívne systémy pre dánsku regionálnu vládu — back-office procesy, na ktorých región beží.",
+      metrics: [],
+      draft: true,
+    },
+    {
+      name: "Dánsky regionálny úrad",
+      sector: "Verejný sektor",
+      blurb: "Interný systém pre dánsky regionálny úrad, ktorý nahradil manuálne procesy jedným prevádzkovým prehľadom.",
+      metrics: [],
+      draft: true,
+    },
+    {
+      name: "Národné ozbrojené sily",
+      sector: "Obrana · Mobil",
+      blurb: "Natívna mobilná aplikácia pre národné ozbrojené sily, postavená na spoľahlivosť v teréne.",
+      metrics: [],
+      draft: true,
+    },
+    {
+      name: "EcoStruxure IT Expert",
+      sector: "Dátové centrá · DCIM",
+      blurb: "Rozsiahla DCIM platforma od Schneider Electric na monitoring dátových centier v reálnom čase. Backendová práca na field-service, licenciách a životnom cykle zariadení.",
+      metrics: [
+        { v: "24/7", l: "Vzdialený monitoring" },
+        { v: "4", l: "Dátové úložiská" },
+      ],
+    },
+    {
+      name: "BEUMER Group LocalChat",
+      sector: "Intralogistika · Offline AI",
+      blurb: "Plne offline desktopový asistent, ktorý servisným technikom odpovedá z dôverných manuálov — nič neopustí zariadenie. Postavil som vrstvu merania a vyhodnotenia modelov.",
+      metrics: [
+        { v: "100%", l: "Offline" },
+        { v: "~195", l: "Testov" },
+      ],
+    },
+    {
+      name: "Aperia",
+      sector: "Spotrebiteľské zdravie · Mobil",
+      blurb: "Aplikácia na starostlivosť o pleť citlivá na hormóny, ktorá spája AI analýzu pleti s menštruačným cyklom. Postavená sólo od začiatku do konca a vydaná v oboch obchodoch.",
+      metrics: [
+        { v: "7", l: "Jazykov" },
+        { v: "60+", l: "API endpointov" },
+      ],
+      stage: "V uzavretej beta verzii pred verejným spustením.",
+    },
+    {
+      name: "Platforma pre reťazec reštaurácií",
+      sector: "Gastro",
+      blurb: "Objednávacia a prevádzková platforma pre reťazec reštaurácií s hierarchickým prehľadom pre majiteľa naprieč všetkými pobočkami.",
+      metrics: [],
+      draft: true,
+    },
+    {
+      name: "Klientske weby",
+      sector: "Web a značka",
+      blurb: "Dizajnovo vedené weby pre zakladateľov a štúdiá — UGC tvorcovia, inštalatéri domácich služieb a architektonické portfóliá.",
+      metrics: [],
+      draft: true,
+    },
   ],
 };
 

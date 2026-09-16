@@ -6,7 +6,7 @@ import { useLangSync } from "../components/useLangSync";
 import { useReveal } from "../components/useReveal";
 import { useContent } from "../i18n";
 import { useUI } from "../store";
-import { PROJECTS, PANELS, PROJECT_COUNT, type ScreenSpec } from "../i18n/projects";
+import { PROJECTS, PANELS, PROJECT_COUNT } from "../i18n/projects";
 
 // TODO: migrate these labels into content.ts alongside the rest of the copy.
 const L = {
@@ -46,36 +46,11 @@ const L = {
   },
 };
 
-/** A stylised product screen, mirroring the MacBook's — pure HTML, no three.js. */
-function ProjectScreen({ spec, small = false }: { spec: ScreenSpec; small?: boolean }) {
-  const path = "etereo / " + spec.title.toLowerCase().replace(/\s+/g, "-");
+/** The project's real product screen (public/screens/screen-<slug>.png). */
+function ProjectScreen({ slug, accent }: { slug: string; accent: string }) {
   return (
-    <div className={"pscreen" + (small ? " pscreen--sm" : "")} style={{ ["--accent" as string]: spec.accent }}>
-      <div className="pscreen__bar">
-        <span className="pscreen__dots">
-          <i /><i /><i />
-        </span>
-        <span className="pscreen__path">{path}</span>
-      </div>
-      <div className="pscreen__body">
-        <div className="pscreen__sub">{spec.subtitle}</div>
-        <div className="pscreen__title">{spec.title}</div>
-        <div className="pscreen__kpis">
-          {spec.kpis.map((k) => (
-            <div className="pscreen__kpi" key={k.l}>
-              <div className="pscreen__v">{k.v}</div>
-              <div className="pscreen__l">{k.l}</div>
-            </div>
-          ))}
-        </div>
-        <div className="pscreen__rows">
-          {spec.rows.map((r, i) => (
-            <span className={"pscreen__row" + (i === 1 ? " on" : "")} key={r}>
-              {r}
-            </span>
-          ))}
-        </div>
-      </div>
+    <div className="pscreen" style={{ ["--accent" as string]: accent }}>
+      <img className="pscreen__img" src={`/screens/screen-${slug}.png`} alt="" width={2400} height={1500} loading="lazy" />
     </div>
   );
 }
@@ -172,7 +147,7 @@ function ProjectHub({
                 key={proj.slug}
                 href={withLang(`/projects/?p=${proj.slug}`)}
               >
-                <ProjectScreen spec={proj.screen} small />
+                <ProjectScreen slug={proj.slug} accent={proj.screen.accent} />
                 <div className="pcard__body">
                   <div className="pcard__meta">
                     <span className="pcard__num">
@@ -260,7 +235,7 @@ function ProjectDetail({
               <p className="page-intro">{text.blurb}</p>
             </div>
             <div className="pdetail-head__screen reveal stagger-2">
-              <ProjectScreen spec={proj.screen} />
+              <ProjectScreen slug={proj.slug} accent={proj.screen.accent} />
             </div>
           </div>
         </div>
