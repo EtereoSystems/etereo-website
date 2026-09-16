@@ -268,6 +268,54 @@ main > .section:nth-of-type(even) {
   }
 }
 
+/* per-element entrance stagger — opt in with .reveal .stagger-N */
+.stagger-1 {
+  transition-delay: 60ms;
+}
+.stagger-2 {
+  transition-delay: 120ms;
+}
+.stagger-3 {
+  transition-delay: 180ms;
+}
+.stagger-4 {
+  transition-delay: 240ms;
+}
+
+/* ---------- cross-document page transitions ---------- */
+/* Chromium fades one document into the next on same-origin navigation; every page
+   opts in through this shared file. Other browsers ignore it and navigate as before. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root) {
+  animation: vt-fade-out 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+}
+::view-transition-new(root) {
+  animation: vt-fade-in 0.44s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
 /* ---------- faint grid backdrop ---------- */
 .grid-bg {
   position: absolute;
