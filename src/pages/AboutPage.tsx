@@ -14,7 +14,7 @@ export default function AboutPage() {
       <SeoHead page="about" />
       <Nav base="/" />
 
-      <main className="subpage">
+      <main className="subpage subpage--about">
         <header className="page-head">
           <div className="container container--narrow">
             <a className="page-back" href="/">
@@ -30,7 +30,6 @@ export default function AboutPage() {
             {a.story.map((para) => (
               <p key={para}>{para}</p>
             ))}
-            <p className="page-note">{a.note}</p>
           </div>
         </section>
 
@@ -73,9 +72,14 @@ export default function AboutPage() {
           <div className="container container--narrow">
             <h2>{a.cta.title}</h2>
             <p>{a.cta.body}</p>
-            <a className="btn btn--primary" href="/#contact">
-              {a.cta.action}
-            </a>
+            <div className="page-cta__actions">
+              <a className="btn btn--primary" href="/#contact">
+                {a.cta.action}
+              </a>
+              <a className="btn btn--ghost" href="/projects/">
+                {a.cta.work}
+              </a>
+            </div>
           </div>
         </section>
       </main>

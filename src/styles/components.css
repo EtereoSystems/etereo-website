@@ -852,7 +852,10 @@ body[data-scrolled="true"] .nav {
 /* ================= TEAM ================= */
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* auto-fit with a cap, so a two-person roster centres at a sane card width
+     instead of being stranded in the left half or stretched across the row. */
+  grid-template-columns: repeat(auto-fit, minmax(230px, 300px));
+  justify-content: center;
   gap: 18px;
 }
 .person {
@@ -1359,6 +1362,12 @@ body[data-scrolled="true"] .nav {
   color: var(--text-2);
   font-size: 16.5px;
 }
+.page-cta__actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
 
 /* home page: the link out to the full case studies */
 .work-more {
@@ -1693,10 +1702,19 @@ body[data-scrolled="true"] .nav {
   font-size: 16.5px;
   line-height: 1.75;
 }
-.about-story .page-note {
-  margin-top: 34px;
-}
 
+/* Scoped to .subpage--about because .page-intro is shared with /projects/ and
+   /blog/. hyphens follows <html lang> (useLangSync keeps it in step) — without
+   breaks, long Slovak words leave rivers at this measure. */
+.subpage--about :is(.page-intro, .about-story p, .about-team__intro, .roster__body) {
+  text-align: justify;
+  hyphens: auto;
+}
+/* The shared 54ch cap makes the intro narrower than the story below it;
+   dropping it lets both share the container measure so the edges line up. */
+.subpage--about .page-intro {
+  max-width: none;
+}
 .about-facts {
   border-top: 1px solid var(--line-soft);
   padding: 64px 0;
@@ -1734,7 +1752,6 @@ body[data-scrolled="true"] .nav {
 }
 .about-team__intro {
   margin: 14px 0 30px;
-  max-width: 58ch;
   color: var(--text-2);
   font-size: 16.5px;
 }
@@ -1802,6 +1819,10 @@ body[data-scrolled="true"] .nav {
 @media (max-width: 560px) {
   .facts {
     grid-template-columns: 1fr;
+  }
+  /* The measure is too short here for justification to space evenly. */
+  .subpage--about :is(.page-intro, .about-story p, .about-team__intro, .roster__body) {
+    text-align: left;
   }
 }
 
