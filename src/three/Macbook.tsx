@@ -26,7 +26,7 @@ export function Macbook() {
   const fit = useRef(1);
   const drawn = useRef<number | "final" | null>(null);
 
-  const { model, screenTex, draw, drawTerminal } = useMemo(() => {
+  const { model, screenTex, termTex, screenMat, draw, drawTerminal } = useMemo(() => {
     const src = scene.clone(true);
     const box = new THREE.Box3().setFromObject(src);
     const size = new THREE.Vector3();
@@ -38,7 +38,8 @@ export function Macbook() {
     const wrap = new THREE.Group();
     wrap.add(src);
 
-    const { texture, draw, drawTerminal } = makeScreenTexture();
+    const { texture, termTexture, draw, drawTerminal } = makeScreenTexture();
+    const screenMat: { mat: THREE.MeshStandardMaterial | null } = { mat: null };
 
     src.traverse((o) => {
       const mesh = o as THREE.Mesh;
@@ -46,7 +47,7 @@ export function Macbook() {
       const mat = mesh.material as THREE.MeshStandardMaterial;
       const nm = (mat?.name || "") + " " + (mesh.name || "");
       if (/Glass_-_Heavy_Color/i.test(mat?.name || "")) {
-        mesh.material = new THREE.MeshStandardMaterial({
+        screenMat.mat = new THREE.MeshStandardMaterial({
           map: texture,
           emissiveMap: texture,
           emissive: new THREE.Color("#ffffff"),
@@ -54,6 +55,7 @@ export function Macbook() {
           roughness: 0.3,
           metalness: 0,
         });
+        mesh.material = screenMat.mat;
       } else if (/keyboard/i.test(nm)) {
         mat.metalness = 0.6;
         mat.roughness = 0.5;
@@ -64,10 +66,26 @@ export function Macbook() {
         mat.envMapIntensity = 1.1;
       }
     });
-    return { model: wrap, screenTex: texture, draw, drawTerminal };
+    return { model: wrap, screenTex: texture, termTex: termTexture, screenMat, draw, drawTerminal };
   }, [scene]);
 
-  useEffect(() => () => screenTex.dispose(), [screenTex]);
+  useEffect(
+    () => () => {
+      screenTex.dispose();
+      termTex.dispose();
+    },
+    [screenTex, termTex],
+  );
+
+  // Swapping which texture the screen samples needs no material.needsUpdate: both are
+  // sRGB maps, so the program key is unchanged and three re-reads the uniform each frame.
+  const bind = (tex: THREE.Texture) => {
+    const m = screenMat.mat;
+    if (m && m.map !== tex) {
+      m.map = tex;
+      m.emissiveMap = tex;
+    }
+  };
 
   const setScreen = (idx: number | "final") => {
     if (drawn.current !== idx) {
@@ -112,6 +130,7 @@ export function Macbook() {
       // splash shows an animated terminal, not a project screen; null so the carousel
       // re-draws the real project when we leave the intro
       drawTerminal(t, motionPref.reduced);
+      bind(termTex);
       drawn.current = null;
       camera.position.set(0, 0.12, 6.4);
       camera.lookAt(0, 0.05, 0);
@@ -143,6 +162,7 @@ export function Macbook() {
       }
 
       setScreen(proj);
+      bind(screenTex);
       camera.position.set(0, 0.12, 6.4);
       camera.lookAt(0, 0.05, 0);
       root.setProperty("--hero-fade", "0");
@@ -152,6 +172,7 @@ export function Macbook() {
       // faces us, centred (LX[7]=0), so we continue straight in with no re-spin.
       const zt = seg(p, SHOW_END, 1);
       setScreen("final");
+      bind(screenTex);
       g.rotation.y = 0;
       g.rotation.x = lerp(0.12, 0.045, zt);
       g.rotation.z = 0;

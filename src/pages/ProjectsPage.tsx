@@ -46,11 +46,11 @@ const L = {
   },
 };
 
-/** The project's real product screen (public/screens/screen-<slug>.png). */
+/** The project's real product screen (public/screens/screen-<slug>.webp). */
 function ProjectScreen({ slug, accent }: { slug: string; accent: string }) {
   return (
     <div className="pscreen" style={{ ["--accent" as string]: accent }}>
-      <img className="pscreen__img" src={`/screens/screen-${slug}.png`} alt="" width={2400} height={1500} loading="lazy" />
+      <img className="pscreen__img" src={`/screens/screen-${slug}.webp`} alt="" width={1800} height={1125} loading="lazy" />
     </div>
   );
 }

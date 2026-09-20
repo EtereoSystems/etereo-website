@@ -8,10 +8,10 @@ import { PROJECTS, type ScreenSpec } from "../i18n/projects";
  */
 
 const SIZE = 1200;
-// Supersample: the canvas is SS× the logical SIZE so the screenshot is rasterised at ~its
-// native resolution instead of being downscaled to ~900px and then blown back up on the
-// laptop screen. All drawing stays in the 1200 logical space (draw() pre-scales by SS).
-const SS = 2;
+// The splash terminal gets its own, fixed-size texture. It repaints up to 25x/s while
+// typing, and pushing the project canvas to the GPU at that rate cost ~80 ms per frame.
+// It is flat text on a panel, so it needs far less than a screenshot does.
+const TERM_PX = 1024;
 const CANVAS_ROT = (3 * Math.PI) / 2;
 const MIRROR = true;
 const FIT = 0.72;
@@ -19,6 +19,22 @@ const FIT = 0.72;
 // a coordinate-grid overlay at a facing beat). A real screenshot is cover-fit into this so
 // it fills the panel edge-to-edge instead of floating in the smaller drawn-UI frame.
 const SCREEN = { x: -240, y: 385, w: 1255, h: 805 };
+
+// Supersample: the canvas is SS× the logical SIZE so a screenshot is rasterised near its
+// native resolution instead of being downscaled and then blown back up on the laptop
+// screen. All drawing stays in the 1200 logical space (paint() pre-scales by SS).
+//
+// Sized to the viewport rather than pinned at 2. Handing the canvas to the GPU costs
+// roughly 16 ms per megapixel and happens on every beat change, so a 2400² canvas spends
+// ~60 ms a beat carrying detail a 1440px window can never resolve. The laptop screen
+// covers about 36% of the viewport width at a facing beat, and the canvas itself renders
+// at the same dpr cap as the <Canvas>. Read once at import: a later resize does not
+// rebuild the texture, which is why this rounds up rather than aiming exactly.
+const SS = (() => {
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.8);
+  const need = (window.innerWidth * 0.36 * dpr) / (SCREEN.w * FIT);
+  return Math.min(2, Math.max(1, Math.ceil(need * 4) / 4));
+})();
 
 // logical landscape drawing area, centred in the square canvas
 const W = 1200;
@@ -35,29 +51,52 @@ function hexA(hex: string, a: number) {
 
 export function makeScreenTexture(): {
   texture: THREE.CanvasTexture;
+  /** separate low-res texture for the splash terminal — see TERM_PX */
+  termTexture: THREE.CanvasTexture;
   draw: (idx: number | "final") => void;
   drawTerminal: (t: number, reduced: boolean) => void;
 } {
   const canvas = document.createElement("canvas");
   canvas.width = SIZE * SS;
   canvas.height = SIZE * SS;
-  const ctx = canvas.getContext("2d")!;
+  // mutable so the terminal can borrow every draw helper below for its own canvas
+  let ctx = canvas.getContext("2d")!;
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
+
+  const termCanvas = document.createElement("canvas");
+  termCanvas.width = TERM_PX;
+  termCanvas.height = TERM_PX;
+  const termCtx = termCanvas.getContext("2d")!;
+  termCtx.imageSmoothingEnabled = true;
+  termCtx.imageSmoothingQuality = "high";
+  const termTexture = new THREE.CanvasTexture(termCanvas);
+  termTexture.colorSpace = THREE.SRGBColorSpace;
+  termTexture.anisotropy = 16;
 
   let texture: THREE.CanvasTexture | undefined;
   let currentIdx: number | "final" = 0;
 
-  // Real product screens (public/screens/screen-<slug>.png). Each replaces its drawn
+  // Real product screens (public/screens/screen-<slug>.webp). Each replaces its drawn
   // fallback once loaded; a slow or missing image keeps the drawn template showing.
-  const shots = PROJECTS.map((p, i) => {
+  // Fetched on demand: nine up front put 1800x1125 decodes on the splash all at once,
+  // and the beat they belong to is the first moment any of them is needed.
+  const shots: (HTMLImageElement | undefined)[] = [];
+  function shot(i: number) {
+    const cached = shots[i];
+    if (cached) return cached;
     const im = new Image();
-    im.src = `/screens/screen-${p.slug}.png`;
-    im.onload = () => {
-      if (currentIdx === i && texture) draw(currentIdx);
-    };
+    im.decoding = "async";
+    shots[i] = im;
+    im.src = `/screens/screen-${PROJECTS[i].slug}.webp`;
+    // decode off the main thread, so the beat change costs a draw and not a decode
+    im.decode()
+      .catch(() => {})
+      .then(() => {
+        if (currentIdx === i && texture) draw(i);
+      });
     return im;
-  });
+  }
 
   function drawImageCover(img: HTMLImageElement, dx: number, dy: number, dw: number, dh: number) {
     const ir = img.naturalWidth / img.naturalHeight;
@@ -91,12 +130,12 @@ export function makeScreenTexture(): {
     g.addColorStop(0, "#0a0e1c");
     g.addColorStop(1, "#070a16");
     ctx.fillStyle = g;
-    ctx.fillRect(-SIZE, -SIZE, SIZE * 3, SIZE * 3);
+    ctx.fillRect(-SIZE / 2, -SIZE / 2, SIZE * 2, SIZE * 2);
     const rg = ctx.createRadialGradient(OY + W * 0.82, OY + 60, 0, OY + W * 0.82, OY + 60, 560);
     rg.addColorStop(0, hexA(accent, 0.26));
     rg.addColorStop(1, hexA(accent, 0));
     ctx.fillStyle = rg;
-    ctx.fillRect(-SIZE, -SIZE, SIZE * 3, SIZE * 3);
+    ctx.fillRect(-SIZE / 2, -SIZE / 2, SIZE * 2, SIZE * 2);
   }
 
   function header(s: ScreenSpec, badge: string) {
@@ -403,7 +442,9 @@ export function makeScreenTexture(): {
     return { text, cursorOn: typing ? true : t % 1 < 0.5 };
   }
 
-  function renderTerminal(st: { text: string; cursorOn: boolean }) {
+  // Everything that never changes between typed frames — cached as a bitmap so the
+  // per-character repaint is a blit plus one line of text, not two full-canvas gradients.
+  function renderTerminalChrome() {
     bg("#6d54f0");
     ctx.save();
     ctx.translate(0, OY);
@@ -437,6 +478,13 @@ export function makeScreenTexture(): {
     ctx.moveTo(x + 30, y + 80);
     ctx.lineTo(x + w - 30, y + 80);
     ctx.stroke();
+    ctx.restore();
+  }
+
+  function renderTerminalText(st: { text: string; cursorOn: boolean }) {
+    ctx.save();
+    ctx.translate(0, OY);
+    const { x, y, h } = SCREEN;
     // prompt + typed text, vertically centred, with a soft phosphor glow
     const cy = y + h / 2 + 24;
     const pxp = x + 76;
@@ -460,42 +508,62 @@ export function makeScreenTexture(): {
   }
 
   function render(idx: number | "final") {
-    const accent = idx === "final" ? "#6d54f0" : PROJECTS[idx % PROJECTS.length].screen.accent;
-    bg(accent);
+    const i = idx === "final" ? -1 : idx % PROJECTS.length;
+    const img = i < 0 ? null : shot(i);
+    const shotReady = !!img && img.complete && img.naturalWidth > 0;
+
+    if (shotReady) {
+      // A loaded screenshot covers the visible screen rect edge to edge, so the accent
+      // gradient behind it is never sampled. A flat fill keeps the mip chain clean at the
+      // rect's edges for a fraction of the cost — bg() is two gradients over ~12 Mpx.
+      ctx.fillStyle = "#070a16";
+      ctx.fillRect(-SIZE / 2, -SIZE / 2, SIZE * 2, SIZE * 2);
+    } else {
+      bg(i < 0 ? "#6d54f0" : PROJECTS[i].screen.accent);
+    }
+
     ctx.save();
     ctx.translate(0, OY);
-    if (idx === "final") {
+    if (i < 0) {
       finalConsole();
+    } else if (shotReady) {
+      // cover-fit the screenshot into the visible screen rectangle (measured in this
+      // draw space with a coordinate-grid overlay — see git history)
+      drawImageCover(img, SCREEN.x, SCREEN.y, SCREEN.w, SCREEN.h);
     } else {
-      const i = idx % PROJECTS.length;
-      const img = shots[i];
-      if (img.complete && img.naturalWidth > 0) {
-        // cover-fit the screenshot into the visible screen rectangle (measured in this
-        // draw space with a coordinate-grid overlay — see git history)
-        drawImageCover(img, SCREEN.x, SCREEN.y, SCREEN.w, SCREEN.h);
-      } else {
-        const s = PROJECTS[i].screen;
-        if (s.template === "ops") opsTemplate(s);
-        else if (s.template === "analytics") analyticsTemplate(s);
-        else if (s.template === "mobile") mobileTemplate(s);
-        else mapTemplate(s);
-      }
+      const s = PROJECTS[i].screen;
+      if (s.template === "ops") opsTemplate(s);
+      else if (s.template === "analytics") analyticsTemplate(s);
+      else if (s.template === "mobile") mobileTemplate(s);
+      else mapTemplate(s);
     }
     ctx.restore();
   }
 
-  function paint(renderFn: () => void) {
+  const view = () => {
     const wd = window as unknown as { __CROT?: number; __CMIR?: boolean; __FIT?: number };
-    const rot = typeof wd.__CROT === "number" ? wd.__CROT : CANVAS_ROT;
-    const mir = typeof wd.__CMIR === "boolean" ? wd.__CMIR : MIRROR;
-    const fit = typeof wd.__FIT === "number" ? wd.__FIT : FIT;
-    ctx.setTransform(SS, 0, 0, SS, 0, 0);
-    ctx.clearRect(0, 0, SIZE, SIZE);
+    return {
+      rot: typeof wd.__CROT === "number" ? wd.__CROT : CANVAS_ROT,
+      mir: typeof wd.__CMIR === "boolean" ? wd.__CMIR : MIRROR,
+      fit: typeof wd.__FIT === "number" ? wd.__FIT : FIT,
+    };
+  };
+
+  /** the pre-transform that cancels the screen mesh's rotated + mirrored UVs */
+  function applyTransform(unit = SS) {
+    const { rot, mir, fit } = view();
+    ctx.setTransform(unit, 0, 0, unit, 0, 0);
     ctx.translate(SIZE / 2, SIZE / 2);
     ctx.rotate(rot);
     if (mir) ctx.scale(-1, 1);
     ctx.scale(fit, fit);
     ctx.translate(-SIZE / 2, -SIZE / 2);
+  }
+
+  function paint(renderFn: () => void) {
+    ctx.setTransform(SS, 0, 0, SS, 0, 0);
+    ctx.clearRect(0, 0, SIZE, SIZE);
+    applyTransform();
     renderFn();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     if (texture) texture.needsUpdate = true;
@@ -504,11 +572,17 @@ export function makeScreenTexture(): {
   function draw(idx: number | "final") {
     currentIdx = idx;
     paint(() => render(idx));
+    // Warm the next project so its beat lands on an already-decoded image. `texture` is
+    // still undefined on the construction-time draw(0), which is what keeps the splash
+    // from kicking off a second download before anything needs it.
+    if (texture && typeof idx === "number") shot((idx + 1) % PROJECTS.length);
   }
 
   // Splash typewriter. Called every frame during the intro; repaints only when the visible
   // frame changes. currentIdx = -1 keeps a late image onload from painting over it.
   let termSig = "";
+  let termBase: HTMLCanvasElement | null = null;
+  let termBaseKey = "";
   function drawTerminal(t: number, reduced: boolean) {
     const wasImage = currentIdx !== -1;
     currentIdx = -1;
@@ -516,7 +590,32 @@ export function makeScreenTexture(): {
     const sig = st.text + (st.cursorOn ? "|1" : "|0");
     if (!wasImage && sig === termSig) return;
     termSig = sig;
-    paint(() => renderTerminal(st));
+
+    const { rot, mir, fit } = view();
+    const key = `${rot}|${mir}|${fit}`;
+    const unit = TERM_PX / SIZE;
+    const main = ctx;
+    ctx = termCtx;
+    if (!termBase || termBaseKey !== key) {
+      ctx.setTransform(unit, 0, 0, unit, 0, 0);
+      ctx.clearRect(0, 0, SIZE, SIZE);
+      applyTransform(unit);
+      renderTerminalChrome();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      termBase = document.createElement("canvas");
+      termBase.width = TERM_PX;
+      termBase.height = TERM_PX;
+      termBase.getContext("2d")!.drawImage(termCanvas, 0, 0);
+      termBaseKey = key;
+    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, TERM_PX, TERM_PX);
+    ctx.drawImage(termBase, 0, 0);
+    applyTransform(unit);
+    renderTerminalText(st);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    termTexture.needsUpdate = true;
+    ctx = main;
   }
 
   draw(0);
@@ -524,5 +623,5 @@ export function makeScreenTexture(): {
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 16;
   texture.needsUpdate = true;
-  return { texture, draw, drawTerminal };
+  return { texture, termTexture, draw, drawTerminal };
 }
