@@ -109,6 +109,15 @@ The 3D loop talks to CSS by setting custom properties on `document.documentEleme
 
 [src/three/screenTexture.ts](src/three/screenTexture.ts) draws each project's fake product UI into a 2D canvas used as a `CanvasTexture`. The screen mesh is found at runtime by material name `Glass_-_Heavy_Color` in `public/models/macbook.glb` and its material swapped for an emissive one — renaming that material in the model breaks the screen. The mesh's UVs rotate + mirror the texture, so everything is drawn inside a compensating transform (`CANVAS_ROT`, `MIRROR`). `Macbook.tsx` redraws only when the beat changes (`drawn` ref), not per frame.
 
+Handing that canvas to the GPU costs roughly **16 ms per megapixel**, and it is the single biggest cost in the hero — everything below exists to keep that number down, so measure before growing a canvas:
+
+- **Two textures, not one.** The splash typewriter repaints up to 25×/s, so it has its own fixed 1024² canvas (`TERM_PX`); the project canvas is only re-uploaded on a beat change. `Macbook.tsx` swaps `material.map`/`emissiveMap` between them and deliberately does **not** set `material.needsUpdate` — both are sRGB maps, so the program key is unchanged and a recompile would be pure cost.
+- **`SS` is computed from the viewport, not pinned at 2.** The laptop screen covers ~36% of the viewport width at a facing beat, so a 2400² canvas spends ~60 ms a beat on detail a 1440px window cannot resolve. It is read once at import — a resize does not rebuild the texture. The one place this under-samples is the final zoom on a retina screen, which the `--handoff` veil is already fading out.
+- **The terminal's static chrome is cached as a bitmap** and blitted per character; only the typed line is redrawn.
+- **`bg()` is skipped once a screenshot has loaded**, because the screenshot covers the visible screen rect edge to edge and the gradient behind it is never sampled.
+
+Screenshots are **WebP, 1800×1125** (`public/screens/screen-<slug>.webp`, ~50 kB each) and are fetched **on demand**, one beat ahead. Nine 2400×1500 PNGs requested up front was 11 MB of download plus nine full-size decodes landing on the splash. `/projects/` renders the same files as `<img>`. Regenerating them needs an encoder the repo does not carry; the 2400px PNG originals are in git history at `0539b66`.
+
 Screen content comes from `PROJECTS[].screen` in [src/i18n/projects.ts](src/i18n/projects.ts), rendered by one of four `template`s (`ops`/`analytics`/`mobile`/`map`). Adding a project to `PROJECTS` shifts the whole timeline — `PROJECT_COUNT` drives the beat count — so `LX` in `choreo.ts` must grow to match (last entry stays `0.0` so the final zoom is centred).
 
 ### Content & i18n
