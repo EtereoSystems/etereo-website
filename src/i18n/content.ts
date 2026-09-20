@@ -42,9 +42,8 @@ export interface AboutPage {
   facts: { label: string; value: string }[];
   teamTitle: string;
   teamIntro: string;
-  note: string;
   back: string;
-  cta: { title: string; body: string; action: string };
+  cta: { title: string; body: string; action: string; work: string };
 }
 
 export interface CasePage {
@@ -229,8 +228,6 @@ const en: Content = {
     people: [
       { initials: "PK", name: "Patrik Klimko", role: "Co-founder · Engineering", body: "Product and platform engineering, from first architecture to production run." },
       { initials: "MK", name: "Matej Kučera", role: "Co-founder · Engineering", body: "Systems, data and delivery — turning messy operations into software that holds." },
-      { initials: "—", name: "Your senior lead", role: "Named per engagement", body: "Every programme gets one accountable lead who stays from audit to hand-over." },
-      { initials: "+", name: "A small senior bench", role: "Specialists on call", body: "Mobile, cloud and data specialists pulled in exactly when the work needs them." },
     ],
   },
   insights: {
@@ -285,11 +282,11 @@ const en: Content = {
   },
   aboutPage: {
     title: "About us",
-    intro: "ETEREO is a Slovak software house built around one arrangement: the people who scope the work are the people who ship it.",
+    intro: "ETEREO is a Slovak software company built on a principle most vendors abandon in practice: the party that prices the work is the same party that delivers it. No sales representative who promises a date and then steps away from delivery. No architect who hands the design to another team. No unannounced swapping of team members mid-project. The same team stands behind the estimate and behind the delivery itself.",
     story: [
-      "We started ETEREO in 2026, after years spent inside other people's transformation programmes — most of them sold by one team, planned by a second and built by a third. By the time anyone wrote code, nobody left in the room had been in the meeting where the promises were made.",
-      "So we keep the company small on purpose. Every engagement is staffed from the same senior bench, held to the same architecture review, and led by one person who stays from the first audit to the hand-over. When something breaks at two in the morning, the person who answers is the person who built it.",
-      "We work mostly with established companies whose systems are load-bearing — the platform the business actually runs on, where a rewrite is not an option and a failed cutover is a board-level event. That constraint shapes the method: work in slices, keep the business running throughout, and end every phase in something you can inspect yourself.",
+      "We founded ETEREO in 2026, on the back of years spent inside the transformation programmes of large organisations. In that environment we saw the same pattern again and again: one team sold the work, a second planned it, a third built it. By the time implementation actually began, nobody was left on the project who had taken part in the original commitments to the client. The client carried the consequences — missed deadlines, a budget that could no longer be defended to management, and a system that in the end nobody on the team fully understood.",
+      "So we operate as one aligned team that carries the entire course of delivery: from architecture review through implementation to deployment and the operation that follows. That removes both the loss of context in hand-offs between departments and the need to bring new people up to speed mid-project. For the client it means unambiguous accountability: when an incident happens, it is handled by the same team that designed and implemented the solution.",
+      "We work with large, established companies, but also with smaller businesses for whom we build IT solutions cut to fit. With the large ones it is usually systems their operation genuinely rests on: rewriting such a system wholesale is not a real option, and a failed move to a new solution would be a risk at board level. So we proceed in clearly verifiable stages, the client's operation keeps running throughout, and we close every phase with an output the client can check themselves before we move on.",
     ],
     factsTitle: "The essentials",
     facts: [
@@ -298,16 +295,16 @@ const en: Content = {
       { label: "Legal entity", value: "ETEREO s.r.o." },
       { label: "How we work", value: "Remote-first, CET hours" },
       { label: "Languages", value: "English and Slovak" },
-      { label: "Where we work", value: "Slovakia, Central Europe, EU" },
+      { label: "Where we work", value: "Europe, EU" },
     ],
     teamTitle: "Who you actually work with",
     teamIntro: "A small senior bench rather than a pyramid. You meet the engineers on the first call, and they are the ones who stay.",
-    note: "ETEREO is a newly founded company. We do not claim historical project counts or client rosters — the case studies on this site are labelled illustrative until real client work is published.",
     back: "Back to the site",
     cta: {
       title: "Want to talk to the people who would do the work?",
       body: "It is the only kind of call we run — no account manager, no discovery deck, just the engineers who would build it.",
       action: "Book a discovery call",
+      work: "See the case studies",
     },
   },
   blogPage: {
@@ -418,8 +415,6 @@ const sk: Content = {
     people: [
       { initials: "PK", name: "Patrik Klimko", role: "Spoluzakladateľ · Vývoj", body: "Produktové a platformové inžinierstvo — od prvej architektúry po produkčnú prevádzku." },
       { initials: "MK", name: "Matej Kučera", role: "Spoluzakladateľ · Vývoj", body: "Systémy, dáta a dodávka — z chaotickej prevádzky robíme softvér, ktorý drží." },
-      { initials: "—", name: "Váš senior lead", role: "Menovaný pre každý projekt", body: "Každý program má jedného zodpovedného vedúceho — od auditu až po odovzdanie." },
-      { initials: "+", name: "Malý seniorný tím", role: "Špecialisti na zavolanie", body: "Mobil, cloud a dáta zapojíme presne vtedy, keď si to práca vyžiada." },
     ],
   },
   insights: {
@@ -474,11 +469,11 @@ const sk: Content = {
   },
   aboutPage: {
     title: "O nás",
-    intro: "ETEREO je slovenská softvérová firma postavená na jednom princípe: ľudia, ktorí prácu nacenia, sú tí istí, ktorí ju aj dodajú.",
+    intro: "ETEREO je slovenská softvérová spoločnosť, ktorá sa riadi princípom, ktorý väčšina dodávateľov v praxi nedodržiava: subjekt, ktorý projekt nacení, je zároveň subjektom, ktorý ho aj dodá. Bez obchodného zástupcu, ktorý prisľúbi termín a následne sa stiahne z realizácie. Bez architekta, ktorý odovzdá návrh ďalšiemu tímu. Bez neohlásenej výmeny členov tímu v priebehu realizácie projektu. Za odhadom aj za samotnou dodávkou stojí ten istý tím.",
     story: [
-      "ETEREO sme založili v roku 2026, po rokoch strávených v transformačných programoch iných firiem — kde zákazku predal jeden tím, naplánoval druhý a postavil tretí. Kým sa začalo písať, v miestnosti už nezostal nikto, kto bol pri tom, keď padali sľuby.",
-      "Preto firmu zámerne držíme malú. Každý projekt obsadzujeme z tej istej seniornej lavičky, prechádza rovnakým architektonickým review a vedie ho jeden človek, ktorý ostáva od prvého auditu po odovzdanie. Keď o druhej v noci niečo spadne, dvíha to ten, kto to postavil.",
-      "Pracujeme najmä s etablovanými firmami, ktorých systémy sú nosné — platforma, na ktorej biznis reálne beží, kde prepísať všetko odznova nie je možnosť a neúspešné prepnutie rieši predstavenstvo. Tá podmienka určuje aj metódu: pracovať po častiach, nechať biznis bežať po celý čas a každú fázu ukončiť niečím, čo si viete overiť sami.",
+      "Spoločnosť ETEREO sme založili v roku 2026 na základe skúseností z transformačných programov veľkých spoločností. V tomto prostredí sme opakovane pozorovali rovnaký vzorec: zákazku predal jeden tím, naplánoval ju druhý a zrealizoval tretí. Kým sa začala samotná implementácia, v projekte už nepôsobil nikto, kto sa zúčastnil na pôvodných záväzkoch voči klientovi. Dôsledky niesol klient: v podobe nedodržaných termínov, rozpočtu, ktorý sa spätne nedal obhájiť pred vedením, a systému, ktorému napokon v tíme nikto v plnom rozsahu nerozumel.",
+      "Preto fungujeme ako jeden zosynchronizovaný tím, ktorý riadi celý priebeh realizácie: od architektonického posúdenia cez implementáciu až po nasadenie a následnú prevádzku. Eliminujeme tak stratu kontextu pri odovzdávaní medzi oddeleniami aj potrebu oboznamovať nových členov tímu v priebehu projektu. Pre klienta to znamená jednoznačnú zodpovednosť: v prípade incidentu rieši problém ten istý tím, ktorý dané riešenie navrhol a implementoval.",
+      "Spolupracujeme s veľkými, zavedenými spoločnosťami, ale aj s menšími podnikateľmi, pre ktorých pripravujeme IT riešenia šité na mieru. Pri veľkých spoločnostiach ide zvyčajne o systémy, na ktorých reálne stojí ich prevádzka: kompletné prepísanie takéhoto systému nie je reálna možnosť a neúspešný prechod na nové riešenie by predstavoval riziko na úrovni vedenia spoločnosti. Preto postupujeme po jasne overiteľných etapách, prevádzka klienta zostáva funkčná počas celej realizácie a každú fázu uzatvárame výstupom, ktorý si klient môže sám skontrolovať skôr, než pokročíme ďalej.",
     ],
     factsTitle: "Základné údaje",
     facts: [
@@ -487,16 +482,16 @@ const sk: Content = {
       { label: "Právna forma", value: "ETEREO s.r.o." },
       { label: "Ako pracujeme", value: "Remote-first, stredoeurópsky čas" },
       { label: "Jazyky", value: "Slovensky a anglicky" },
-      { label: "Kde pôsobíme", value: "Slovensko, stredná Európa, EÚ" },
+      { label: "Kde pôsobíme", value: "Európa, EÚ" },
     ],
     teamTitle: "S kým naozaj pracujete",
     teamIntro: "Malá seniorná lavička namiesto pyramídy. Inžinierov stretnete hneď na prvom hovore — a oni pri projekte aj ostanú.",
-    note: "ETEREO je novozaložená firma. Netvrdíme, koľko projektov máme za sebou ani aký máme zoznam klientov — prípadové štúdie na tejto stránke sú označené ako ilustratívne, kým nezverejníme skutočnú klientsku prácu.",
     back: "Späť na stránku",
     cta: {
       title: "Chcete hovoriť s ľuďmi, ktorí to budú robiť?",
       body: "Iné hovory nerobíme — žiadny account manager, žiadna prezentácia, len inžinieri, ktorí to postavia.",
       action: "Dohodnúť úvodný hovor",
+      work: "Pozrieť projekty",
     },
   },
   blogPage: {
