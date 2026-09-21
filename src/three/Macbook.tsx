@@ -20,13 +20,15 @@ const MOBILE_SCALE = 0.42; // base fit scale (smaller so it never clips on a nar
 export function Macbook() {
   const { scene } = useGLTF("/models/macbook.glb");
   const camera = useThree((s) => s.camera);
+  const gl = useThree((s) => s.gl);
   const group = useRef<THREE.Group>(null);
   const setEntered = useUI((s) => s.setEntered);
   const enteredRef = useRef(false);
   const fit = useRef(1);
   const drawn = useRef<number | "final" | null>(null);
+  const warmed = useRef(false);
 
-  const { model, screenTex, termTex, screenMat, draw, drawTerminal } = useMemo(() => {
+  const { model, screenTex, termTex, screenMat, draw, drawTerminal, shotReady } = useMemo(() => {
     const src = scene.clone(true);
     const box = new THREE.Box3().setFromObject(src);
     const size = new THREE.Vector3();
@@ -38,7 +40,7 @@ export function Macbook() {
     const wrap = new THREE.Group();
     wrap.add(src);
 
-    const { texture, termTexture, draw, drawTerminal } = makeScreenTexture();
+    const { texture, termTexture, draw, drawTerminal, shotReady } = makeScreenTexture();
     const screenMat: { mat: THREE.MeshStandardMaterial | null } = { mat: null };
 
     src.traverse((o) => {
@@ -66,7 +68,7 @@ export function Macbook() {
         mat.envMapIntensity = 1.1;
       }
     });
-    return { model: wrap, screenTex: texture, termTex: termTexture, screenMat, draw, drawTerminal };
+    return { model: wrap, screenTex: texture, termTex: termTexture, screenMat, draw, drawTerminal, shotReady };
   }, [scene]);
 
   useEffect(
@@ -127,11 +129,17 @@ export function Macbook() {
         g.position.z = 0.55;
         g.scale.setScalar(fit.current * 0.7);
       }
-      // splash shows an animated terminal, not a project screen; null so the carousel
-      // re-draws the real project when we leave the intro
       drawTerminal(t, motionPref.reduced);
       bind(termTex);
-      drawn.current = null;
+      // The terminal has its own canvas, so the project canvas is untouched here and the
+      // screen texture is never bound — meaning its whole upload would otherwise land on
+      // the single frame that leaves the intro, which is the one transition everybody
+      // sees. Draw project 0 and push it to the GPU now, while frames are cheap.
+      if (!warmed.current && shotReady(0)) {
+        warmed.current = true;
+        setScreen(0);
+        gl.initTexture(screenTex);
+      }
       camera.position.set(0, 0.12, 6.4);
       camera.lookAt(0, 0.05, 0);
       root.setProperty("--hero-fade", (1 - seg(p, INTRO_END * 0.55, INTRO_END)).toFixed(3));

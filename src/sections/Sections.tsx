@@ -11,8 +11,8 @@ export function Services() {
           <p>{c.services.sub}</p>
         </div>
         <div className="svc-grid">
-          {c.services.items.map((s, i) => (
-            <article className="card svc reveal" style={{ transitionDelay: `${(i % 3) * 70}ms` }} key={s.id}>
+          {c.services.items.map((s) => (
+            <article className="card svc reveal" key={s.id}>
               <div className="svc__n">{s.id}</div>
               <h3>{s.title}</h3>
               <p>{s.body}</p>
@@ -76,8 +76,8 @@ export function Tech() {
           </div>
         </div>
         <div className="tech-grid">
-          {c.tech.groups.map((g, i) => (
-            <div className="card tech-col reveal" style={{ transitionDelay: `${i * 60}ms` }} key={g.label}>
+          {c.tech.groups.map((g) => (
+            <div className="card tech-col reveal" key={g.label}>
               <div className="tech-col__label">{g.label}</div>
               <ul>
                 {g.items.map((it) => (
@@ -197,7 +197,7 @@ export function Voices() {
         </div>
         <div className="voices">
           {c.voices.items.map((v, i) => (
-            <figure className="card voice reveal" style={{ transitionDelay: `${i * 70}ms` }} key={i}>
+            <figure className="card voice reveal" key={i}>
               <blockquote>“{v.quote}”</blockquote>
               <figcaption>
                 <span className="voice__av">{v.name.split(" ").map((s) => s[0]).join("")}</span>
@@ -223,8 +223,8 @@ export function Team() {
           <h2>{c.team.title}</h2>
         </div>
         <div className="team-grid">
-          {c.team.people.map((p, i) => (
-            <article className="card person reveal" style={{ transitionDelay: `${i * 60}ms` }} key={p.name}>
+          {c.team.people.map((p) => (
+            <article className="card person reveal" key={p.name}>
               <div className="person__av">{p.initials}</div>
               <h4>{p.name}</h4>
               <div className="person__role">{p.role}</div>

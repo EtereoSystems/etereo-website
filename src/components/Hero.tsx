@@ -59,8 +59,12 @@ export function Hero() {
         </div>
 
         <div className="hero__hint">
-          <span>{c.hero.scrollHint}</span>
-          <span className="hero__hint-line" />
+          <span className="hero__hint-label">{c.hero.scrollHint}</span>
+          <span className="hero__hint-line">
+            <svg className="hero__hint-arrow" viewBox="0 0 12 8" aria-hidden focusable="false">
+              <path d="M1 1.5 L6 6.5 L11 1.5" />
+            </svg>
+          </span>
         </div>
 
         <div className="hero__veil" />

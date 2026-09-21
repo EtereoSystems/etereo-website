@@ -2,12 +2,14 @@ import { Nav } from "../components/Nav";
 import { Footer } from "../components/Footer";
 import { SeoHead } from "../seo/SeoHead";
 import { useLangSync } from "../components/useLangSync";
+import { useReveal } from "../components/useReveal";
 import { useContent } from "../i18n";
 
 export default function AboutPage() {
   const c = useContent();
   const a = c.aboutPage;
   useLangSync();
+  useReveal();
 
   return (
     <>
@@ -20,25 +22,25 @@ export default function AboutPage() {
             <a className="page-back" href="/">
               {a.back}
             </a>
-            <h1>{a.title}</h1>
-            <p className="page-intro">{a.intro}</p>
+            <h1 className="reveal">{a.title}</h1>
+            <p className="page-intro reveal">{a.intro}</p>
           </div>
         </header>
 
         <section className="about-story">
           <div className="container container--narrow">
             {a.story.map((para) => (
-              <p key={para}>{para}</p>
+              <p className="reveal" key={para}>{para}</p>
             ))}
           </div>
         </section>
 
         <section className="about-facts">
           <div className="container">
-            <h2>{a.factsTitle}</h2>
+            <h2 className="reveal">{a.factsTitle}</h2>
             <dl className="facts">
               {a.facts.map((f) => (
-                <div className="fact" key={f.label}>
+                <div className="fact reveal" key={f.label}>
                   <dt>{f.label}</dt>
                   <dd>{f.value}</dd>
                 </div>
@@ -49,11 +51,11 @@ export default function AboutPage() {
 
         <section className="about-team">
           <div className="container">
-            <h2>{a.teamTitle}</h2>
-            <p className="about-team__intro">{a.teamIntro}</p>
+            <h2 className="reveal">{a.teamTitle}</h2>
+            <p className="about-team__intro reveal">{a.teamIntro}</p>
             <ul className="roster">
               {c.team.people.map((p) => (
-                <li className="roster__row" key={p.name}>
+                <li className="roster__row reveal" key={p.name}>
                   <span className="roster__av" aria-hidden>
                     {p.initials}
                   </span>
@@ -70,9 +72,9 @@ export default function AboutPage() {
 
         <section className="page-cta">
           <div className="container container--narrow">
-            <h2>{a.cta.title}</h2>
-            <p>{a.cta.body}</p>
-            <div className="page-cta__actions">
+            <h2 className="reveal">{a.cta.title}</h2>
+            <p className="reveal">{a.cta.body}</p>
+            <div className="page-cta__actions reveal">
               <a className="btn btn--primary" href="/#contact">
                 {a.cta.action}
               </a>

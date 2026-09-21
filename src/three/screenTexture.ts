@@ -55,6 +55,8 @@ export function makeScreenTexture(): {
   termTexture: THREE.CanvasTexture;
   draw: (idx: number | "final") => void;
   drawTerminal: (t: number, reduced: boolean) => void;
+  /** whether draw(i) would use the real screenshot rather than the drawn fallback */
+  shotReady: (i: number) => boolean;
 } {
   const canvas = document.createElement("canvas");
   canvas.width = SIZE * SS;
@@ -81,6 +83,9 @@ export function makeScreenTexture(): {
   // fallback once loaded; a slow or missing image keeps the drawn template showing.
   // Fetched on demand: nine up front put 1800x1125 decodes on the splash all at once,
   // and the beat they belong to is the first moment any of them is needed.
+  // which project the canvas currently holds painted from its real screenshot, rather
+  // than from the drawn template
+  let paintedShot: number | null = null;
   const shots: (HTMLImageElement | undefined)[] = [];
   function shot(i: number) {
     const cached = shots[i];
@@ -93,10 +98,18 @@ export function makeScreenTexture(): {
     im.decode()
       .catch(() => {})
       .then(() => {
-        if (currentIdx === i && texture) draw(i);
+        // Only worth repainting if what is on the canvas is the drawn fallback. A decode
+        // that lands just after a real paint would otherwise re-dirty the texture and cost
+        // a full re-upload on whichever frame binds it next.
+        if (currentIdx === i && paintedShot !== i && texture) draw(i);
       });
     return im;
   }
+
+  const shotReady = (i: number) => {
+    const im = shots[i];
+    return !!im && im.complete && im.naturalWidth > 0;
+  };
 
   function drawImageCover(img: HTMLImageElement, dx: number, dy: number, dw: number, dh: number) {
     const ir = img.naturalWidth / img.naturalHeight;
@@ -510,9 +523,10 @@ export function makeScreenTexture(): {
   function render(idx: number | "final") {
     const i = idx === "final" ? -1 : idx % PROJECTS.length;
     const img = i < 0 ? null : shot(i);
-    const shotReady = !!img && img.complete && img.naturalWidth > 0;
+    const ready = !!img && img.complete && img.naturalWidth > 0;
+    paintedShot = ready ? i : null;
 
-    if (shotReady) {
+    if (ready) {
       // A loaded screenshot covers the visible screen rect edge to edge, so the accent
       // gradient behind it is never sampled. A flat fill keeps the mip chain clean at the
       // rect's edges for a fraction of the cost — bg() is two gradients over ~12 Mpx.
@@ -526,7 +540,7 @@ export function makeScreenTexture(): {
     ctx.translate(0, OY);
     if (i < 0) {
       finalConsole();
-    } else if (shotReady) {
+    } else if (ready) {
       // cover-fit the screenshot into the visible screen rectangle (measured in this
       // draw space with a coordinate-grid overlay — see git history)
       drawImageCover(img, SCREEN.x, SCREEN.y, SCREEN.w, SCREEN.h);
@@ -623,5 +637,5 @@ export function makeScreenTexture(): {
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 16;
   texture.needsUpdate = true;
-  return { texture, termTexture, draw, drawTerminal };
+  return { texture, termTexture, draw, drawTerminal, shotReady };
 }

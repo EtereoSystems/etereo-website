@@ -123,8 +123,8 @@ function ProjectHub({
             {c.casePage.back}
           </a>
           <h1 className="reveal">{t.hubTitle}</h1>
-          <p className="page-intro reveal stagger-1">{t.hubIntro}</p>
-          <div className="psearch reveal stagger-2">
+          <p className="page-intro reveal">{t.hubIntro}</p>
+          <div className="psearch reveal">
             <input
               type="search"
               value={q}
@@ -141,9 +141,9 @@ function ProjectHub({
           <p className="phub-empty">{t.noResults}</p>
         ) : (
           <div className="phub">
-            {results.map(({ proj, text }, idx) => (
+            {results.map(({ proj, text }) => (
               <a
-                className={"pcard reveal" + (idx ? " stagger-" + Math.min(idx, 4) : "")}
+                className="pcard reveal"
                 key={proj.slug}
                 href={withLang(`/projects/?p=${proj.slug}`)}
               >
@@ -234,7 +234,7 @@ function ProjectDetail({
               </div>
               <p className="page-intro">{text.blurb}</p>
             </div>
-            <div className="pdetail-head__screen reveal stagger-2">
+            <div className="pdetail-head__screen reveal">
               <ProjectScreen slug={proj.slug} accent={proj.screen.accent} />
             </div>
           </div>
@@ -293,7 +293,7 @@ function ProjectDetail({
             {proj.confidential && <p className="pdetail-conf">{t.confidential}</p>}
           </div>
 
-          <div className="case__body reveal stagger-1">
+          <div className="case__body reveal">
             {hasBody ? (
               <>
                 {text.challenge && (
