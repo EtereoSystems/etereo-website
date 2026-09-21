@@ -224,18 +224,70 @@ body[data-scrolled="true"] .nav {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--text-3);
+  color: var(--text-2);
+  /* The arrow is the only sign that a 940vh opening sequence is still running, so it
+     outlives --hero-fade and leaves with the handoff instead. */
+  opacity: calc(1 - var(--handoff));
+}
+.hero__hint-label {
+  /* said what the gesture does; once you are scrolling it has nothing left to add */
   opacity: var(--hero-fade);
+  transition: opacity 0.3s ease;
 }
 .hero__hint-line {
+  --hint-travel: 46px;
+  position: relative;
   width: 1px;
-  height: 40px;
-  background: linear-gradient(var(--text-3), transparent);
+  height: 52px;
+  background: linear-gradient(var(--line), transparent);
+}
+/* a signal running down the wire — demonstrates the gesture rather than labelling it */
+.hero__hint-arrow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 12px;
+  height: 8px;
+  fill: none;
+  stroke: var(--violet-2);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: hintDrop 1.9s cubic-bezier(0.4, 0, 0.5, 1) infinite;
+}
+@keyframes hintDrop {
+  0% {
+    transform: translate(-50%, -2px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, var(--hint-travel));
+    opacity: 0;
+  }
+}
+/* answers the gesture: while the page is actually moving the cue runs tighter and
+   brighter, so it reads as feedback on the scroll rather than an idle loop */
+body[data-scrolling="true"] .hero__hint-arrow {
+  animation-duration: 0.9s;
+  filter: drop-shadow(0 0 6px var(--violet-glow));
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__hint-arrow {
+    animation: none;
+    transform: translate(-50%, 18px);
+    opacity: 0.85;
+  }
 }
 .hero__veil {
   position: absolute;
@@ -267,11 +319,12 @@ body[data-scrolled="true"] .nav {
   right: 7vw;
 }
 .project-panel__inner {
-  animation: panelIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* same rise as every .reveal — the hero should not have a motion of its own */
+  animation: panelIn var(--rv-dur) var(--rv-ease) both;
 }
 @keyframes panelIn {
   from {
-    transform: translateY(20px);
+    transform: translateY(var(--rv-shift));
   }
   to {
     transform: none;
@@ -356,7 +409,9 @@ body[data-scrolled="true"] .nav {
   .hero__overlay {
     align-items: flex-end;
     justify-content: center;
-    padding: 0 22px calc(78px + env(safe-area-inset-bottom, 0px));
+    /* the bottom strip is the scroll cue's — the CTA stops above it. There is spare room
+       between the laptop and the badge, so the column moves up rather than crowding. */
+    padding: 0 22px calc(122px + env(safe-area-inset-bottom, 0px));
   }
   .hero__col {
     align-items: center;
@@ -398,7 +453,15 @@ body[data-scrolled="true"] .nav {
     display: none;
   }
   .hero__hint {
-    display: none;
+    /* the mobile project panel takes this spot once the carousel starts, so the cue
+       lives through the intro only and leaves with --hero-fade */
+    display: flex;
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    opacity: var(--hero-fade);
+  }
+  .hero__hint-line {
+    --hint-travel: 32px;
+    height: 38px;
   }
 
   /* project description: a centred glass card pinned beneath the laptop */

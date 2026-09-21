@@ -2,6 +2,7 @@ import { Nav } from "../components/Nav";
 import { Footer } from "../components/Footer";
 import { SeoHead } from "../seo/SeoHead";
 import { useLangSync } from "../components/useLangSync";
+import { useReveal } from "../components/useReveal";
 import { useContent } from "../i18n";
 import { useUI } from "../store";
 
@@ -10,6 +11,7 @@ export default function BlogPage() {
   const b = c.blogPage;
   const lang = useUI((s) => s.lang);
   useLangSync();
+  useReveal();
 
   const withLang = (p: string) => (lang === "sk" ? `${p}?lang=sk` : p);
 
@@ -24,9 +26,9 @@ export default function BlogPage() {
             <a className="page-back" href="/">
               {b.back}
             </a>
-            <h1>{b.title}</h1>
-            <p className="page-intro">{b.intro}</p>
-            <p className="page-note">{b.note}</p>
+            <h1 className="reveal">{b.title}</h1>
+            <p className="page-intro reveal">{b.intro}</p>
+            <p className="page-note reveal">{b.note}</p>
           </div>
         </header>
 
@@ -34,7 +36,7 @@ export default function BlogPage() {
           <div className="container">
             <ul className="posts">
               {c.insights.items.map((a) => (
-                <li key={a.slug}>
+                <li className="reveal" key={a.slug}>
                   <a className="post" href={withLang(`/blog/${a.slug}/`)}>
                     <div className="post__meta">
                       <span className="chip">{a.tag}</span>
