@@ -12,7 +12,7 @@ There is **no client router**: the second page is a second Vite entry (see Pages
 
 ```bash
 npm run dev       # vite dev server on :5173 (runs scripts/seo.mjs first via predev)
-npm run build     # tsc -b && vite build → dist/ (runs scripts/seo.mjs first via prebuild)
+npm run build     # tsc -b && vite build → dist/ (prebuild: seo.mjs; postbuild: inline-css.mjs)
 npm run preview   # serve the production build
 npm run lint      # oxlint (config in .oxlintrc.json)
 npm run seo       # regenerate public/robots.txt, sitemap.xml, llms.txt
@@ -60,6 +60,27 @@ Every entry HTML carries two things that exist purely to stop a white flash when
 - an inline `<style>` setting `html { background: #060811; color-scheme: dark }`. A stylesheet cannot paint the background before it has loaded, so this has to be inline and it has to be a literal — `--bg` lives in the very file we are not waiting for.
 - `<link rel="preload" as="font" … crossorigin>` for `inter-latin.woff2` and `space-grotesk-latin.woff2`. They carry the body text and every heading, so they start in parallel with the CSS instead of after it. `crossorigin` is required even though they are same-origin — fonts are fetched in CORS mode, and without it the preload is ignored and fetched twice.
 
+### The static first screen (`index.html` only)
+
+`#root` on the home page holds **two** fallbacks, and which one shows is decided by CSS before anything runs:
+
+| | with JS (`html[data-js]`) | without |
+|---|---|---|
+| `.boot-hero` | shown until React mounts | hidden |
+| `.boot-doc` | hidden | shown |
+
+`.boot-hero` is the hero's first screen as static HTML — badge, wordmark, tagline, sub, CTAs, scroll cue — using the same class names as [Hero.tsx](src/components/Hero.tsx). Nothing painted before it, because everything visible was React's, so the first paint waited on ~92 kB gz of app JS. It now lands with the document itself: the styles are inlined at build time (see Styling), so on a throttled mobile connection first paint comes ~1.5 s earlier than it did and Speed Index roughly halves.
+
+Three things keep it honest, and all three are easy to break:
+
+- **The markup has to match what React renders**, class for class and string for string. React replaces all of `#root` on mount; if the two disagree the swap shows up as a layout shift, and CLS is currently 0.
+- **It ships both languages.** Each translated node is duplicated with `data-l="en"` / `data-l="sk"`, and the inline boot script picks one by setting `data-boot-lang` on `<html>` before first paint. That script is a second, read-only implementation of `detectLang()` — same order, same `etereo.lang` key — kept deliberately, because a Slovak visitor seeing an English first screen is worse than the delay it removes. Change one, change the other. No attribute at all (script threw) falls back to English.
+- **`.boot-doc` is the old crawler copy, unchanged.** It has to stay below the hero *and* hidden whenever the shell is shown, or a no-JS visitor gets nine screens of empty hero before any text.
+
+The wordmark SVG is inlined here as well as in [Wordmark.tsx](src/components/Wordmark.tsx) — a second copy of ~5 kB of path data, and the one part of this that is genuinely duplicated rather than merely mirrored. An `<img>` would cost a request on the critical path, and leaving it out would shift the column.
+
+The other three entries have no shell: they are ordinary pages whose content is not a 940vh scroll sequence, and adding one would mean four more copies to keep in step.
+
 ### Fonts
 
 Self-hosted, nothing is requested from Google at runtime. `scripts/fonts.mjs` downloads the woff2 files into `public/fonts/` and generates [src/styles/fonts.css](src/styles/fonts.css); that CSS is **generated — edit the script, not the file**, but unlike the `seo.mjs` output it *is* committed, along with the woff2 files. Each entry imports `fonts.css` before `global.css`.
@@ -95,11 +116,29 @@ Subpages share one set of chrome classes — `.subpage`, `.page-head`, `.page-ba
 
 `currentProgress()` respects a `window.__P` override, which is the way to jump the animation to a given progress when checking a frame by hand.
 
-[src/three/Scene.tsx](src/three/Scene.tsx) is **lazy-loaded** from `Hero` and is the only route into three.js — that split is what keeps the home-page shell at ~41 kB instead of ~1,058 kB, with the 1,019 kB `Scene` chunk streaming in behind the splash (`--hero-fade` defaults to 1, so the wordmark is already on screen). Importing anything from `src/three/` outside `Scene` collapses the split.
+[src/three/Scene.tsx](src/three/Scene.tsx) is **lazy-loaded** from `Hero` and is the only route into three.js — that split is what keeps the home-page shell at ~41 kB instead of ~1,010 kB, with the 968 kB `Scene` chunk streaming in behind the splash (`--hero-fade` defaults to 1, so the wordmark is already on screen). Importing anything from `src/three/` outside `Scene` collapses the split.
 
-`Hero` also watches `.hero__sticky` with an IntersectionObserver and passes `running` to both `Scene` (`frameloop={running ? "always" : "never"}`) and `ProjectPanel` (which stops scheduling its rAF). Without it the 3D kept drawing at full rate long after scrolling away — measured at 1,028 WebGL draw calls/s with the hero 9,375 px above the viewport; it is 0 now, and resumes on the way back.
+`Hero` renders `<Scene>` only once an `armed` flag flips, in a `requestIdleCallback` after the first paint. `lazy` starts its import *during render*, so the 3D chunk was being requested before the browser had painted anything and shared the first screen's bandwidth with the stylesheet and the app chunk. Keep the gate: moving the import back into render undoes it.
+
+`Hero` also watches `.hero__sticky` with an IntersectionObserver and passes `running` to both `Scene` (which stops pacing, below) and `ProjectPanel` (which stops scheduling its rAF). Without it the 3D kept drawing at full rate long after scrolling away — measured at 1,028 WebGL draw calls/s with the hero 9,375 px above the viewport; it is 0 now, and resumes on the way back.
+
+### What the hero is allowed to spend
+
+The `<Canvas>` runs `frameloop="demand"`, and `Pacer` in `Scene.tsx` decides which frames are worth rendering:
+
+- **while the progress is changing** (plus `HOT_MS` after, because Lenis keeps easing) every frame is rendered — that is the user's own gesture and it carries the content;
+- **at rest** the idle drift and the typewriter are paced, at `IDLE_FPS` or slower. The rate is not fixed: `Pacer` estimates what a rendered frame costs this device from its own rAF interval and holds it to `IDLE_DUTY` of the main thread, so a laptop keeps 24 fps of drift and a cheap phone falls back to a few frames a second instead of being pinned;
+- **under `prefers-reduced-motion` with the scroll parked** nothing is drawn at all: the sway is off and the terminal holds one line, so the frame is genuinely static. A warm-up window covers the first render; r3f invalidates on its own when the model finishes loading, so a slow connection still gets its first frame.
+
+There is no `ContactShadows`. It re-rendered the scene into a depth target and blurred it twice **per frame** to produce, on a page this dark, a faint smudge — a fifth of the hero's frame cost for something you have to look for. `Macbook.tsx` draws the same smudge as one textured quad (`makeBlob`) that tracks the laptop along the ground plane. Re-adding drei's version means paying that again.
+
+There is **no `Environment`/`Lightformer`** either, and the laptop's materials are built around its absence. drei's environment bakes its lightformers through PMREM, which compiles several shader programs on the first rendered frame — about 40% of it under 4× CPU throttling, and worth ~10 Lighthouse points on desktop on its own. The cost is compilation rather than pixels, so turning `resolution` down barely helped (256 → 64, then 64 → 8, each took off roughly a tenth of that frame); the only real saving was removing it.
+
+What replaces it, in `Scene.tsx` and the `traverse` in `Macbook.tsx`, is lighting the metal directly: lower `metalness` (0.42, not 0.85 — a metal with no environment to reflect renders black), and **two `pointLight`s with `decay={0}`** angled from the camera side. The decay matters. A `directionalLight` shades a flat surface one uniform colour, which is why the closed lid read as plastic; a positional light still varies across it even with the falloff switched off, and that variation is what reads as sheen. If you re-tune the body material, check the lid at a non-facing beat (`window.__P = 0.42`) — it is the pose with the least going on and shows a flat shade immediately.
 
 Two independent rAF consumers read that progress: [src/three/Macbook.tsx](src/three/Macbook.tsx) (`useFrame`) and [src/components/ProjectPanel.tsx](src/components/ProjectPanel.tsx) (own loop, `setState` only when the computed beat actually changes). Both branch on a 900px width breakpoint: below it the laptop stays centred and lifted (`MOBILE_Y`) with the project text beneath instead of beside it.
+
+That loop in `App.tsx` measures the hero on resize, not per frame. It used to re-query `.hero` and read `offsetTop`/`offsetHeight` every frame while also writing `data-scrolling`/`data-scrolled` every frame — a style invalidation followed by a forced layout, 60 times a second, for numbers that only change when the viewport does. Both flags are now written on transitions only.
 
 `App.tsx` also scrolls to `location.hash` itself once the sections are mounted. The browser resolves a fragment while parsing, when `#root` still holds the static fallback and the real sections do not exist yet — so arriving from a subpage's nav (`/#industries`) silently landed at the top. Whether it happened to work depended on whether React mounted before the browser gave up, which is a race, not a feature.
 
@@ -111,7 +150,7 @@ The 3D loop talks to CSS by setting custom properties on `document.documentEleme
 
 Handing that canvas to the GPU costs roughly **16 ms per megapixel**, and it is the single biggest cost in the hero — everything below exists to keep that number down, so measure before growing a canvas:
 
-- **Two textures, not one.** The splash typewriter repaints up to 25×/s, so it has its own fixed 1024² canvas (`TERM_PX`); the project canvas is only re-uploaded on a beat change. `Macbook.tsx` swaps `material.map`/`emissiveMap` between them and deliberately does **not** set `material.needsUpdate` — both are sRGB maps, so the program key is unchanged and a recompile would be pure cost.
+- **Two textures, not one.** The splash typewriter repaints on every frame it advances, so it has its own canvas (`TERM_PX`, sized from the viewport like `SS` below: 512 on a phone, 1024 otherwise); the project canvas is only re-uploaded on a beat change. `Macbook.tsx` swaps `material.map`/`emissiveMap` between them and deliberately does **not** set `material.needsUpdate` — both are sRGB maps, so the program key is unchanged and a recompile would be pure cost.
 - **`SS` is computed from the viewport, not pinned at 2.** The laptop screen covers ~36% of the viewport width at a facing beat, so a 2400² canvas spends ~60 ms a beat on detail a 1440px window cannot resolve. It is read once at import — a resize does not rebuild the texture. The one place this under-samples is the final zoom on a retina screen, which the `--handoff` veil is already fading out.
 - **The terminal's static chrome is cached as a bitmap** and blitted per character; only the typed line is redrawn.
 - **`bg()` is skipped once a screenshot has loaded**, because the screenshot covers the visible screen rect edge to edge and the gradient behind it is never sampled.
@@ -138,12 +177,14 @@ Section markup lives in one file, [src/sections/Sections.tsx](src/sections/Secti
 
 Plain CSS, no framework: `global.css` (design tokens in `:root` — colours, fonts, radii) and `components.css`. Dark palette only. Add colours as tokens rather than literals.
 
+**The build inlines them.** `scripts/inline-css.mjs` runs as `postbuild`, replaces the `<link rel="stylesheet">` in all ten built HTML documents with a `<style>` holding the same bytes, and deletes the now-unreferenced assets — so `dist/assets/` ships no CSS at all. It works on Vite's output, never on the sources, so there is still exactly one place styles live and nothing to keep in sync. Two things follow: `dist` HTML is ~36 kB larger (the host serves it brotli-compressed, which is what makes that affordable), and the stylesheet is no longer cached across pages, so a second page pays for it again. That is the right way round for a site people reach from search. If you ever add a stylesheet that should stay a request — something big and genuinely below the fold — this script is where to exempt it.
+
 Shared primitives live in `global.css` and are composed by every section: `.section` / `.section--tight`, `.container` / `.container--narrow`, `.section-head`, `.eyebrow`, `.card`, `.chip`, `.btn` (`--primary` / `--ghost`), `.reveal`, `.grid-bg`. Section-specific classes live in `components.css` under `/* ===== NAME ===== */` banners in the same order as `App.tsx` composes them. A new section means composing the primitives plus one banner block.
 
 Caveats worth knowing before editing:
 - **Type sizes are not tokenized.** Colours, font families and radii are `:root` tokens; font sizes are literal px (23 distinct values, several half-pixel one-offs like `14.5px`). To match an existing size, grep for it rather than guessing a scale.
 - **`.card` is one visual treatment shared by eight unrelated content types** (services, tech columns, work cases, engagement tiers, voices, team, articles, contact form), including a single hover lift + violet glow. Restyling `.card` changes all of them.
-- Three families load from Google Fonts in `index.html`; changing one means editing both the `<link>` there and the `--font-*` token.
+- The three families are self-hosted (see Fonts above), not loaded from Google. Changing one means editing `scripts/fonts.mjs` and the matching `--font-*` token.
 - `.eyebrow` survives in exactly two places — Work ("Selected work" qualifies a three-case list as non-exhaustive) and Contact ("Start here" is wayfinding at the end of a long page). It was removed from the other nine sections as decoration; don't reintroduce it as a default label above every heading.
 
 ### Accessibility baseline

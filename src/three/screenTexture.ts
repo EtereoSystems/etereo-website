@@ -8,10 +8,12 @@ import { PROJECTS, type ScreenSpec } from "../i18n/projects";
  */
 
 const SIZE = 1200;
-// The splash terminal gets its own, fixed-size texture. It repaints up to 25x/s while
-// typing, and pushing the project canvas to the GPU at that rate cost ~80 ms per frame.
-// It is flat text on a panel, so it needs far less than a screenshot does.
-const TERM_PX = 1024;
+// The splash terminal gets its own texture. It repaints on every frame the typewriter
+// advances, and pushing the project canvas to the GPU at that rate cost ~80 ms per frame.
+// It is flat text on a panel, so it needs far less than a screenshot does — and sized to
+// the viewport for the same reason as SS below, since a phone holds the laptop smaller on
+// screen than a desktop does and pays the upload just as often.
+const TERM_PX = window.innerWidth < 900 ? 512 : 1024;
 const CANVAS_ROT = (3 * Math.PI) / 2;
 const MIRROR = true;
 const FIT = 0.72;
