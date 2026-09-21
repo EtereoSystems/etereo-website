@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { useContent } from "../i18n";
 import { useUI } from "../store";
 import { Wordmark } from "./Wordmark";
@@ -24,8 +25,14 @@ export function Nav({ base = "" }: { base?: string }) {
         </a>
 
         <nav className={"nav__links" + (menuOpen ? " open" : "")}>
-          {links.map(([label, href]) => (
-            <a key={href} href={href} onClick={() => setMenuOpen(false)}>
+          {links.map(([label, href], i) => (
+            <a
+              key={href}
+              href={href}
+              // the open menu steps its items in against this, like `.reveal` does
+              style={{ "--i": i } as CSSProperties}
+              onClick={() => setMenuOpen(false)}
+            >
               {label}
             </a>
           ))}

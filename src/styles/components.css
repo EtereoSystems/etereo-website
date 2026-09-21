@@ -1,6 +1,9 @@
 :root {
   --hero-fade: 1;
   --handoff: 0;
+  /* --rv-ease spends 87% of its distance in the first third — right for something you
+     scroll past, a snap for a panel you watch open. See Styling in CLAUDE.md. */
+  --menu-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ================= NAV ================= */
@@ -86,6 +89,17 @@ body[data-scrolled="true"] .nav {
   height: 1.6px;
   background: var(--text);
   display: block;
+  border-radius: 2px;
+  transition: transform 0.34s var(--menu-ease);
+}
+/* The bars fold into a close cross, driven by the button's own aria-expanded so the
+   picture and the announced state cannot drift. 3.3px is half the distance between the
+   bar centres (5px gap + 1.6px bar): what each has to travel to meet. */
+.nav__burger[aria-expanded="true"] span:first-child {
+  transform: translateY(3.3px) rotate(45deg);
+}
+.nav__burger[aria-expanded="true"] span:last-child {
+  transform: translateY(-3.3px) rotate(-45deg);
 }
 
 /* wordmark */
@@ -1229,15 +1243,42 @@ body[data-scrolling="true"] .hero__hint-arrow {
     gap: 4px;
     padding: 18px 0 26px;
     border-bottom: 1px solid var(--line);
-    transform: translateY(-140%);
-    transition: transform 0.3s ease;
+    /* A short drop and a fade instead of sliding in the panel's full height, and
+       `visibility` so the links leave the tab order while it is shut. The short numbers
+       are the close: a rule's own transition runs when its class is taken away. */
+    transform: translateY(-16px);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.28s var(--menu-ease), opacity 0.28s var(--menu-ease),
+      visibility 0s linear 0.28s;
   }
   .nav__links.open {
     transform: none;
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.44s var(--menu-ease), opacity 0.44s var(--menu-ease), visibility 0s;
   }
   .nav__links a {
     padding: 12px;
     font-size: 17px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s var(--menu-ease), transform 0.2s var(--menu-ease), color 0.18s ease;
+  }
+  /* Items step in against `--i`, the handle `.reveal` uses. On the way in only: leaving,
+     they go together, so tapping a link does not leave the menu over the page. */
+  .nav__links.open a {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.36s var(--menu-ease), transform 0.36s var(--menu-ease), color 0.18s ease;
+    transition-delay: calc(var(--i, 0) * 55ms);
+  }
+  /* The panel answers a tap, so it keeps moving; the stagger is decoration. Nested so it
+     outranks the delay above — media queries carry no specificity, only source order. */
+  @media (prefers-reduced-motion: reduce) {
+    .nav__links.open a {
+      transition-delay: 0s;
+    }
   }
   .nav__cta {
     display: none;
