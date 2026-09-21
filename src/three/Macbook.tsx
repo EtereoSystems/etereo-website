@@ -17,11 +17,33 @@ const MOBILE_MAX = 900;
 const MOBILE_Y = 1.02; // how far up the laptop floats (leaves the lower half for text)
 const MOBILE_SCALE = 0.42; // base fit scale (smaller so it never clips on a narrow screen)
 
+// A blurred dark ellipse on the ground plane, in place of drei's ContactShadows. That
+// one re-rendered the scene into a depth target and blurred it twice on every single
+// frame to produce, on a page this dark, a faint smudge under the laptop. This is the
+// same smudge for one textured quad.
+function makeBlob() {
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const g = c.getContext("2d")!;
+  const rg = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  rg.addColorStop(0, "rgba(0,0,0,0.62)");
+  rg.addColorStop(0.42, "rgba(0,0,0,0.3)");
+  rg.addColorStop(1, "rgba(0,0,0,0)");
+  g.fillStyle = rg;
+  g.fillRect(0, 0, 128, 128);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
 export function Macbook() {
   const { scene } = useGLTF("/models/macbook.glb");
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
   const group = useRef<THREE.Group>(null);
+  const blob = useRef<THREE.Mesh>(null);
+  const blobTex = useMemo(() => makeBlob(), []);
+  useEffect(() => () => blobTex.dispose(), [blobTex]);
   const setEntered = useUI((s) => s.setEntered);
   const enteredRef = useRef(false);
   const fit = useRef(1);
@@ -59,13 +81,12 @@ export function Macbook() {
         });
         mesh.material = screenMat.mat;
       } else if (/keyboard/i.test(nm)) {
-        mat.metalness = 0.6;
-        mat.roughness = 0.5;
+        mat.metalness = 0.3;
+        mat.roughness = 0.52;
       } else if (mat) {
-        mat.metalness = 0.85;
-        mat.roughness = 0.34;
-        mat.color = new THREE.Color("#c9ccd6");
-        mat.envMapIntensity = 1.1;
+        mat.metalness = 0.42;
+        mat.roughness = 0.42;
+        mat.color = new THREE.Color("#959db1");
       }
     });
     return { model: wrap, screenTex: texture, termTex: termTexture, screenMat, draw, drawTerminal, shotReady };
@@ -200,6 +221,17 @@ export function Macbook() {
       root.setProperty("--handoff", seg(p, 0.92, 1).toFixed(3));
     }
 
+    // The blob tracks the laptop along the ground plane, thinning as it lifts away from
+    // it and gone entirely by the time the final zoom has filled the screen.
+    const sh = blob.current;
+    if (sh) {
+      const own = g.scale.x / fit.current; // the laptop's own scale, without the model fit
+      sh.position.set(g.position.x, -1.15, -0.25 + g.position.z * 0.3);
+      sh.scale.set(5 * own, 3.6 * own, 1);
+      (sh.material as THREE.MeshBasicMaterial).opacity =
+        clamp(1 - Math.abs(g.position.y) * 0.5) * clamp(1.6 - own);
+    }
+
     const nowEntered = p > 0.99;
     if (nowEntered !== enteredRef.current) {
       enteredRef.current = nowEntered;
@@ -207,7 +239,15 @@ export function Macbook() {
     }
   });
 
-  return <primitive ref={group} object={model} />;
+  return (
+    <>
+      <primitive ref={group} object={model} />
+      <mesh ref={blob} rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.15, 0]}>
+        <planeGeometry args={[1, 1]} />
+        <meshBasicMaterial map={blobTex} transparent depthWrite={false} />
+      </mesh>
+    </>
+  );
 }
 
 useGLTF.preload("/models/macbook.glb");

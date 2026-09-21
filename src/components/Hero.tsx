@@ -11,6 +11,30 @@ export function Hero() {
   const c = useContent();
   const sticky = useRef<HTMLDivElement>(null);
   const [running, setRunning] = useState(true);
+  const [armed, setArmed] = useState(false);
+
+  // `lazy` fires its import during render — before the browser has painted — so the
+  // 3D chunk was racing the stylesheet and the app chunk for the first screen. Ask
+  // for it in the idle period after that paint instead; on a fast connection this is
+  // a frame or two, on a slow one it is the whole point.
+  useEffect(() => {
+    let cancel = () => {};
+    const raf = requestAnimationFrame(() => {
+      // still missing on Safari < 16.4, so this is a real branch, not a formality
+      const ric: typeof window.requestIdleCallback | undefined = window.requestIdleCallback;
+      if (ric) {
+        const h = ric(() => setArmed(true), { timeout: 600 });
+        cancel = () => cancelIdleCallback(h);
+      } else {
+        const h = window.setTimeout(() => setArmed(true), 60);
+        cancel = () => clearTimeout(h);
+      }
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      cancel();
+    };
+  }, []);
 
   // The hero is 940vh with ~10 sections after it. Left alone the 3D keeps drawing
   // at 60fps long after it has scrolled away, so park it once it is out of sight.
@@ -30,9 +54,7 @@ export function Hero() {
         <div className="grid-bg" />
         <div className="hero__glow" />
         <div className="hero__canvas">
-          <Suspense fallback={null}>
-            <Scene running={running} />
-          </Suspense>
+          <Suspense fallback={null}>{armed && <Scene running={running} />}</Suspense>
         </div>
 
         <ProjectPanel running={running} />
