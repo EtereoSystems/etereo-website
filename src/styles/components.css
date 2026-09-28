@@ -1,9 +1,6 @@
 :root {
   --hero-fade: 1;
   --handoff: 0;
-  /* --rv-ease spends 87% of its distance in the first third — right for something you
-     scroll past, a snap for a panel you watch open. See Styling in CLAUDE.md. */
-  --menu-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ================= NAV ================= */
@@ -89,17 +86,6 @@ body[data-scrolled="true"] .nav {
   height: 1.6px;
   background: var(--text);
   display: block;
-  border-radius: 2px;
-  transition: transform 0.34s var(--menu-ease);
-}
-/* The bars fold into a close cross, driven by the button's own aria-expanded so the
-   picture and the announced state cannot drift. 3.3px is half the distance between the
-   bar centres (5px gap + 1.6px bar): what each has to travel to meet. */
-.nav__burger[aria-expanded="true"] span:first-child {
-  transform: translateY(3.3px) rotate(45deg);
-}
-.nav__burger[aria-expanded="true"] span:last-child {
-  transform: translateY(-3.3px) rotate(-45deg);
 }
 
 /* wordmark */
@@ -238,70 +224,18 @@ body[data-scrolled="true"] .nav {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--text-2);
-  /* The arrow is the only sign that a 940vh opening sequence is still running, so it
-     outlives --hero-fade and leaves with the handoff instead. */
-  opacity: calc(1 - var(--handoff));
-}
-.hero__hint-label {
-  /* said what the gesture does; once you are scrolling it has nothing left to add */
+  color: var(--text-3);
   opacity: var(--hero-fade);
-  transition: opacity 0.3s ease;
 }
 .hero__hint-line {
-  --hint-travel: 46px;
-  position: relative;
   width: 1px;
-  height: 52px;
-  background: linear-gradient(var(--line), transparent);
-}
-/* a signal running down the wire — demonstrates the gesture rather than labelling it */
-.hero__hint-arrow {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 12px;
-  height: 8px;
-  fill: none;
-  stroke: var(--violet-2);
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  animation: hintDrop 1.9s cubic-bezier(0.4, 0, 0.5, 1) infinite;
-}
-@keyframes hintDrop {
-  0% {
-    transform: translate(-50%, -2px);
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, var(--hint-travel));
-    opacity: 0;
-  }
-}
-/* answers the gesture: while the page is actually moving the cue runs tighter and
-   brighter, so it reads as feedback on the scroll rather than an idle loop */
-body[data-scrolling="true"] .hero__hint-arrow {
-  animation-duration: 0.9s;
-  filter: drop-shadow(0 0 6px var(--violet-glow));
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero__hint-arrow {
-    animation: none;
-    transform: translate(-50%, 18px);
-    opacity: 0.85;
-  }
+  height: 40px;
+  background: linear-gradient(var(--text-3), transparent);
 }
 .hero__veil {
   position: absolute;
@@ -333,12 +267,11 @@ body[data-scrolling="true"] .hero__hint-arrow {
   right: 7vw;
 }
 .project-panel__inner {
-  /* same rise as every .reveal — the hero should not have a motion of its own */
-  animation: panelIn var(--rv-dur) var(--rv-ease) both;
+  animation: panelIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 @keyframes panelIn {
   from {
-    transform: translateY(var(--rv-shift));
+    transform: translateY(20px);
   }
   to {
     transform: none;
@@ -423,9 +356,7 @@ body[data-scrolling="true"] .hero__hint-arrow {
   .hero__overlay {
     align-items: flex-end;
     justify-content: center;
-    /* the bottom strip is the scroll cue's — the CTA stops above it. There is spare room
-       between the laptop and the badge, so the column moves up rather than crowding. */
-    padding: 0 22px calc(122px + env(safe-area-inset-bottom, 0px));
+    padding: 0 22px calc(78px + env(safe-area-inset-bottom, 0px));
   }
   .hero__col {
     align-items: center;
@@ -467,15 +398,7 @@ body[data-scrolling="true"] .hero__hint-arrow {
     display: none;
   }
   .hero__hint {
-    /* the mobile project panel takes this spot once the carousel starts, so the cue
-       lives through the intro only and leaves with --hero-fade */
-    display: flex;
-    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
-    opacity: var(--hero-fade);
-  }
-  .hero__hint-line {
-    --hint-travel: 32px;
-    height: 38px;
+    display: none;
   }
 
   /* project description: a centred glass card pinned beneath the laptop */
@@ -929,10 +852,7 @@ body[data-scrolling="true"] .hero__hint-arrow {
 /* ================= TEAM ================= */
 .team-grid {
   display: grid;
-  /* auto-fit with a cap, so a two-person roster centres at a sane card width
-     instead of being stranded in the left half or stretched across the row. */
-  grid-template-columns: repeat(auto-fit, minmax(230px, 300px));
-  justify-content: center;
+  grid-template-columns: repeat(4, 1fr);
   gap: 18px;
 }
 .person {
@@ -1243,42 +1163,15 @@ body[data-scrolling="true"] .hero__hint-arrow {
     gap: 4px;
     padding: 18px 0 26px;
     border-bottom: 1px solid var(--line);
-    /* A short drop and a fade instead of sliding in the panel's full height, and
-       `visibility` so the links leave the tab order while it is shut. The short numbers
-       are the close: a rule's own transition runs when its class is taken away. */
-    transform: translateY(-16px);
-    opacity: 0;
-    visibility: hidden;
-    transition: transform 0.28s var(--menu-ease), opacity 0.28s var(--menu-ease),
-      visibility 0s linear 0.28s;
+    transform: translateY(-140%);
+    transition: transform 0.3s ease;
   }
   .nav__links.open {
     transform: none;
-    opacity: 1;
-    visibility: visible;
-    transition: transform 0.44s var(--menu-ease), opacity 0.44s var(--menu-ease), visibility 0s;
   }
   .nav__links a {
     padding: 12px;
     font-size: 17px;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.2s var(--menu-ease), transform 0.2s var(--menu-ease), color 0.18s ease;
-  }
-  /* Items step in against `--i`, the handle `.reveal` uses. On the way in only: leaving,
-     they go together, so tapping a link does not leave the menu over the page. */
-  .nav__links.open a {
-    opacity: 1;
-    transform: none;
-    transition: opacity 0.36s var(--menu-ease), transform 0.36s var(--menu-ease), color 0.18s ease;
-    transition-delay: calc(var(--i, 0) * 55ms);
-  }
-  /* The panel answers a tap, so it keeps moving; the stagger is decoration. Nested so it
-     outranks the delay above — media queries carry no specificity, only source order. */
-  @media (prefers-reduced-motion: reduce) {
-    .nav__links.open a {
-      transition-delay: 0s;
-    }
   }
   .nav__cta {
     display: none;
@@ -1465,12 +1358,6 @@ body[data-scrolling="true"] .hero__hint-arrow {
   max-width: 54ch;
   color: var(--text-2);
   font-size: 16.5px;
-}
-.page-cta__actions {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 14px;
 }
 
 /* home page: the link out to the full case studies */
@@ -1806,19 +1693,10 @@ body[data-scrolling="true"] .hero__hint-arrow {
   font-size: 16.5px;
   line-height: 1.75;
 }
+.about-story .page-note {
+  margin-top: 34px;
+}
 
-/* Scoped to .subpage--about because .page-intro is shared with /projects/ and
-   /blog/. hyphens follows <html lang> (useLangSync keeps it in step) — without
-   breaks, long Slovak words leave rivers at this measure. */
-.subpage--about :is(.page-intro, .about-story p, .about-team__intro, .roster__body) {
-  text-align: justify;
-  hyphens: auto;
-}
-/* The shared 54ch cap makes the intro narrower than the story below it;
-   dropping it lets both share the container measure so the edges line up. */
-.subpage--about .page-intro {
-  max-width: none;
-}
 .about-facts {
   border-top: 1px solid var(--line-soft);
   padding: 64px 0;
@@ -1856,6 +1734,7 @@ body[data-scrolling="true"] .hero__hint-arrow {
 }
 .about-team__intro {
   margin: 14px 0 30px;
+  max-width: 58ch;
   color: var(--text-2);
   font-size: 16.5px;
 }
@@ -1924,10 +1803,6 @@ body[data-scrolling="true"] .hero__hint-arrow {
   .facts {
     grid-template-columns: 1fr;
   }
-  /* The measure is too short here for justification to space evenly. */
-  .subpage--about :is(.page-intro, .about-story p, .about-team__intro, .roster__body) {
-    text-align: left;
-  }
 }
 
 /* ================= BLOG (/blog/) ================= */
@@ -1979,6 +1854,79 @@ body[data-scrolling="true"] .hero__hint-arrow {
     flex-direction: row;
     align-items: center;
     gap: 12px;
+  }
+}
+
+/* blog pagination */
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+.pager__nums {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pager__num {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 6px;
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+.pager__num:hover {
+  border-color: var(--line);
+  color: var(--text);
+}
+.pager__num.on {
+  border-color: var(--violet);
+  color: var(--violet-2);
+  background: color-mix(in srgb, var(--violet) 12%, transparent);
+}
+.pager__step {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  height: 40px;
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.pager__step:hover:not(:disabled) {
+  border-color: var(--line);
+  color: var(--violet-2);
+}
+.pager__step:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+@media (max-width: 560px) {
+  .pager {
+    justify-content: center;
+  }
+  .pager__nums {
+    order: -1;
+    width: 100%;
+    justify-content: center;
   }
 }
 
