@@ -215,14 +215,19 @@ ${moreLinks(post)}
 
           <section class="page-cta">
             <div class="container container--narrow">
-              <h2>${i18nSpan("Have a system like the ones we write about?", "Máte systém, o akých píšeme?")}</h2>
+              <h2>${i18nSpan(
+                post.cta?.title?.en || "Thinking about building something like this?",
+                post.cta?.title?.sk || "Zvažujete stavbu niečoho takého?",
+              )}</h2>
               <p>${i18nSpan(
-                "We start most engagements with a two-week audit. It ends in a plan you can fund.",
-                "Väčšinu spoluprác začíname dvojtýždňovým auditom. Skončí plánom, ktorý viete financovať.",
+                post.cta?.body?.en ||
+                  "We start most engagements with a short, fixed-fee audit — a written read on what to build, what it will cost, and where the risks are. It ends in a plan you can fund.",
+                post.cta?.body?.sk ||
+                  "Väčšinu spoluprác začíname krátkym auditom za fixnú cenu — písomným pohľadom na to, čo stavať, koľko to bude stáť a kde sú riziká. Skončí plánom, ktorý viete financovať.",
               )}</p>
               <a class="btn btn--primary" href="/#contact">${i18nSpan(
-                "Book a discovery call",
-                "Dohodnúť si úvodný hovor",
+                post.cta?.action?.en || "Book a free discovery call",
+                post.cta?.action?.sk || "Dohodnúť si nezáväzný hovor",
               )}</a>
             </div>
           </section>

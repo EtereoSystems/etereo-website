@@ -42,8 +42,9 @@ export interface AboutPage {
   facts: { label: string; value: string }[];
   teamTitle: string;
   teamIntro: string;
+  note: string;
   back: string;
-  cta: { title: string; body: string; action: string; work: string };
+  cta: { title: string; body: string; action: string };
 }
 
 export interface CasePage {
@@ -228,17 +229,39 @@ const en: Content = {
     people: [
       { initials: "PK", name: "Patrik Klimko", role: "Co-founder · Engineering", body: "Product and platform engineering, from first architecture to production run." },
       { initials: "MK", name: "Matej Kučera", role: "Co-founder · Engineering", body: "Systems, data and delivery — turning messy operations into software that holds." },
+      { initials: "—", name: "Your senior lead", role: "Named per engagement", body: "Every programme gets one accountable lead who stays from audit to hand-over." },
+      { initials: "+", name: "A small senior bench", role: "Specialists on call", body: "Mobile, cloud and data specialists pulled in exactly when the work needs them." },
     ],
   },
   insights: {
     title: "Notes from inside the work",
     items: [
+      { slug: "how-to-build-a-booking-system", date: "2026-09-23", tag: "Systems", read: "8 min", title: "How to build a booking or scheduling system that never double-books", body: "A calendar with a booking button looks trivial. The double-booking that costs you a customer is where the real engineering lives. When to build custom, and how to get availability right." },
+      { slug: "how-to-build-a-customer-portal", date: "2026-09-16", tag: "Systems", read: "8 min", title: "How to build a customer portal that reduces support, not increases it", body: "Give customers a portal that answers their questions before they call, and support drops. Give them a slow, empty login, and it becomes another thing to complain about. Here's the difference." },
+      { slug: "how-to-build-a-custom-erp", date: "2026-09-09", tag: "Systems", read: "9 min", title: "How to build a custom ERP system (without betting the company)", body: "ERP projects are famous for going over budget and taking down the businesses they were meant to help. How to get the benefits of a system that fits — without the big-bang risk." },
       { slug: "offline-first-and-on-premise", date: "2026-09-02", tag: "Engineering", read: "8 min", title: "Offline-first and on-premise: software for disconnected, regulated worlds", body: "Cloud-by-default has a blind spot: the field, the factory floor, the classified network, the regulator. What it takes to build software — and AI — that runs where the data must stay." },
+      { slug: "how-to-build-an-internal-tool", date: "2026-08-19", tag: "Systems", read: "8 min", title: "How to build an internal tool your team will actually use", body: "The spreadsheet everyone hates but no one can kill is a business risk with a deadline. How to build the internal tool that replaces it — and why simple beats impressive." },
+      { slug: "how-to-build-a-custom-crm", date: "2026-08-05", tag: "Systems", read: "9 min", title: "How to build a custom CRM (and when you actually should)", body: "Most companies should not build a custom CRM — and a few absolutely should. How to tell which you are, and how to build one your salespeople actually use instead of avoid." },
       { slug: "saas-on-a-legacy-core", date: "2026-07-29", tag: "Integration", read: "9 min", title: "Shipping a SaaS product on top of a legacy core", body: "The core system that runs the business is rarely the one you get to replace. The integration patterns for building modern product on top of it — and the trap to avoid." },
+      { slug: "how-to-build-an-mvp", date: "2026-07-22", tag: "Product", read: "8 min", title: "How to build an MVP that doesn't waste your budget", body: "A real MVP is a question, not a product. Here's how to find the one assumption to test, build the smallest thing that tests it, and avoid the trap that ruins most MVPs." },
+      { slug: "how-to-build-a-saas-product", date: "2026-07-08", tag: "SaaS", read: "10 min", title: "How to build a SaaS product from scratch", body: "Building a SaaS is less about the feature you're excited about and more about the invisible machinery around it — billing, tenancy, onboarding. Here's how to build one that lasts." },
       { slug: "rewrite-replatform-or-refactor", date: "2026-06-24", tag: "Strategy", read: "8 min", title: "Rewrite, replatform, or refactor? Choosing a modernization strategy", body: "Three modernization strategies, three different risk profiles. A framework for matching the approach to the system — and the true cost of reaching for a rewrite too early." },
+      { slug: "fixed-price-vs-time-and-materials", date: "2026-06-17", tag: "Pricing", read: "8 min", title: "Fixed price vs time & materials: which contract actually protects you?", body: "Fixed price sounds like the safe choice — and it quietly pushes you toward the wrong software. How the main pricing models really work, and when each one protects you." },
+      { slug: "how-to-choose-a-software-development-company", date: "2026-06-03", tag: "Hiring", read: "10 min", title: "How to choose a software development company: the questions that matter", body: "Picking the wrong software company is one of the most expensive mistakes a business can make. The questions that reveal who can actually deliver — and the red flags that don't." },
       { slug: "cut-cloud-costs-without-a-freeze", date: "2026-05-20", tag: "Platform", read: "8 min", title: "Cutting cloud costs 40-70% without a migration freeze", body: "Cloud bills quietly grow to two or three times what the workload needs. The practical, incremental checklist for taking a third off — without a migration freeze." },
+      { slug: "nearshore-software-development-in-europe", date: "2026-05-13", tag: "Sourcing", read: "9 min", title: "Nearshore software development in Europe: a buyer's guide", body: "Building software with a team a couple of timezones away — not twelve — is why Central Europe has become the sweet spot for Western companies. What nearshore gets you, and how to do it well." },
+      { slug: "no-code-vs-custom-software", date: "2026-04-29", tag: "Build vs buy", read: "8 min", title: "No-code vs custom software: when does each one win?", body: "No-code can get you live in a weekend and stuck in a year. Where it genuinely wins, the ceiling it hits, and the smart path that uses no-code to earn the right to build custom." },
       { slug: "two-week-software-audit", date: "2026-04-15", tag: "Delivery", read: "7 min", title: "What a two-week software audit should actually deliver", body: "Most audits end in a slide deck nobody acts on. The four concrete artefacts a two-week assessment should hand over — and how clients turn them into approved budget." },
+      { slug: "custom-software-vs-off-the-shelf", date: "2026-04-01", tag: "Build vs buy", read: "9 min", title: "Custom software vs off-the-shelf: should you build or buy?", body: "Off-the-shelf is faster and cheaper to start — until the workarounds, subscriptions, and lock-in add up. A framework for deciding which one your problem actually needs." },
+      { slug: "how-to-automate-a-manual-business-process", date: "2026-03-25", tag: "Automation", read: "8 min", title: "How to automate a manual business process with software", body: "Automation's biggest win is giving your team back the hours they lose to repetitive work — if you automate the right process, and don't just make a broken one run faster." },
+      { slug: "how-long-does-it-take-to-build-custom-software", date: "2026-03-18", tag: "Timeline", read: "8 min", title: "How long does it take to build custom software?", body: "Weeks, months, or a year — the timeline for custom software is set less by how fast a team codes than by how quickly you can make decisions. Here is what really moves it." },
       { slug: "strangler-fig-legacy-migration", date: "2026-03-04", tag: "Architecture", read: "9 min", title: "Replacing a legacy system without a big-bang rewrite", body: "Why incremental cutovers fail on the org chart before they fail on the code — and how to sequence a replacement so the business keeps running throughout." },
+      { slug: "how-much-does-it-cost-to-build-an-mvp", date: "2026-02-25", tag: "Cost", read: "8 min", title: "How much does it cost to build an MVP?", body: "Most MVPs cost too much because they aren't minimal. The point of an MVP is to buy a learning, not a product — here's how to scope one that does its job cheaply." },
+      { slug: "how-much-does-it-cost-to-build-a-mobile-app", date: "2026-02-11", tag: "Cost", read: "9 min", title: "How much does it cost to build a mobile app?", body: "The price of a mobile app is set by a few decisions you make before a line of code is written — native or cross-platform, one platform or two, thin or deep. Here they are." },
+      { slug: "signs-your-business-needs-custom-software", date: "2026-02-04", tag: "Strategy", read: "7 min", title: "7 signs your business has outgrown off-the-shelf software", body: "The moment to build custom software rarely announces itself. It shows up as workarounds, hiring to cover for tools, and a spreadsheet no one dares touch. Seven signals it's time." },
+      { slug: "how-much-does-it-cost-to-build-a-web-app", date: "2026-01-28", tag: "Cost", read: "9 min", title: "How much does it cost to build a web app?", body: "A web app can cost fifteen thousand euros or half a million — and the difference is rarely the pretty screens. What actually sets the price, and how to keep it sane." },
+      { slug: "how-much-does-it-cost-to-build-custom-software", date: "2026-01-14", tag: "Cost", read: "10 min", title: "How much does it cost to build custom software?", body: "\"It depends\" is a true answer and a useless one. Here is what actually drives the cost of custom software, real ballpark ranges, and how to get a number you can defend." },
+      { slug: "the-software-development-process-explained", date: "2026-01-07", tag: "Process", read: "9 min", title: "The software development process, explained for non-technical leaders", body: "You don't need to code to tell whether a software project is healthy. A plain-English walk through how custom software really gets built — and the signals that it's going well or badly." },
     ],
   },
   faq: {
@@ -282,11 +305,11 @@ const en: Content = {
   },
   aboutPage: {
     title: "About us",
-    intro: "ETEREO is a Slovak software company built on a principle most vendors abandon in practice: the party that prices the work is the same party that delivers it. No sales representative who promises a date and then steps away from delivery. No architect who hands the design to another team. No unannounced swapping of team members mid-project. The same team stands behind the estimate and behind the delivery itself.",
+    intro: "ETEREO is a Slovak software house built around one arrangement: the people who scope the work are the people who ship it.",
     story: [
-      "We founded ETEREO in 2026, on the back of years spent inside the transformation programmes of large organisations. In that environment we saw the same pattern again and again: one team sold the work, a second planned it, a third built it. By the time implementation actually began, nobody was left on the project who had taken part in the original commitments to the client. The client carried the consequences — missed deadlines, a budget that could no longer be defended to management, and a system that in the end nobody on the team fully understood.",
-      "So we operate as one aligned team that carries the entire course of delivery: from architecture review through implementation to deployment and the operation that follows. That removes both the loss of context in hand-offs between departments and the need to bring new people up to speed mid-project. For the client it means unambiguous accountability: when an incident happens, it is handled by the same team that designed and implemented the solution.",
-      "We work with large, established companies, but also with smaller businesses for whom we build IT solutions cut to fit. With the large ones it is usually systems their operation genuinely rests on: rewriting such a system wholesale is not a real option, and a failed move to a new solution would be a risk at board level. So we proceed in clearly verifiable stages, the client's operation keeps running throughout, and we close every phase with an output the client can check themselves before we move on.",
+      "We started ETEREO in 2026, after years spent inside other people's transformation programmes — most of them sold by one team, planned by a second and built by a third. By the time anyone wrote code, nobody left in the room had been in the meeting where the promises were made.",
+      "So we keep the company small on purpose. Every engagement is staffed from the same senior bench, held to the same architecture review, and led by one person who stays from the first audit to the hand-over. When something breaks at two in the morning, the person who answers is the person who built it.",
+      "We work mostly with established companies whose systems are load-bearing — the platform the business actually runs on, where a rewrite is not an option and a failed cutover is a board-level event. That constraint shapes the method: work in slices, keep the business running throughout, and end every phase in something you can inspect yourself.",
     ],
     factsTitle: "The essentials",
     facts: [
@@ -295,16 +318,16 @@ const en: Content = {
       { label: "Legal entity", value: "ETEREO s.r.o." },
       { label: "How we work", value: "Remote-first, CET hours" },
       { label: "Languages", value: "English and Slovak" },
-      { label: "Where we work", value: "Europe, EU" },
+      { label: "Where we work", value: "Slovakia, Central Europe, EU" },
     ],
     teamTitle: "Who you actually work with",
     teamIntro: "A small senior bench rather than a pyramid. You meet the engineers on the first call, and they are the ones who stay.",
+    note: "ETEREO is a newly founded company. We do not claim historical project counts or client rosters — the case studies on this site are labelled illustrative until real client work is published.",
     back: "Back to the site",
     cta: {
       title: "Want to talk to the people who would do the work?",
       body: "It is the only kind of call we run — no account manager, no discovery deck, just the engineers who would build it.",
       action: "Book a discovery call",
-      work: "See the case studies",
     },
   },
   blogPage: {
@@ -415,17 +438,39 @@ const sk: Content = {
     people: [
       { initials: "PK", name: "Patrik Klimko", role: "Spoluzakladateľ · Vývoj", body: "Produktové a platformové inžinierstvo — od prvej architektúry po produkčnú prevádzku." },
       { initials: "MK", name: "Matej Kučera", role: "Spoluzakladateľ · Vývoj", body: "Systémy, dáta a dodávka — z chaotickej prevádzky robíme softvér, ktorý drží." },
+      { initials: "—", name: "Váš senior lead", role: "Menovaný pre každý projekt", body: "Každý program má jedného zodpovedného vedúceho — od auditu až po odovzdanie." },
+      { initials: "+", name: "Malý seniorný tím", role: "Špecialisti na zavolanie", body: "Mobil, cloud a dáta zapojíme presne vtedy, keď si to práca vyžiada." },
     ],
   },
   insights: {
     title: "Poznámky priamo z práce",
     items: [
+      { slug: "how-to-build-a-booking-system", date: "2026-09-23", tag: "Systémy", read: "8 min", title: "Ako postaviť rezervačný alebo plánovací systém, ktorý nikdy neduplikuje termín", body: "Kalendár s tlačidlom rezervácie vyzerá triviálne. Dvojitá rezervácia, ktorá vás stojí zákazníka, je tam, kde žije skutočné inžinierstvo. Kedy stavať na mieru a ako zvládnuť dostupnosť." },
+      { slug: "how-to-build-a-customer-portal", date: "2026-09-16", tag: "Systémy", read: "8 min", title: "Ako postaviť zákaznícky portál, ktorý zníži podporu, nie zvýši", body: "Dajte zákazníkom portál, ktorý odpovie na ich otázky skôr, než zavolajú, a podpora klesne. Dajte im pomalé, prázdne prihlásenie a stane sa ďalšou vecou na sťažovanie. Tu je rozdiel." },
+      { slug: "how-to-build-a-custom-erp", date: "2026-09-09", tag: "Systémy", read: "9 min", title: "Ako postaviť ERP systém na mieru (bez stávky o firmu)", body: "ERP projekty sú povestné prekročeným rozpočtom a položením firiem, ktorým mali pomôcť. Ako získať výhody systému, ktorý sadne — bez rizika veľkého tresku." },
       { slug: "offline-first-and-on-premise", date: "2026-09-02", tag: "Inžinierstvo", read: "8 min", title: "Offline-first a on-premise: softvér pre odpojené a regulované prostredia", body: "Cloud ako predvoľba má slepé miesto: terén, výrobnú halu, utajovanú sieť, regulátora. Čo treba na softvér — a AI — ktorý beží tam, kde dáta musia zostať." },
+      { slug: "how-to-build-an-internal-tool", date: "2026-08-19", tag: "Systémy", read: "8 min", title: "Ako postaviť interný nástroj, ktorý tím naozaj použije", body: "Tabuľka, ktorú všetci nenávidia, no nikto ju nevie zabiť, je biznis riziko s termínom. Ako postaviť interný nástroj, ktorý ju nahradí — a prečo jednoduché poráža pôsobivé." },
+      { slug: "how-to-build-a-custom-crm", date: "2026-08-05", tag: "Systémy", read: "9 min", title: "Ako postaviť CRM na mieru (a kedy to naozaj má zmysel)", body: "Väčšina firiem by CRM na mieru stavať nemala — a pár by rozhodne malo. Ako spoznať, ktorá ste, a ako postaviť také, ktoré obchodníci naozaj používajú namiesto obchádzania." },
       { slug: "saas-on-a-legacy-core", date: "2026-07-29", tag: "Integrácia", read: "9 min", title: "Ako postaviť SaaS produkt na legacy jadre", body: "Jadrový systém, na ktorom firma beží, je zriedka ten, ktorý smiete vymeniť. Integračné vzory na stavbu moderného produktu nad ním — a pasca, ktorej sa treba vyhnúť." },
+      { slug: "how-to-build-an-mvp", date: "2026-07-22", tag: "Produkt", read: "8 min", title: "Ako postaviť MVP, ktoré nespáli váš rozpočet", body: "Skutočné MVP je otázka, nie produkt. Tu je, ako nájsť ten jeden predpoklad na otestovanie, postaviť najmenšiu vec, ktorá ho otestuje, a vyhnúť sa pasci, ktorá ničí väčšinu MVP." },
+      { slug: "how-to-build-a-saas-product", date: "2026-07-08", tag: "SaaS", read: "10 min", title: "Ako postaviť SaaS produkt od nuly", body: "Stavba SaaS je menej o funkcii, z ktorej ste nadšení, a viac o neviditeľnej mašinérii okolo nej — fakturácia, tenancia, onboarding. Tu je, ako postaviť taký, ktorý vydrží." },
       { slug: "rewrite-replatform-or-refactor", date: "2026-06-24", tag: "Stratégia", read: "8 min", title: "Rewrite, replatform, alebo refaktoring? Ako vybrať stratégiu modernizácie", body: "Tri stratégie modernizácie, tri rôzne rizikové profily. Rámec, ako zladiť prístup so systémom — a skutočná cena za to, keď po rewrite siahnete priskoro." },
+      { slug: "fixed-price-vs-time-and-materials", date: "2026-06-17", tag: "Cenotvorba", read: "8 min", title: "Fixná cena vs time & materials: ktorá zmluva vás naozaj chráni?", body: "Fixná cena znie ako bezpečná voľba — a potichu vás tlačí k nesprávnemu softvéru. Ako hlavné cenové modely naozaj fungujú a kedy vás ktorý chráni." },
+      { slug: "how-to-choose-a-software-development-company", date: "2026-06-03", tag: "Výber partnera", read: "10 min", title: "Ako si vybrať softvérovú firmu: otázky, na ktorých záleží", body: "Vybrať si nesprávnu softvérovú firmu je jedna z najdrahších chýb, akú firma spraví. Otázky, ktoré odhalia, kto naozaj dodá — a varovné signály, ktoré klamú." },
       { slug: "cut-cloud-costs-without-a-freeze", date: "2026-05-20", tag: "Platforma", read: "8 min", title: "Ako znížiť náklady na cloud o 40-70 % bez zmrazenia vývoja", body: "Cloudové účty potichu narastú na dvoj- až trojnásobok toho, čo záťaž potrebuje. Praktický, inkrementálny checklist, ako z toho zložiť tretinu — bez zmrazenia vývoja." },
+      { slug: "nearshore-software-development-in-europe", date: "2026-05-13", tag: "Sourcing", read: "9 min", title: "Nearshore vývoj softvéru v Európe: sprievodca pre zákazníka", body: "Stavať softvér s tímom pár časových pásiem ďaleko — nie dvanásť — je dôvod, prečo sa stredná Európa stala sladkým miestom pre západné firmy. Čo vám nearshore dá a ako to robiť dobre." },
+      { slug: "no-code-vs-custom-software", date: "2026-04-29", tag: "Postaviť či kúpiť", read: "8 min", title: "No-code vs softvér na mieru: kedy vyhráva ktoré?", body: "S no-code môžete byť online za víkend a zaseknutí za rok. Kde naozaj vyhráva, na aký strop narazí a múdra cesta, ktorá no-code využíva na získanie práva stavať na mieru." },
       { slug: "two-week-software-audit", date: "2026-04-15", tag: "Dodávka", read: "7 min", title: "Čo má dvojtýždňový softvérový audit naozaj priniesť", body: "Väčšina auditov skončí prezentáciou, na ktorú nikto nekoná. Štyri konkrétne výstupy dvojtýždňového posúdenia — a ako z nich klienti spravia schválený rozpočet." },
+      { slug: "custom-software-vs-off-the-shelf", date: "2026-04-01", tag: "Postaviť či kúpiť", read: "9 min", title: "Softvér na mieru vs hotové riešenie: postaviť, alebo kúpiť?", body: "Hotové riešenie sa spustí rýchlejšie a lacnejšie — kým sa nenazbierajú obchádzky, predplatné a uzamknutie. Rámec na rozhodnutie, ktoré z nich váš problém naozaj potrebuje." },
+      { slug: "how-to-automate-a-manual-business-process", date: "2026-03-25", tag: "Automatizácia", read: "8 min", title: "Ako automatizovať manuálny firemný proces softvérom", body: "Najväčšou výhrou automatizácie je vrátiť tímu hodiny, ktoré stráca na opakujúcej sa práci — ak automatizujete správny proces a len nezrýchlite pokazený." },
+      { slug: "how-long-does-it-take-to-build-custom-software", date: "2026-03-18", tag: "Časový plán", read: "8 min", title: "Ako dlho trvá vývoj softvéru na mieru?", body: "Týždne, mesiace či rok — časový plán softvéru na mieru určuje menej to, ako rýchlo tím kóduje, než to, ako rýchlo viete rozhodovať. Tu je, čo ním naozaj hýbe." },
       { slug: "strangler-fig-legacy-migration", date: "2026-03-04", tag: "Architektúra", read: "9 min", title: "Ako vymeniť legacy systém bez veľkého rewrite", body: "Prečo inkrementálne prechody zlyhajú skôr na organizačnej štruktúre než na kóde — a ako naplánovať výmenu tak, aby biznis bežal celý čas." },
+      { slug: "how-much-does-it-cost-to-build-an-mvp", date: "2026-02-25", tag: "Náklady", read: "8 min", title: "Koľko stojí vývoj MVP?", body: "Väčšina MVP stojí priveľa, lebo nie sú minimálne. Zmyslom MVP je kúpiť poznanie, nie produkt — tu je, ako navrhnúť také, ktoré spraví svoju prácu lacno." },
+      { slug: "how-much-does-it-cost-to-build-a-mobile-app", date: "2026-02-11", tag: "Náklady", read: "9 min", title: "Koľko stojí vývoj mobilnej aplikácie?", body: "Cenu mobilnej aplikácie určuje pár rozhodnutí, ktoré spravíte skôr, než sa napíše riadok kódu — natívne či cross-platform, jedna platforma či dve, tenká či hlboká. Tu sú." },
+      { slug: "signs-your-business-needs-custom-software", date: "2026-02-04", tag: "Stratégia", read: "7 min", title: "7 znakov, že vaša firma prerástla krabicový softvér", body: "Chvíľa na softvér na mieru sa málokedy ohlási. Prejaví sa ako obchádzky, najímanie na zakrytie nástrojov a tabuľka, ktorej sa nikto neodváži dotknúť. Sedem signálov, že je čas." },
+      { slug: "how-much-does-it-cost-to-build-a-web-app", date: "2026-01-28", tag: "Náklady", read: "9 min", title: "Koľko stojí vývoj webovej aplikácie?", body: "Webová aplikácia môže stáť pätnásť tisíc eur alebo pol milióna — a rozdiel sú málokedy tie pekné obrazovky. Čo naozaj určuje cenu a ako ju udržať rozumnú." },
+      { slug: "how-much-does-it-cost-to-build-custom-software", date: "2026-01-14", tag: "Náklady", read: "10 min", title: "Koľko stojí vývoj softvéru na mieru?", body: "„Závisí to“ je pravdivá, no zbytočná odpoveď. Tu je to, čo naozaj určuje cenu softvéru na mieru, reálne orientačné rozpätia a ako získať číslo, ktoré obhájite." },
+      { slug: "the-software-development-process-explained", date: "2026-01-07", tag: "Proces", read: "9 min", title: "Proces vývoja softvéru, vysvetlený pre netechnických lídrov", body: "Nemusíte kódovať, aby ste rozpoznali, či je softvérový projekt zdravý. Zrozumiteľná prechádzka tým, ako sa softvér na mieru naozaj stavia — a signály, že ide dobre alebo zle." },
     ],
   },
   faq: {
@@ -469,11 +514,11 @@ const sk: Content = {
   },
   aboutPage: {
     title: "O nás",
-    intro: "ETEREO je slovenská softvérová spoločnosť, ktorá sa riadi princípom, ktorý väčšina dodávateľov v praxi nedodržiava: subjekt, ktorý projekt nacení, je zároveň subjektom, ktorý ho aj dodá. Bez obchodného zástupcu, ktorý prisľúbi termín a následne sa stiahne z realizácie. Bez architekta, ktorý odovzdá návrh ďalšiemu tímu. Bez neohlásenej výmeny členov tímu v priebehu realizácie projektu. Za odhadom aj za samotnou dodávkou stojí ten istý tím.",
+    intro: "ETEREO je slovenská softvérová firma postavená na jednom princípe: ľudia, ktorí prácu nacenia, sú tí istí, ktorí ju aj dodajú.",
     story: [
-      "Spoločnosť ETEREO sme založili v roku 2026 na základe skúseností z transformačných programov veľkých spoločností. V tomto prostredí sme opakovane pozorovali rovnaký vzorec: zákazku predal jeden tím, naplánoval ju druhý a zrealizoval tretí. Kým sa začala samotná implementácia, v projekte už nepôsobil nikto, kto sa zúčastnil na pôvodných záväzkoch voči klientovi. Dôsledky niesol klient: v podobe nedodržaných termínov, rozpočtu, ktorý sa spätne nedal obhájiť pred vedením, a systému, ktorému napokon v tíme nikto v plnom rozsahu nerozumel.",
-      "Preto fungujeme ako jeden zosynchronizovaný tím, ktorý riadi celý priebeh realizácie: od architektonického posúdenia cez implementáciu až po nasadenie a následnú prevádzku. Eliminujeme tak stratu kontextu pri odovzdávaní medzi oddeleniami aj potrebu oboznamovať nových členov tímu v priebehu projektu. Pre klienta to znamená jednoznačnú zodpovednosť: v prípade incidentu rieši problém ten istý tím, ktorý dané riešenie navrhol a implementoval.",
-      "Spolupracujeme s veľkými, zavedenými spoločnosťami, ale aj s menšími podnikateľmi, pre ktorých pripravujeme IT riešenia šité na mieru. Pri veľkých spoločnostiach ide zvyčajne o systémy, na ktorých reálne stojí ich prevádzka: kompletné prepísanie takéhoto systému nie je reálna možnosť a neúspešný prechod na nové riešenie by predstavoval riziko na úrovni vedenia spoločnosti. Preto postupujeme po jasne overiteľných etapách, prevádzka klienta zostáva funkčná počas celej realizácie a každú fázu uzatvárame výstupom, ktorý si klient môže sám skontrolovať skôr, než pokročíme ďalej.",
+      "ETEREO sme založili v roku 2026, po rokoch strávených v transformačných programoch iných firiem — kde zákazku predal jeden tím, naplánoval druhý a postavil tretí. Kým sa začalo písať, v miestnosti už nezostal nikto, kto bol pri tom, keď padali sľuby.",
+      "Preto firmu zámerne držíme malú. Každý projekt obsadzujeme z tej istej seniornej lavičky, prechádza rovnakým architektonickým review a vedie ho jeden človek, ktorý ostáva od prvého auditu po odovzdanie. Keď o druhej v noci niečo spadne, dvíha to ten, kto to postavil.",
+      "Pracujeme najmä s etablovanými firmami, ktorých systémy sú nosné — platforma, na ktorej biznis reálne beží, kde prepísať všetko odznova nie je možnosť a neúspešné prepnutie rieši predstavenstvo. Tá podmienka určuje aj metódu: pracovať po častiach, nechať biznis bežať po celý čas a každú fázu ukončiť niečím, čo si viete overiť sami.",
     ],
     factsTitle: "Základné údaje",
     facts: [
@@ -482,16 +527,16 @@ const sk: Content = {
       { label: "Právna forma", value: "ETEREO s.r.o." },
       { label: "Ako pracujeme", value: "Remote-first, stredoeurópsky čas" },
       { label: "Jazyky", value: "Slovensky a anglicky" },
-      { label: "Kde pôsobíme", value: "Európa, EÚ" },
+      { label: "Kde pôsobíme", value: "Slovensko, stredná Európa, EÚ" },
     ],
     teamTitle: "S kým naozaj pracujete",
     teamIntro: "Malá seniorná lavička namiesto pyramídy. Inžinierov stretnete hneď na prvom hovore — a oni pri projekte aj ostanú.",
+    note: "ETEREO je novozaložená firma. Netvrdíme, koľko projektov máme za sebou ani aký máme zoznam klientov — prípadové štúdie na tejto stránke sú označené ako ilustratívne, kým nezverejníme skutočnú klientsku prácu.",
     back: "Späť na stránku",
     cta: {
       title: "Chcete hovoriť s ľuďmi, ktorí to budú robiť?",
       body: "Iné hovory nerobíme — žiadny account manager, žiadna prezentácia, len inžinieri, ktorí to postavia.",
       action: "Dohodnúť úvodný hovor",
-      work: "Pozrieť projekty",
     },
   },
   blogPage: {

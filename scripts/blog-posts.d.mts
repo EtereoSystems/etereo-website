@@ -14,6 +14,11 @@ export interface BlogPost {
   description: BlogText;
   excerpt: BlogText;
   body: BlogText;
+  cta?: {
+    title?: BlogText;
+    body?: BlogText;
+    action?: BlogText;
+  };
 }
 
 export const POSTS: BlogPost[];
