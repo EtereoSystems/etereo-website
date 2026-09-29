@@ -19,6 +19,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Nothing reaches the server that has not passed these first. CI runs the same
+      # three on every PR; repeating them here covers a direct push to main.
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
       - name: Build
         run: npm run build
         env:
