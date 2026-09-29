@@ -44,7 +44,7 @@ export interface AboutPage {
   teamIntro: string;
   note: string;
   back: string;
-  cta: { title: string; body: string; action: string };
+  cta: { title: string; body: string; action: string; work: string };
 }
 
 export interface CasePage {
@@ -408,6 +408,7 @@ const en: Content = {
       title: "Want to talk to the people who would do the work?",
       body: "It is the only kind of call we run — no account manager, no discovery deck, just the engineers who would build it.",
       action: "Book a discovery call",
+      work: "See the work",
     },
   },
   blogPage: {
@@ -697,6 +698,7 @@ const sk: Content = {
       title: "Chcete hovoriť s ľuďmi, ktorí to budú robiť?",
       body: "Iné hovory nerobíme — žiadny account manager, žiadna prezentácia, len inžinieri, ktorí to postavia.",
       action: "Dohodnúť úvodný hovor",
+      work: "Pozrieť našu prácu",
     },
   },
   blogPage: {

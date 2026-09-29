@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Marketing site for ETEREO s.r.o. — React 19 + TypeScript + Vite, with a scroll-driven 3D MacBook (react-three-fiber) as the hero. Four pages, bilingual EN/SK, no backend. There is no test suite.
+Marketing site for ETEREO s.r.o. — React 19 + TypeScript + Vite, with a scroll-driven 3D MacBook (react-three-fiber) as the hero. Four pages, bilingual EN/SK, no backend. Tests are Vitest + jsdom under [tests/](tests/) (see Testing below).
 
 There is **no client router**: the second page is a second Vite entry (see Pages below), so each page is its own HTML document.
 
@@ -15,11 +15,15 @@ npm run dev       # vite dev server on :5173 (runs scripts/seo.mjs first via pre
 npm run build     # tsc -b && vite build → dist/ (prebuild: seo.mjs; postbuild: inline-css.mjs)
 npm run preview   # serve the production build
 npm run lint      # oxlint (config in .oxlintrc.json)
+npm run typecheck # tsc -b across src, vite.config.ts and tests
+npm run test      # vitest run (tests/, jsdom)
+npm run test:watch
+npm run verify    # typecheck + lint + test — what CI runs on every PR
 npm run seo       # regenerate public/robots.txt, sitemap.xml, llms.txt
 npm run fonts     # re-download public/fonts/*.woff2 + regenerate src/styles/fonts.css
 ```
 
-Type errors only surface via `npm run build` (`tsc -b`); `oxlint` does not type-check. `tsconfig.app.json` has `noUnusedLocals`/`noUnusedParameters` on, so dead bindings break the build.
+`oxlint` does not type-check — `npm run typecheck` (or a full `npm run build`) is what surfaces type errors. `tsconfig.app.json` has `noUnusedLocals`/`noUnusedParameters` on, so dead bindings break the build. Tests are a third project (`tsconfig.test.json`) in the same `tsc -b` graph, so a test referring to a field that no longer exists fails the typecheck rather than the run.
 
 ## Code style
 
@@ -39,6 +43,40 @@ Copy `.env.example` → `.env` for local work. CI overrides it: `.github/workflo
 Push to `main` → GitHub Actions builds and rsyncs `dist/` over SSH to a Websupport host (secrets: `SSH_HOST`, `SSH_PORT`, `SSH_USER`, `SSH_PRIVATE_KEY`, `DEPLOY_PATH`). SSH/rsync are pinned to IPv4 (`-4`) because the runner has no IPv6 route — don't remove those flags.
 
 `src/.github/workflows/deploy.yml` is a stale duplicate of an older workflow and is **not** used by Actions; only the root `.github/` one runs.
+
+Two workflows now run from the root `.github/workflows/`:
+
+| Workflow | Trigger | Does |
+|---|---|---|
+| `ci.yml` (job `verify`) | every PR, plus pushes to `main` | typecheck → lint → test → build |
+| `deploy.yml` | push to `main` | the same four, then rsync `dist/` |
+
+`deploy.yml` repeats the checks rather than depending on `ci.yml` because a workflow cannot `needs:` a job in another file — so the deploy job itself is what guarantees nothing reaches the server that has not passed. `verify` is the job name to require as a status check in branch protection; renaming the job silently unrequires it.
+
+The checks run on the `main` *merge* of a PR branch, not on the branch alone, so a change that only breaks in combination with another still fails before it deploys.
+
+## Testing
+
+Vitest + jsdom, in [tests/](tests/), no build step needed (all four entry HTML files are tracked). `tsconfig.test.json` puts them in the `tsc -b` graph, so they are type-checked with the same strictness as `src`.
+
+The suite is not unit coverage of components — it is the invariants this repo's structure depends on and which nothing else notices:
+
+| File | Guards |
+|---|---|
+| `render.test.tsx` | every page and section renders in both languages with no unlabelled link/button/heading and no `undefined` in the output — this is what catches a CTA whose copy was never written |
+| `content-parity.test.ts` | `content.en` / `content.sk` have the *same shape*, not just the same keys: an array that grew on one side, or an optional filled in on one side, fails here where the `Content` interface cannot see it |
+| `seo-registry.test.ts` | the five-place checklist for adding a page (entry HTML on disk, `vite.config.ts` input, `PATHS`, `META`, `structuredData`, `scripts/seo.mjs`) agrees with itself; its `Record<Page, …>` means a new page in the union fails `tsc` until it is listed |
+| `entry-html.test.ts` | the anti-white-flash markup in all four entries (inline `#060811` literal, both font preloads with `crossorigin`) and that the boot shell ships both languages with `detectLang`'s own rules |
+| `lang.test.ts` | `detectLang()` precedence, `cs`→`sk`, that a *detected* language is never persisted, and that storage throwing does not break resolution |
+| `choreo.test.ts` | `LX` length tracks `PROJECT_COUNT`, every project gets a reachable stretch of scroll, splash/handoff boundaries, `window.__P` override |
+| `projects.test.ts` | `PANELS` per language lines up with `PROJECTS`, each screen spec has what `screenTexture.ts` draws, and every slug's `.webp` is on disk |
+| `blog.test.tsx` | 106 posts have both languages and balanced body HTML, `content.insights.items` mirrors `POSTS` exactly (title, tag, date, newest first), and pagination shows all of them across 11 pages with none repeated |
+
+Two gaps are **recorded in the tests rather than hidden**, each with the offending name listed so the assertion still fires on anything new:
+- `content.work.sub` is blank in both languages and read by nothing — the Work section renders `note` in that slot (`KNOWN_BLANK` in `content-parity.test.ts`).
+- `ecostruxure-it`, `beumer-localchat` and `aperia` have EN `role`/`challenge`/`approach`/`outcome` with no Slovak counterpart, so their `/projects/?p=<slug>` detail sections are empty in SK (`LONG_FORM_GAP` in `projects.test.ts`). Shrinking either list keeps the suite green; growing it turns it red.
+
+`npm run lint` fails on oxlint *errors* only — the ~12 pre-existing warnings in `src/three/` and `App.tsx` do not block a merge. Adding `--deny-warnings` means fixing those first.
 
 ## Architecture
 
@@ -206,3 +244,5 @@ The first two items are solved — extend them rather than working around them. 
 ## Content caveats
 
 Case studies, stats, testimonials, contact details and the footer legal line are illustrative placeholders for a newly founded company (see README). The contact form is front-end only — it simulates a submit and posts nowhere.
+
+Three projects (`ecostruxure-it`, `beumer-localchat`, `aperia`) carry their long-form `challenge`/`approach`/`outcome` in English only, so those detail sections are missing on the Slovak `/projects/?p=<slug>`. Recorded in `projects.test.ts` (see Testing) rather than left to be rediscovered.
