@@ -172,7 +172,7 @@ body[data-scrolled="true"] .nav {
   flex-direction: column;
   align-items: flex-end;
   text-align: right;
-  max-width: 500px;
+  max-width: 540px;
 }
 .hero__overlay .btn {
   pointer-events: auto;
@@ -183,7 +183,8 @@ body[data-scrolled="true"] .nav {
   gap: 9px;
   font-family: var(--font-mono);
   font-size: 12px;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
   text-transform: uppercase;
   color: var(--text-2);
   border: 1px solid var(--line);
@@ -210,24 +211,27 @@ body[data-scrolled="true"] .nav {
 .hero__tag {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(22px, 3.4vw, 40px);
+  font-size: clamp(24px, 2.6vw, 37px);
   letter-spacing: -0.02em;
   color: var(--text);
-  margin: 18px 0 0;
-  max-width: 15ch;
+  margin: 26px 0 0;
+  line-height: 1.22;
+  text-wrap: pretty;
 }
 .hero__sub {
   color: var(--text-2);
-  font-size: 16px;
-  max-width: 46ch;
-  margin: 18px 0 0;
+  font-size: clamp(16px, 1.05vw, 18px);
+  line-height: 1.65;
+  margin: 24px 0 0;
+  text-align: justify;
 }
 .hero__cta {
   display: flex;
   gap: 14px;
   margin-top: 30px;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
+  align-self: stretch;
 }
 .hero__hint {
   position: absolute;
@@ -244,6 +248,7 @@ body[data-scrolled="true"] .nav {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--text-2);
+  white-space: nowrap;
   /* The arrow is the only sign that a 940vh opening sequence is still running, so it
      outlives --hero-fade and leaves with the handoff instead. */
   opacity: calc(1 - var(--handoff));
@@ -411,7 +416,7 @@ body[data-scrolling="true"] .hero__hint-arrow {
   opacity: 0.82;
   transform: translateX(2px);
 }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-width: 1199.98px) and (orientation: portrait) {
   /* Mobile hero: the laptop is centred + lifted into the upper half by the 3D layer,
      so all text lives in the lower half, centred, and never overlaps the model. */
   .hero__glow {
@@ -425,7 +430,8 @@ body[data-scrolling="true"] .hero__hint-arrow {
     justify-content: center;
     /* the bottom strip is the scroll cue's — the CTA stops above it. There is spare room
        between the laptop and the badge, so the column moves up rather than crowding. */
-    padding: 0 22px calc(122px + env(safe-area-inset-bottom, 0px));
+    padding: 0 22px
+      calc(104px + clamp(0px, (100svh - 667px) * 0.26, 60px) + env(safe-area-inset-bottom, 0px));
   }
   .hero__col {
     align-items: center;
@@ -437,17 +443,19 @@ body[data-scrolling="true"] .hero__hint-arrow {
     font-size: 10.5px;
     letter-spacing: 0.18em;
     padding: 7px 13px;
+    white-space: normal;
   }
   .hero__wordmark {
-    margin-top: 12px;
+    margin-top: clamp(12px, (100svh - 667px) * 0.06 + 12px, 22px);
   }
   .hero__wordmark .wordmark__text {
     width: clamp(150px, 44vw, 300px);
   }
   .hero__tag {
     font-size: clamp(19px, 5.2vw, 26px);
-    max-width: 20ch;
-    margin: 12px auto 0;
+    max-width: 28ch;
+    margin: clamp(12px, (100svh - 667px) * 0.06 + 12px, 22px) auto 0;
+    text-wrap: balance;
   }
   /* keep the splash short so it never crowds the laptop — the full pitch lives in the sections below */
   .hero__sub {
@@ -456,15 +464,13 @@ body[data-scrolling="true"] .hero__hint-arrow {
   .hero__cta {
     justify-content: center;
     width: 100%;
-    margin-top: 20px;
+    margin-top: clamp(20px, (100svh - 667px) * 0.07 + 20px, 32px);
+    gap: 12px;
   }
-  .hero__cta .btn--primary {
+  .hero__cta .btn {
     width: 100%;
     justify-content: center;
     text-align: center;
-  }
-  .hero__cta .btn--ghost {
-    display: none;
   }
   .hero__hint {
     /* the mobile project panel takes this spot once the carousel starts, so the cue
@@ -536,6 +542,14 @@ body[data-scrolling="true"] .hero__hint-arrow {
   .project-panel.mobile .project-panel__stack {
     padding-top: 14px;
     font-size: 11px;
+  }
+}
+/* A portrait tablet has far more height than the text needs, so bottom-pinning leaves a
+   hole under the laptop. Its underside sits at ~38% of the height, so start just below. */
+@media (min-width: 600px) and (max-width: 1199.98px) and (orientation: portrait) {
+  .hero__overlay {
+    align-items: flex-start;
+    padding-top: 44svh;
   }
 }
 
