@@ -1240,10 +1240,9 @@ body[data-scrolling="true"] .hero__hint-arrow {
   }
 }
 
-@media (max-width: 720px) {
-  .section {
-    padding: 88px 0;
-  }
+/* The full nav needs ~950px in English before "About us" wraps, so the burger takes over
+   here rather than at the 720px phone breakpoint. */
+@media (max-width: 1000px) {
   .nav__inner {
     grid-template-columns: auto 1fr;
   }
@@ -1299,6 +1298,12 @@ body[data-scrolling="true"] .hero__hint-arrow {
   }
   .nav__burger {
     display: flex;
+  }
+}
+
+@media (max-width: 720px) {
+  .section {
+    padding: 88px 0;
   }
   .svc-grid,
   .tech-grid,
