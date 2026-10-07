@@ -14,6 +14,10 @@ const MODEL_FIT = 3.4;
 // Below this canvas width we drop the left/right travel: the laptop stays centred
 // and lifted into the upper half so the project description can sit beneath it.
 const MOBILE_MAX = 900;
+// A portrait tablet is wide enough for the side layout, but the laptop is sized from the
+// height there, so it overflows the left edge and sits under the text. Keep in step with
+// the hero @media in components.css and ProjectPanel.
+const PORTRAIT_STACK_MAX = 1200;
 const MOBILE_Y = 1.02; // how far up the laptop floats (leaves the lower half for text)
 const MOBILE_SCALE = 0.42; // base fit scale (smaller so it never clips on a narrow screen)
 
@@ -124,7 +128,8 @@ export function Macbook() {
     const p = currentProgress();
     const t = state.clock.elapsedTime;
     const root = document.documentElement.style;
-    const mobile = state.size.width < MOBILE_MAX;
+    const { width: w, height: h } = state.size;
+    const mobile = w < MOBILE_MAX || (w < PORTRAIT_STACK_MAX && h >= w);
     // Under prefers-reduced-motion the laptop holds wherever the scroll put it:
     // the choreography is the user's own scrolling, the float/sway is not.
     const idle = motionPref.reduced ? 0 : 1;

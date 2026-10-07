@@ -8,10 +8,11 @@ export function ProjectPanel({ running }: { running: boolean }) {
   const [st, setSt] = useState<ShowState>({ index: 0, side: "right", active: false });
   const prev = useRef<ShowState>({ index: -1, side: "right", active: false });
 
-  // below 900px the panel is pinned beneath the (centred) laptop rather than beside it
+  // below 900px, or on a portrait tablet (same rule as Macbook.tsx), the panel is pinned
+  // beneath the (centred) laptop rather than beside it
   const [mobile, setMobile] = useState(false);
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 899.98px)");
+    const mq = window.matchMedia("(max-width: 899.98px), (max-width: 1199.98px) and (orientation: portrait)");
     const on = () => setMobile(mq.matches);
     on();
     mq.addEventListener("change", on);

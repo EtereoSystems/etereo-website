@@ -149,7 +149,7 @@ ${POSTS.map((p) => `- ${p.title.en} (${p.tag.en}, ${p.date}) — ${SITE_URL}/blo
 
 ## O firme (slovensky)
 
-ETEREO (ETEREO s.r.o.) je slovenská softvérová firma so sídlom v Bratislave. Prestavujeme systémy, na ktorých etablované firmy denne bežia: modernizácia starších platforiem, softvér na mieru, SaaS produkty a mobilný aj webový vývoj. Stratégia, architektúra a dodanie pod jednou strechou — jeden tím, ktorý za výsledok ručí. Pracujeme na diaľku, v slovenčine aj angličtine, pre klientov na Slovensku aj v zahraničí.
+ETEREO (ETEREO s.r.o.) je slovenská softvérová firma so sídlom v Bratislave. Vyvíjame a modernizujeme firemné systémy na mieru: modernizácia starších platforiem, softvér na mieru, SaaS produkty a mobilný aj webový vývoj. Stratégia, architektúra a dodanie pod jednou strechou — jeden tím, ktorý za výsledok ručí. Pracujeme na diaľku, v slovenčine aj angličtine, pre klientov na Slovensku aj v zahraničí.
 
 - Služby: digitálna transformácia a modernizácia systémov, softvér na mieru, SaaS produkty, mobilný vývoj (iOS, Android), webové platformy, cloud a DevOps.
 - Odvetvia: financie, zdravotníctvo, logistika, energetika, retail a verejný sektor.

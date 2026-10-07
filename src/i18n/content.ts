@@ -143,7 +143,7 @@ const en: Content = {
   nav: { services: "Services", process: "Process", work: "Work", industries: "Industries", about: "About us", insights: "Blog", start: "Start a project" },
   hero: {
     badge: "Digital transformation engineering",
-    tagline: "We rebuild the systems your business already runs on.",
+    tagline: "Custom software and system modernization for the business you already run.",
     sub: "Established companies hire us to modernise legacy platforms, ship SaaS products, and put mobile and web engineering on a footing that lasts. Strategy, architecture, delivery — one accountable team.",
     primary: "Book a discovery call",
     secondary: "See our work",
@@ -433,7 +433,7 @@ const sk: Content = {
   nav: { services: "Služby", process: "Postup", work: "Projekty", industries: "Odvetvia", about: "O nás", insights: "Blog", start: "Začať projekt" },
   hero: {
     badge: "Softvérové inžinierstvo a digitálna transformácia",
-    tagline: "Prestavujeme systémy, na ktorých vaša firma denne beží.",
+    tagline: "Vývoj a modernizácia firemných systémov na mieru.",
     sub: "Etablované firmy nás oslovujú, keď treba zmodernizovať staršie platformy, dodať SaaS produkty a postaviť mobilný aj webový vývoj na základoch, ktoré vydržia. Stratégia, architektúra a dodanie — jeden tím, ktorý za výsledok ručí.",
     primary: "Dohodnúť si úvodný hovor",
     secondary: "Pozrieť projekty",
