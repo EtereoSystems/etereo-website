@@ -4,6 +4,8 @@ import AboutPage from "../src/pages/AboutPage";
 import BlogPage from "../src/pages/BlogPage";
 import ProjectsPage from "../src/pages/ProjectsPage";
 import { Contact } from "../src/components/Contact";
+import { Footer } from "../src/components/Footer";
+import { Nav } from "../src/components/Nav";
 import * as Sections from "../src/sections/Sections";
 import { SITE } from "../src/config";
 import { useUI, type Lang } from "../src/store";
@@ -69,7 +71,7 @@ describe("subpage chrome", () => {
   });
 
   // Nav/Footer anchors are prefixed per page (base="" on home, "/" on a subpage), so a
-  // subpage linking to a bare "#services" would scroll its own page instead of home.
+  // subpage linking to a bare "#products" would scroll its own page instead of home.
   it.each([
     ["AboutPage", AboutPage],
     ["ProjectsPage", ProjectsPage],
@@ -80,5 +82,38 @@ describe("subpage chrome", () => {
       (a) => a.getAttribute("href"),
     );
     expect(bare).toEqual([]);
+  });
+});
+
+describe("home page anchors", () => {
+  beforeEach(() => {
+    useUI.setState({ lang: "en" });
+  });
+
+  // Renaming a section's id breaks every link to it without an error: the link still
+  // navigates, it just stops at the top of the page.
+  it("every #anchor the nav and footer use has a target", () => {
+    const { container } = render(
+      <>
+        <Nav />
+        {Object.entries(SECTIONS).map(([name, Section]) => (
+          <Section key={name} />
+        ))}
+        <Footer />
+      </>,
+    );
+    const ids = [...container.querySelectorAll("[id]")].map((el) => el.id);
+    const targets = [...container.querySelectorAll<HTMLAnchorElement>("a[href*='#']")]
+      .map((a) => a.getAttribute("href")!.split("#")[1])
+      // the hero's own id; rendering Hero would pull in the 3D stack
+      .filter((id) => id !== "top");
+    expect(targets.length).toBeGreaterThan(0);
+    for (const id of targets) expect(ids, `#${id} has no target`).toContain(id);
+  });
+
+  // Products was #services, and bookmarks, search results and other sites still say so.
+  it("keeps #services landing on the products section", () => {
+    const { container } = render(<Sections.Products />);
+    expect(container.querySelector("section#products #services")).not.toBeNull();
   });
 });

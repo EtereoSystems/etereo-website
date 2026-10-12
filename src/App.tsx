@@ -5,7 +5,7 @@ import { Hero } from "./components/Hero";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
 import {
-  Services,
+  Products,
   Process,
   Tech,
   Work,
@@ -117,7 +117,7 @@ export default function App() {
       <Nav />
       <Hero />
       <main>
-        <Services />
+        <Products />
         <Process />
         <Tech />
         <Work />

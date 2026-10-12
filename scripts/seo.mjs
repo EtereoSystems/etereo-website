@@ -99,16 +99,15 @@ writeFileSync(resolve(pub, "sitemap.xml"), sitemap);
 // ── llms.txt (the "AI SEO" file: a clean, quotable brief for LLMs) ───────────────
 const llms = `# ETEREO
 
-> ETEREO (legal name ETEREO s.r.o.) is a Slovakia-based software house that rebuilds the systems established companies already run on. Founded in 2026 by Patrik Klimko and Matej Kučera, ETEREO delivers legacy modernisation, custom software, SaaS products, and mobile & web engineering with one accountable team — strategy, architecture and delivery together. Remote-first, based in Bratislava, working across Slovakia, Central Europe and internationally, in English and Slovak.
+> ETEREO (legal name ETEREO s.r.o.) is a Slovakia-based software house that rebuilds the systems established companies already run on. Founded in 2026 by Patrik Klimko and Matej Kučera, ETEREO delivers AI process automation, custom software and system modernisation, SaaS products, web & mobile applications, and cloud & DevOps with one accountable team — strategy, architecture and delivery together. Remote-first, based in Bratislava, working across Slovakia, Central Europe and internationally, in English and Slovak.
 
-## What ETEREO does
+## Products
 
-- **Digital transformation** — legacy platforms replatformed in slices, with the business running the whole way through (no big-bang cutovers).
-- **Custom software** — line-of-business systems built around how an operation actually works.
-- **SaaS products** — multi-tenant products from zero: billing, entitlements, admin, telemetry.
-- **Mobile engineering** — iOS, Android and cross-platform apps with offline behaviour and release automation.
-- **Web platforms** — sites, portals and commerce fronts engineered for performance and accessibility (WCAG 2.2).
-- **Cloud & platform** — infrastructure as code, CI/CD, observability and cost control.
+- **AI process automation** — AI agents connected directly to ERP, CRM and internal systems take over handling documents, emails, orders and customer requests. Human oversight where it matters, an audit trail of every step, built to comply with GDPR and the EU AI Act. Includes a process audit with ROI estimate, an internal knowledge base (an AI assistant over the client's documents), and monitoring of quality, accuracy and cost.
+- **Custom software & system modernization** — business systems built around how an operation actually works; legacy platforms modernized piece by piece while the business keeps running, with no risky overnight migrations.
+- **SaaS product development** — multi-tenant platforms from the first release to scale: billing, permissions, admin and analytics.
+- **Web & mobile applications** — websites, portals, e-shops and iOS and Android apps designed for performance, accessibility (WCAG 2.2) and long-term growth, with automated releases and app store operations.
+- **Cloud & DevOps** — infrastructure as code, CI/CD, monitoring and cost control on AWS and Azure.
 
 ## How ETEREO works
 
@@ -151,7 +150,7 @@ ${POSTS.map((p) => `- ${p.title.en} (${p.tag.en}, ${p.date}) — ${SITE_URL}/blo
 
 ETEREO (ETEREO s.r.o.) je slovenská softvérová firma so sídlom v Bratislave. Vyvíjame a modernizujeme firemné systémy na mieru: modernizácia starších platforiem, softvér na mieru, SaaS produkty a mobilný aj webový vývoj. Stratégia, architektúra a dodanie pod jednou strechou — jeden tím, ktorý za výsledok ručí. Pracujeme na diaľku, v slovenčine aj angličtine, pre klientov na Slovensku aj v zahraničí.
 
-- Služby: digitálna transformácia a modernizácia systémov, softvér na mieru, SaaS produkty, mobilný vývoj (iOS, Android), webové platformy, cloud a DevOps.
+- Produkty: AI automatizácia procesov, softvér na mieru a modernizácia systémov, vývoj SaaS produktov, webové a mobilné aplikácie (iOS, Android), cloud a DevOps.
 - Odvetvia: financie, zdravotníctvo, logistika, energetika, retail a verejný sektor.
 - Kontakt: info@etereosystems.com · Bratislava, Slovensko.
 

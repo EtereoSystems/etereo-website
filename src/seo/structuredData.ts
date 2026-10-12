@@ -13,6 +13,7 @@ import type { Lang } from "../store";
 
 const KEYWORDS_EN = [
   "software development company",
+  "AI process automation",
   "digital transformation",
   "legacy system modernisation",
   "custom software development",
@@ -27,6 +28,7 @@ const KEYWORDS_EN = [
 const KEYWORDS_SK = [
   "softvérová firma",
   "vývoj softvéru",
+  "AI automatizácia procesov",
   "digitálna transformácia",
   "modernizácia starších systémov",
   "softvér na mieru",
@@ -76,11 +78,11 @@ function professionalService(lang: Lang) {
     areaServed: SITE.areaServed.map((name) => ({ "@type": "AdministrativeArea", name })),
     knowsAbout: keywords(lang),
     ...(SITE.sameAs.length ? { sameAs: SITE.sameAs } : {}),
-    // the six disciplines, exposed as an offer catalog
+    // the five products, exposed as an offer catalog
     hasOfferCatalog: {
       "@type": "OfferCatalog",
-      name: c.services.title,
-      itemListElement: c.services.items.map((s) => ({
+      name: `${SITE.name} ${c.products.eyebrow}`,
+      itemListElement: [c.products.featured, ...c.products.items].map((s) => ({
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",

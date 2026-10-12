@@ -1,28 +1,75 @@
 import { useState } from "react";
 import { useContent } from "../i18n";
 
-export function Services() {
-  const c = useContent();
+function ProductTags({ tags }: { tags: string[] }) {
   return (
-    <section id="services" className="section">
+    <ul className="prod__tags">
+      {tags.map((t) => (
+        <li className="chip" key={t}>
+          {t}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function Products() {
+  const c = useContent();
+  const { featured: f, items } = c.products;
+  return (
+    <section id="products" className="section products">
+      {/* This section was #services; links to that still land here, at the same spot. */}
+      <span id="services" className="products__alias" />
       <div className="container">
         <div className="section-head reveal">
-          <h2>{c.services.title}</h2>
-          <p>{c.services.sub}</p>
+          <div className="eyebrow">{c.products.eyebrow}</div>
+          <h2>{c.products.title}</h2>
+          <p>{c.products.sub}</p>
         </div>
-        <div className="svc-grid">
-          {c.services.items.map((s) => (
-            <article className="card svc reveal" key={s.id}>
-              <div className="svc__n">{s.id}</div>
+
+        <article className="card prod prod--featured reveal">
+          <div className="prod--featured__main">
+            <div className="prod__top">
+              <span className="prod__n" aria-hidden="true">
+                {f.id}
+              </span>
+              <span className="prod__badge">{f.badge}</span>
+            </div>
+            <h3>{f.title}</h3>
+            <p className="prod__lead">{f.subtitle}</p>
+            <p>{f.body}</p>
+            <div className="prod__action">
+              <a href="#contact" className="btn btn--primary prod__cta">
+                {/* one flex item with a no-break space, so a wrapped label keeps its arrow */}
+                <span>
+                  {f.cta}
+                  {"\u00a0"}
+                  <span aria-hidden="true">→</span>
+                </span>
+              </a>
+            </div>
+          </div>
+          <div className="prod--featured__side">
+            <h4 className="prod__list-title">{f.listTitle}</h4>
+            <ul className="prod__list">
+              {f.list.map((x) => (
+                <li key={x}>{x}</li>
+              ))}
+            </ul>
+            <ProductTags tags={f.tags} />
+          </div>
+        </article>
+
+        <div className="prod-grid">
+          {items.map((s) => (
+            <article className="card prod reveal" key={s.id}>
+              <span className="prod__n" aria-hidden="true">
+                {s.id}
+              </span>
               <h3>{s.title}</h3>
               <p>{s.body}</p>
-              <div className="svc__tags">
-                {s.tags.map((t) => (
-                  <span className="chip" key={t}>
-                    {t}
-                  </span>
-                ))}
-              </div>
+              <ProductTags tags={s.tags} />
+              {/* TODO: link to product subpage when created */}
             </article>
           ))}
         </div>

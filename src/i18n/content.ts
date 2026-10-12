@@ -1,10 +1,18 @@
 import type { Lang } from "../store";
 
-export interface Service {
+export interface Product {
   id: string;
   title: string;
   body: string;
   tags: string[];
+}
+/** P/01 — the one product the home page sells in full, with a CTA of its own */
+export interface FeaturedProduct extends Product {
+  badge: string;
+  subtitle: string;
+  listTitle: string;
+  list: string[];
+  cta: string;
 }
 export interface Phase {
   n: string;
@@ -89,7 +97,7 @@ export interface Article {
 }
 
 export interface Content {
-  nav: { services: string; process: string; work: string; industries: string; about: string; insights: string; start: string };
+  nav: { products: string; process: string; work: string; industries: string; about: string; insights: string; start: string };
   hero: {
     badge: string;
     tagline: string;
@@ -100,7 +108,7 @@ export interface Content {
     screenTag: string;
     screenTitle: string;
   };
-  services: { title: string; sub: string; items: Service[] };
+  products: { eyebrow: string; title: string; sub: string; featured: FeaturedProduct; items: Product[] };
   process: { title: string; sub: string; items: Phase[] };
   tech: { title: string; sub: string; groups: { label: string; items: string[] }[] };
   work: { eyebrow: string; title: string; sub: string; note: string; all: string; items: WorkCase[] };
@@ -140,7 +148,7 @@ export interface Content {
 }
 
 const en: Content = {
-  nav: { services: "Services", process: "Process", work: "Work", industries: "Industries", about: "About us", insights: "Blog", start: "Start a project" },
+  nav: { products: "Products", process: "Process", work: "Work", industries: "Industries", about: "About us", insights: "Blog", start: "Start a project" },
   hero: {
     badge: "Digital transformation engineering",
     tagline: "Custom software and system modernization for the business you already run.",
@@ -151,16 +159,32 @@ const en: Content = {
     screenTag: "Active engagement",
     screenTitle: "Delivery console",
   },
-  services: {
-    title: "Six disciplines, one delivery team",
-    sub: "We are not a marketplace of freelancers. Every engagement is staffed from the same bench, held to the same architecture review, and shipped on the same release discipline.",
+  products: {
+    eyebrow: "Products",
+    title: "Software, AI and cloud under one roof",
+    sub: "Five clearly defined products with a fixed scope, process and accountability. Each one is delivered by the same senior team, goes through the same architecture review and ships the same way – from the first analysis to production.",
+    featured: {
+      id: "P/01",
+      title: "AI process automation",
+      badge: "AI-first",
+      subtitle: "AI agents take over the repetitive work. Your people focus on decisions.",
+      body: "We identify the processes that cost your team the most time – handling documents, emails, orders or customer requests – and deploy AI agents connected directly to your ERP, CRM and internal systems. Human oversight stays where it matters, every step leaves an audit trail, and everything is built to comply with GDPR and the EU AI Act.",
+      listTitle: "What you get",
+      list: [
+        "Process audit and ROI estimate",
+        "AI agents integrated into your systems",
+        "Internal knowledge base – an AI assistant over your documents",
+        "Monitoring of quality, accuracy and cost",
+      ],
+      tags: ["AI agents", "LLM integrations", "RAG", "Workflow automation"],
+      // no trailing arrow: the component draws it, hidden from screen readers
+      cta: "See what can be automated",
+    },
     items: [
-      { id: "S/01", title: "Digital transformation", body: "Legacy platforms replatformed in slices, with the business running the whole way through. No big-bang cutovers.", tags: ["Assessment", "Replatforming", "Data migration"] },
-      { id: "S/02", title: "Custom software", body: "Line-of-business systems built around how your operation actually works, not around a vendor's roadmap.", tags: ["Architecture", "Integrations", "Workflow"] },
-      { id: "S/03", title: "SaaS products", body: "Multi-tenant products from zero: billing, entitlements, admin, telemetry and the boring parts that decide whether you scale.", tags: ["Multi-tenancy", "Billing", "Analytics"] },
-      { id: "S/04", title: "Mobile engineering", body: "iOS, Android and cross-platform apps with offline behaviour, release automation and store operations handled.", tags: ["iOS", "Android", "React Native"] },
-      { id: "S/05", title: "Web platforms", body: "Marketing sites, portals and commerce fronts engineered for performance budgets and accessibility, not just for launch day.", tags: ["Next.js", "Headless CMS", "Commerce"] },
-      { id: "S/06", title: "Cloud & platform", body: "Infrastructure as code, CI/CD, observability and cost control — so shipping stops being an event.", tags: ["AWS", "Kubernetes", "Terraform"] },
+      { id: "P/02", title: "Custom software & system modernization", body: "Business systems built around how you actually work – not around a vendor's roadmap. We modernize legacy platforms piece by piece while your business keeps running, with no risky overnight migrations.", tags: ["Architecture", "Integrations", "Data migration"] },
+      { id: "P/03", title: "SaaS product development", body: "Multi-tenant platforms from the first release to scale: billing, permissions, admin and analytics – including the unglamorous parts that decide whether a product succeeds.", tags: ["Multi-tenancy", "Subscriptions & billing", "Analytics"] },
+      { id: "P/04", title: "Web & mobile applications", body: "Websites, portals, e-shops and iOS and Android apps designed for performance, accessibility and long-term growth – with automated releases and app store operations.", tags: ["Next.js", "React Native", "Headless CMS"] },
+      { id: "P/05", title: "Cloud & DevOps", body: "Infrastructure as code, CI/CD, monitoring and cost control on AWS and Azure – so shipping a new version becomes routine, not an event.", tags: ["AWS / Azure", "Kubernetes", "Terraform"] },
     ],
   },
   process: {
@@ -420,7 +444,7 @@ const en: Content = {
   footer: {
     blurb: "Software engineering and digital transformation for companies whose systems already carry real weight.",
     cols: [
-      { title: "Services", links: [{ label: "Digital transformation", href: "/#services" }, { label: "Custom software", href: "/#services" }, { label: "SaaS products", href: "/#services" }, { label: "Mobile & web", href: "/#services" }] },
+      { title: "Products", links: [{ label: "AI automation", href: "/#products" }, { label: "Custom software", href: "/#products" }, { label: "SaaS development", href: "/#products" }, { label: "Web & mobile", href: "/#products" }, { label: "Cloud & DevOps", href: "/#products" }] },
       { title: "Company", links: [{ label: "Work", href: "/projects/" }, { label: "Team", href: "/about/" }, { label: "Blog", href: "/blog/" }] },
       { title: "Contact", links: [{ label: "Start a project", href: "/#contact" }, { label: "Engagement models", href: "/#engage" }, { label: "FAQ", href: "/#faq" }, { label: "Industries", href: "/#industries" }] },
     ],
@@ -430,7 +454,7 @@ const en: Content = {
 };
 
 const sk: Content = {
-  nav: { services: "Služby", process: "Postup", work: "Projekty", industries: "Odvetvia", about: "O nás", insights: "Blog", start: "Začať projekt" },
+  nav: { products: "Produkty", process: "Postup", work: "Projekty", industries: "Odvetvia", about: "O nás", insights: "Blog", start: "Začať projekt" },
   hero: {
     badge: "Softvérové inžinierstvo a digitálna transformácia",
     tagline: "Vývoj a modernizácia firemných systémov na mieru.",
@@ -441,16 +465,31 @@ const sk: Content = {
     screenTag: "Aktívny projekt",
     screenTitle: "Konzola projektu",
   },
-  services: {
-    title: "Šesť disciplín, jeden dodávkový tím",
-    sub: "Nie sme trhovisko freelancerov. Za každým projektom stojí ten istý tím, prechádza rovnakou architektonickou revíziou a nasadzuje sa podľa rovnakého procesu.",
+  products: {
+    eyebrow: "Produkty",
+    title: "Softvér, AI a cloud pod jednou strechou",
+    sub: "Päť jasne definovaných produktov s pevným rozsahom, procesom a zodpovednosťou. Za každým stojí ten istý seniorný tím, rovnaká architektonická revízia a rovnaký spôsob nasadenia – od prvej analýzy až po prevádzku.",
+    featured: {
+      id: "P/01",
+      title: "AI automatizácia procesov",
+      badge: "AI-first",
+      subtitle: "Opakovanú prácu prevezmú AI agenti. Vaši ľudia sa venujú rozhodovaniu.",
+      body: "Nájdeme procesy, ktoré vášmu tímu berú najviac času – spracovanie dokumentov, e-mailov, objednávok či zákazníckych požiadaviek – a nasadíme AI agentov napojených priamo na vaše ERP, CRM a interné systémy. S ľudskou kontrolou tam, kde na nej záleží, s auditnou stopou každého kroku a v súlade s GDPR a AI Act.",
+      listTitle: "Čo dostanete",
+      list: [
+        "Audit procesov a odhad návratnosti investície",
+        "AI agenti integrovaní do vašich systémov",
+        "Interná znalostná báza – AI asistent nad vašimi dokumentmi",
+        "Monitoring kvality, presnosti a nákladov",
+      ],
+      tags: ["AI agenti", "LLM integrácie", "RAG", "Automatizácia workflow"],
+      cta: "Zistiť, čo sa dá automatizovať",
+    },
     items: [
-      { id: "S/01", title: "Digitálna transformácia", body: "Staršie platformy prestavujeme po častiach, za plnej prevádzky firmy. Žiadne rizikové migrácie zo dňa na deň.", tags: ["Analýza", "Prestavba", "Migrácia dát"] },
-      { id: "S/02", title: "Softvér na mieru", body: "Firemné systémy postavené okolo toho, ako reálne pracujete — nie okolo roadmapy dodávateľa.", tags: ["Architektúra", "Integrácie", "Procesy"] },
-      { id: "S/03", title: "SaaS produkty", body: "Multi-tenant produkty od nuly: fakturácia, oprávnenia, administrácia, telemetria aj tie nezáživné časti, ktoré rozhodujú o tom, či škálujete.", tags: ["Multi-tenancy", "Fakturácia", "Analytika"] },
-      { id: "S/04", title: "Mobilný vývoj", body: "iOS, Android a cross-platform aplikácie s offline režimom, automatizovaným vydávaním a prevádzkou v app storoch.", tags: ["iOS", "Android", "React Native"] },
-      { id: "S/05", title: "Webové platformy", body: "Weby, portály a e-shopy navrhnuté na výkon a prístupnosť — nielen na deň spustenia.", tags: ["Next.js", "Headless CMS", "Commerce"] },
-      { id: "S/06", title: "Cloud a platforma", body: "Infraštruktúra ako kód, CI/CD, monitoring a kontrola nákladov — aby nasadzovanie prestalo byť udalosťou.", tags: ["AWS", "Kubernetes", "Terraform"] },
+      { id: "P/02", title: "Softvér na mieru a modernizácia systémov", body: "Firemné systémy postavené okolo toho, ako reálne pracujete – nie okolo roadmapy dodávateľa. Staršie platformy modernizujeme po častiach a za plnej prevádzky, bez rizikových migrácií zo dňa na deň.", tags: ["Architektúra", "Integrácie", "Migrácia dát"] },
+      { id: "P/03", title: "Vývoj SaaS produktov", body: "Multi-tenant platformy od prvej verzie až po škálovanie: fakturácia, oprávnenia, administrácia a analytika – vrátane tých nezáživných častí, ktoré rozhodujú o úspechu produktu.", tags: ["Multi-tenancy", "Predplatné a fakturácia", "Analytika"] },
+      { id: "P/04", title: "Webové a mobilné aplikácie", body: "Weby, portály, e-shopy a aplikácie pre iOS a Android navrhnuté na výkon, prístupnosť a dlhodobý rozvoj – s automatizovaným vydávaním a prevádzkou v app storoch.", tags: ["Next.js", "React Native", "Headless CMS"] },
+      { id: "P/05", title: "Cloud a DevOps", body: "Infraštruktúra ako kód, CI/CD, monitoring a kontrola nákladov na AWS aj Azure – aby nasadenie novej verzie bolo rutinou, nie udalosťou.", tags: ["AWS / Azure", "Kubernetes", "Terraform"] },
     ],
   },
   process: {
@@ -710,7 +749,7 @@ const sk: Content = {
   footer: {
     blurb: "Softvérové inžinierstvo a digitálna transformácia pre firmy, ktorých systémy už nesú reálnu váhu.",
     cols: [
-      { title: "Služby", links: [{ label: "Digitálna transformácia", href: "/#services" }, { label: "Softvér na mieru", href: "/#services" }, { label: "SaaS produkty", href: "/#services" }, { label: "Mobil a web", href: "/#services" }] },
+      { title: "Produkty", links: [{ label: "AI automatizácia", href: "/#products" }, { label: "Softvér na mieru", href: "/#products" }, { label: "Vývoj SaaS", href: "/#products" }, { label: "Web a mobil", href: "/#products" }, { label: "Cloud a DevOps", href: "/#products" }] },
       { title: "Firma", links: [{ label: "Projekty", href: "/projects/" }, { label: "Tím", href: "/about/" }, { label: "Blog", href: "/blog/" }] },
       { title: "Kontakt", links: [{ label: "Začať projekt", href: "/#contact" }, { label: "Modely spolupráce", href: "/#engage" }, { label: "Časté otázky", href: "/#faq" }, { label: "Odvetvia", href: "/#industries" }] },
     ],

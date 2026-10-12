@@ -63,7 +63,7 @@ The suite is not unit coverage of components — it is the invariants this repo'
 
 | File | Guards |
 |---|---|
-| `render.test.tsx` | every page and section renders in both languages with no unlabelled link/button/heading and no `undefined` in the output — this is what catches a CTA whose copy was never written |
+| `render.test.tsx` | every page and section renders in both languages with no unlabelled link/button/heading and no `undefined` in the output — this is what catches a CTA whose copy was never written. Also: every `#anchor` the nav and footer use has a target on the home page, and `#services` still lands on Products |
 | `content-parity.test.ts` | `content.en` / `content.sk` have the *same shape*, not just the same keys: an array that grew on one side, or an optional filled in on one side, fails here where the `Content` interface cannot see it |
 | `seo-registry.test.ts` | the five-place checklist for adding a page (entry HTML on disk, `vite.config.ts` input, `PATHS`, `META`, `structuredData`, `scripts/seo.mjs`) agrees with itself; its `Record<Page, …>` means a new page in the union fails `tsc` until it is listed |
 | `entry-html.test.ts` | the anti-white-flash markup in all four entries (inline `#060811` literal, both font preloads with `crossorigin`) and that the boot shell ships both languages with `detectLang`'s own rules |
@@ -133,7 +133,7 @@ Adding a page means: a new `<name>/index.html` (copy the static crawler block fr
 
 Subpages share one set of chrome classes — `.subpage`, `.page-head`, `.page-back`, `.page-intro`, `.page-note`, `.page-cta` — so a third page inherits the frame for free. Page-specific classes (`.case*`, `.about-*`, `.roster`, `.facts`) sit under their own banner.
 
-`Nav` takes a `base` prop that prefixes its in-page anchors — `""` on the home page, `"/"` on a subpage so `#services` becomes `/#services`. Three nav items are exceptions that link straight to a subpage from every page:
+`Nav` takes a `base` prop that prefixes its in-page anchors — `""` on the home page, `"/"` on a subpage so `#products` becomes `/#products`. Three nav items are exceptions that link straight to a subpage from every page:
 
 | Nav item | Target | Home page still has |
 |---|---|---|
@@ -209,6 +209,8 @@ Country/IP is deliberately **not** used. The site is static on shared hosting wi
 
 `WorkCase` carries both lengths of the same case study: `body` is the one-sentence teaser the home page shows, while `challenge` / `approach` / `outcome` are rendered only on `/projects/`. `casePage` holds that page's own framing copy and its section labels. Both languages must stay in step — the `Content` interface will not let one drift.
 
+The first section is **Products** (`#products`), which replaced a six-card Services section. It still carries an empty `<span id="services">` pinned to its top, so old `/#services` links land in the same place; `render.test.tsx` keeps it. P/01 is `content.products.featured` (its own type, with a list and a CTA to `#contact`); P/02–P/05 are `items`, with no links until product subpages exist.
+
 Section markup lives in one file, [src/sections/Sections.tsx](src/sections/Sections.tsx), one exported component per section; `App.tsx` composes them. Subpages live in [src/pages/](src/pages/) instead and compose `Nav` / `Footer` directly. Scroll-in animation is opt-in per element by adding the `reveal` class — `useReveal()` observes them once on mount, so elements added after mount won't animate.
 
 ### Styling
@@ -225,9 +227,9 @@ The menu also opens and closes at different speeds — 440 ms out, 280 ms back �
 
 Caveats worth knowing before editing:
 - **Type sizes are not tokenized.** Colours, font families and radii are `:root` tokens; font sizes are literal px (23 distinct values, several half-pixel one-offs like `14.5px`). To match an existing size, grep for it rather than guessing a scale.
-- **`.card` is one visual treatment shared by eight unrelated content types** (services, tech columns, work cases, engagement tiers, voices, team, articles, contact form), including a single hover lift + violet glow. Restyling `.card` changes all of them.
+- **`.card` is one visual treatment shared by eight unrelated content types** (products, tech columns, work cases, engagement tiers, voices, team, articles, contact form), including a single hover lift + violet glow. Restyling `.card` changes all of them.
 - The three families are self-hosted (see Fonts above), not loaded from Google. Changing one means editing `scripts/fonts.mjs` and the matching `--font-*` token.
-- `.eyebrow` survives in exactly two places — Work ("Selected work" qualifies a three-case list as non-exhaustive) and Contact ("Start here" is wayfinding at the end of a long page). It was removed from the other nine sections as decoration; don't reintroduce it as a default label above every heading.
+- `.eyebrow` survives in exactly three places — Products (asked for by name when the section replaced Services), Work ("Selected work" qualifies a three-case list as non-exhaustive) and Contact ("Start here" is wayfinding at the end of a long page). It was removed from the other eight sections as decoration; don't reintroduce it as a default label above every heading.
 
 ### Accessibility baseline
 

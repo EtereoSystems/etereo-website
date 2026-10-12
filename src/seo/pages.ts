@@ -16,15 +16,15 @@ export const PATHS: Record<Page, string> = {
 export const META: Record<Page, Record<Lang, { title: string; description: string; ogLocale: string }>> = {
   home: {
   en: {
-    title: "ETEREO — Software Development & Digital Transformation | Slovakia",
+    title: "ETEREO – Custom software development & AI automation | Bratislava",
     description:
-      "ETEREO is a Slovak software house: legacy modernisation, custom software, SaaS products, and mobile & web engineering. Strategy, architecture, delivery — one accountable team.",
+      "We design and build custom software, SaaS, web and mobile applications, and automate business processes with AI. One senior team from analysis to production.",
     ogLocale: "en_GB",
   },
   sk: {
-    title: "ETEREO — Vývoj softvéru a digitálna transformácia | Slovensko",
+    title: "ETEREO – vývoj softvéru na mieru a AI automatizácia | Bratislava",
     description:
-      "ETEREO je slovenská softvérová firma: modernizácia systémov, softvér na mieru, SaaS produkty a mobilný aj webový vývoj. Stratégia, architektúra, dodanie — jeden zodpovedný tím.",
+      "Navrhujeme a vyvíjame softvér na mieru, SaaS, webové a mobilné aplikácie a automatizujeme firemné procesy pomocou AI. Jeden seniorný tím od analýzy po prevádzku.",
     ogLocale: "sk_SK",
   },
   },
