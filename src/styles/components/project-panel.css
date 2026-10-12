@@ -1,0 +1,162 @@
+/* project explanation panel — alternates sides (opposite the laptop) each project */
+.project-panel {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: min(360px, 33vw);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.project-panel.on {
+  opacity: 1;
+}
+.project-panel.left {
+  left: 7vw;
+}
+.project-panel.right {
+  right: 7vw;
+}
+.project-panel__inner {
+  /* same rise as every .reveal — the hero should not have a motion of its own */
+  animation: panelIn var(--rv-dur) var(--rv-ease) both;
+}
+@keyframes panelIn {
+  from {
+    transform: translateY(var(--rv-shift));
+  }
+  to {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .project-panel__inner {
+    animation: none;
+  }
+}
+.project-panel__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.project-panel__eyebrow span {
+  color: var(--text-3);
+}
+.project-panel__name {
+  font-size: clamp(30px, 3.4vw, 42px);
+  margin: 14px 0 14px;
+}
+.project-panel__tags {
+  margin-bottom: 18px;
+}
+.project-panel__blurb {
+  color: var(--text-2);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.project-panel__metrics {
+  display: flex;
+  gap: 34px;
+  margin: 24px 0 20px;
+}
+.project-panel__val {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.project-panel__lbl {
+  color: var(--text-3);
+  font-size: 13px;
+  margin-top: 2px;
+  max-width: 16ch;
+}
+.project-panel__stack {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  padding-top: 18px;
+  border-top: 1px solid var(--line-soft);
+}
+.project-panel__more {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 18px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  pointer-events: auto; /* clickable inside the otherwise pass-through panel */
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.project-panel__more:hover {
+  opacity: 0.82;
+  transform: translateX(2px);
+}
+
+/* the hero's own breakpoint (components/hero.css), where the laptop moves above the text */
+@media (max-width: 900px), (max-width: 1199.98px) and (orientation: portrait) {
+  /* project description: a centred glass card pinned beneath the laptop */
+  .project-panel.mobile {
+    display: block;
+    top: auto;
+    bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(460px, 89vw);
+    text-align: center;
+  }
+  .project-panel.mobile.left,
+  .project-panel.mobile.right {
+    left: 50%;
+    right: auto;
+  }
+  .project-panel.mobile .project-panel__inner {
+    background: rgba(10, 12, 24, 0.62);
+    border: 1px solid var(--line-soft);
+    border-radius: 20px;
+    padding: 20px 20px 22px;
+    backdrop-filter: blur(16px) saturate(130%);
+    -webkit-backdrop-filter: blur(16px) saturate(130%);
+    box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.8);
+  }
+  .project-panel.mobile .project-panel__eyebrow {
+    font-size: 11px;
+  }
+  .project-panel.mobile .project-panel__name {
+    font-size: clamp(24px, 6.6vw, 32px);
+    margin: 8px 0 12px;
+  }
+  .project-panel.mobile .project-panel__tags {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .project-panel.mobile .project-panel__blurb {
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .project-panel.mobile .project-panel__metrics {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px 26px;
+    margin: 18px 0 16px;
+  }
+  .project-panel.mobile .project-panel__val {
+    font-size: 24px;
+  }
+  .project-panel.mobile .project-panel__lbl {
+    font-size: 12px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .project-panel.mobile .project-panel__stack {
+    padding-top: 14px;
+    font-size: 11px;
+  }
+}

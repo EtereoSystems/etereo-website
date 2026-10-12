@@ -16,7 +16,7 @@ const MODEL_FIT = 3.4;
 const MOBILE_MAX = 900;
 // A portrait tablet is wide enough for the side layout, but the laptop is sized from the
 // height there, so it overflows the left edge and sits under the text. Keep in step with
-// the hero @media in components.css and ProjectPanel.
+// the hero @media in styles/components/hero.css and ProjectPanel.
 const PORTRAIT_STACK_MAX = 1200;
 const MOBILE_Y = 1.02; // how far up the laptop floats (leaves the lower half for text)
 const MOBILE_SCALE = 0.42; // base fit scale (smaller so it never clips on a narrow screen)

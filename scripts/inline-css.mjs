@@ -1,7 +1,7 @@
 // Inlines the built stylesheets into every dist HTML document and drops the files.
 //
 // Runs as `postbuild`, on Vite's output rather than on the sources, so the styles still
-// live only in src/styles/*.css — nothing here is hand-maintained and nothing can drift.
+// live only in src/styles/ — nothing here is hand-maintained and nothing can drift.
 //
 // The site paints its first screen from static HTML (see the boot shell in index.html),
 // which left one render-blocking request between the document and first paint. On a

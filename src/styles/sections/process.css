@@ -1,0 +1,66 @@
+.timeline {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+  text-align: center;
+}
+.timeline__line {
+  position: absolute;
+  top: 26px;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: var(--line);
+}
+.tl__dot {
+  position: relative;
+  z-index: 1;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 22px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text);
+  box-shadow: 0 0 0 6px var(--bg), 0 8px 26px -12px var(--violet-glow);
+}
+.tl h4 {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+.tl p {
+  color: var(--text-2);
+  font-size: 14.5px;
+  max-width: 22ch;
+  margin: 0 auto;
+}
+/* grid already stretches every cell to the tallest; make the cell a column so the
+   artifact label can sit on the bottom edge and line up across all five phases */
+.tl {
+  display: flex;
+  flex-direction: column;
+}
+.tl__artifact {
+  margin-top: auto;
+  padding-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--violet-2);
+}
+
+@media (max-width: 1000px) {
+  .timeline {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 34px 18px;
+  }
+  .timeline__line {
+    display: none;
+  }
+}
