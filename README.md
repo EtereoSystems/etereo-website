@@ -30,10 +30,10 @@ src/
     Macbook.tsx          # model load + scroll choreography (spin / approach / zoom)
     screenTexture.ts     # draws the ETEREO console UI onto the laptop screen
   components/            # Nav, Hero, Wordmark, Contact, Footer, useReveal
-  sections/Sections.tsx  # Services, Process, Tech, Work, Industries, Engage, Voices, Team, Blog, FAQ
+  sections/Sections.tsx  # Products, Process, Tech, Work, Industries, Engage, Voices, Team, Blog, FAQ
   i18n/content.ts        # ALL copy, EN + SK — edit here
   store.ts               # language + hero scroll progress
-  styles/                # global.css (design tokens) + components.css
+  styles/                # global.css (tokens, primitives) + components.css (imports components/, sections/, pages/)
 ```
 
 ## Editing content

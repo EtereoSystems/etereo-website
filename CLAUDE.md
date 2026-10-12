@@ -63,10 +63,11 @@ The suite is not unit coverage of components — it is the invariants this repo'
 
 | File | Guards |
 |---|---|
-| `render.test.tsx` | every page and section renders in both languages with no unlabelled link/button/heading and no `undefined` in the output — this is what catches a CTA whose copy was never written |
+| `render.test.tsx` | every page and section renders in both languages with no unlabelled link/button/heading and no `undefined` in the output — this is what catches a CTA whose copy was never written. Also: every `#anchor` the nav and footer use has a target on the home page, and `#services` still lands on Products |
 | `content-parity.test.ts` | `content.en` / `content.sk` have the *same shape*, not just the same keys: an array that grew on one side, or an optional filled in on one side, fails here where the `Content` interface cannot see it |
 | `seo-registry.test.ts` | the five-place checklist for adding a page (entry HTML on disk, `vite.config.ts` input, `PATHS`, `META`, `structuredData`, `scripts/seo.mjs`) agrees with itself; its `Record<Page, …>` means a new page in the union fails `tsc` until it is listed |
 | `entry-html.test.ts` | the anti-white-flash markup in all four entries (inline `#060811` literal, both font preloads with `crossorigin`) and that the boot shell ships both languages with `detectLang`'s own rules |
+| `css-contract.test.ts` | what components hand the CSS (custom properties, `data-*` flags, `aria-expanded`) has a rule that reads it, every `var()` resolves to something, and every stylesheet under `styles/` is imported by `components.css` exactly once |
 | `lang.test.ts` | `detectLang()` precedence, `cs`→`sk`, that a *detected* language is never persisted, and that storage throwing does not break resolution |
 | `choreo.test.ts` | `LX` length tracks `PROJECT_COUNT`, every project gets a reachable stretch of scroll, splash/handoff boundaries, `window.__P` override |
 | `projects.test.ts` | `PANELS` per language lines up with `PROJECTS`, each screen spec has what `screenTexture.ts` draws, and every slug's `.webp` is on disk |
@@ -131,9 +132,9 @@ All three families are SIL OFL 1.1; the licence ships alongside them in `public/
 
 Adding a page means: a new `<name>/index.html` (copy the static crawler block from an existing one), an entry in `vite.config.ts`, a `PATHS` entry and a `META` block in [src/seo/SeoHead.tsx](src/seo/SeoHead.tsx), a branch in `structuredData()`, and a `paths` entry in `scripts/seo.mjs`.
 
-Subpages share one set of chrome classes — `.subpage`, `.page-head`, `.page-back`, `.page-intro`, `.page-note`, `.page-cta` — so a third page inherits the frame for free. Page-specific classes (`.case*`, `.about-*`, `.roster`, `.facts`) sit under their own banner.
+Subpages share one set of chrome classes — `.subpage`, `.page-head`, `.page-back`, `.page-intro`, `.page-note`, `.page-cta` — so a third page inherits the frame for free. That chrome lives in `styles/pages/subpage.css`; page-specific classes (`.case*`, `.about-*`, `.roster`, `.facts`) are in that page's own file beside it.
 
-`Nav` takes a `base` prop that prefixes its in-page anchors — `""` on the home page, `"/"` on a subpage so `#services` becomes `/#services`. Three nav items are exceptions that link straight to a subpage from every page:
+`Nav` takes a `base` prop that prefixes its in-page anchors — `""` on the home page, `"/"` on a subpage so `#products` becomes `/#products`. Three nav items are exceptions that link straight to a subpage from every page:
 
 | Nav item | Target | Home page still has |
 |---|---|---|
@@ -209,15 +210,25 @@ Country/IP is deliberately **not** used. The site is static on shared hosting wi
 
 `WorkCase` carries both lengths of the same case study: `body` is the one-sentence teaser the home page shows, while `challenge` / `approach` / `outcome` are rendered only on `/projects/`. `casePage` holds that page's own framing copy and its section labels. Both languages must stay in step — the `Content` interface will not let one drift.
 
+The first section is **Products** (`#products`), which replaced a six-card Services section. It still carries an empty `<span id="services">` pinned to its top, so old `/#services` links land in the same place; `render.test.tsx` keeps it. P/01 is `content.products.featured` (its own type, with a list and a CTA to `#contact`); P/02–P/05 are `items`, with no links until product subpages exist.
+
 Section markup lives in one file, [src/sections/Sections.tsx](src/sections/Sections.tsx), one exported component per section; `App.tsx` composes them. Subpages live in [src/pages/](src/pages/) instead and compose `Nav` / `Footer` directly. Scroll-in animation is opt-in per element by adding the `reveal` class — `useReveal()` observes them once on mount, so elements added after mount won't animate.
 
 ### Styling
 
-Plain CSS, no framework: `global.css` (design tokens in `:root` — colours, fonts, radii) and `components.css`. Dark palette only. Add colours as tokens rather than literals.
+Plain CSS, no framework: `global.css` (design tokens in `:root` — colours, fonts, radii, easings) and `components.css`. Dark palette only. Add colours as tokens rather than literals.
 
 **The build inlines them.** `scripts/inline-css.mjs` runs as `postbuild`, replaces the `<link rel="stylesheet">` in all ten built HTML documents with a `<style>` holding the same bytes, and deletes the now-unreferenced assets — so `dist/assets/` ships no CSS at all. It works on Vite's output, never on the sources, so there is still exactly one place styles live and nothing to keep in sync. Two things follow: `dist` HTML is ~36 kB larger (the host serves it brotli-compressed, which is what makes that affordable), and the stylesheet is no longer cached across pages, so a second page pays for it again. That is the right way round for a site people reach from search. If you ever add a stylesheet that should stay a request — something big and genuinely below the fold — this script is where to exempt it.
 
-Shared primitives live in `global.css` and are composed by every section: `.section` / `.section--tight`, `.container` / `.container--narrow`, `.section-head`, `.eyebrow`, `.card`, `.chip`, `.btn` (`--primary` / `--ghost`), `.reveal`, `.grid-bg`. Section-specific classes live in `components.css` under `/* ===== NAME ===== */` banners in the same order as `App.tsx` composes them. A new section means composing the primitives plus one banner block.
+Shared primitives live in `global.css` and are composed by every section: `.section` / `.section--tight`, `.container` / `.container--narrow`, `.section-head`, `.eyebrow`, `.card`, `.chip`, `.btn` (`--primary` / `--ghost`), `.reveal`, `.grid-bg`. Everything else is one file per component, and `components.css` holds nothing but `@import`s of them:
+
+| Folder | One file per | e.g. |
+|---|---|---|
+| `styles/components/` | file in `src/components/` | `nav.css`, `hero.css`, `project-panel.css`, `contact.css` |
+| `styles/sections/` | export of `Sections.tsx` | `products.css`, `process.css`, `faq.css` |
+| `styles/pages/` | subpage | `subpage.css` (shared chrome), `projects.css`, `about.css`, `blog.css`, `blog-article.css` |
+
+A file carries its own breakpoints: the phone and tablet rules for the footer are at the bottom of `footer.css`, not in a shared responsive block. **The import order in `components.css` is the cascade order** — on a specificity tie the later file wins — so home sections are listed as `App.tsx` composes them and the subpages after them. A new section means composing the primitives plus one new file *and its `@import`*; `css-contract.test.ts` fails on a partial that is never imported, because otherwise its rules would silently never load. Every page still loads all of it.
 
 **Two easings, on purpose.** `--rv-ease` is the site's arrival curve and `.reveal`, the project panel and the view transition all read it (see the `--rv-*` note in `global.css`). The mobile menu reads `--menu-ease` instead. `--rv-ease` is a hard ease-out that spends 87% of its distance in the first third of the duration and creeps through the rest — exactly right for something that should already be settled by the time you scroll to it, and a snap for a panel you are watching open, however long you make the duration. Lengthening one without changing the other just adds a tail. If a new interaction is something the user is *watching*, it wants `--menu-ease`; if it is something that should be finished when they arrive, it wants `--rv-ease`.
 
@@ -225,16 +236,16 @@ The menu also opens and closes at different speeds — 440 ms out, 280 ms back �
 
 Caveats worth knowing before editing:
 - **Type sizes are not tokenized.** Colours, font families and radii are `:root` tokens; font sizes are literal px (23 distinct values, several half-pixel one-offs like `14.5px`). To match an existing size, grep for it rather than guessing a scale.
-- **`.card` is one visual treatment shared by eight unrelated content types** (services, tech columns, work cases, engagement tiers, voices, team, articles, contact form), including a single hover lift + violet glow. Restyling `.card` changes all of them.
+- **`.card` is one visual treatment shared by eight unrelated content types** (products, tech columns, work cases, engagement tiers, voices, team, articles, contact form), including a single hover lift + violet glow. Restyling `.card` changes all of them.
 - The three families are self-hosted (see Fonts above), not loaded from Google. Changing one means editing `scripts/fonts.mjs` and the matching `--font-*` token.
-- `.eyebrow` survives in exactly two places — Work ("Selected work" qualifies a three-case list as non-exhaustive) and Contact ("Start here" is wayfinding at the end of a long page). It was removed from the other nine sections as decoration; don't reintroduce it as a default label above every heading.
+- `.eyebrow` survives in exactly three places — Products (asked for by name when the section replaced Services), Work ("Selected work" qualifies a three-case list as non-exhaustive) and Contact ("Start here" is wayfinding at the end of a long page). It was removed from the other eight sections as decoration; don't reintroduce it as a default label above every heading.
 
 ### Accessibility baseline
 
 The first two items are solved — extend them rather than working around them. The rest are open gaps, recorded so they are closed deliberately rather than rediscovered:
 
 - **One shared focus ring** lives in `global.css`: a zero-specificity `:where(a, button, input, …):focus-visible` rule using the `--focus` token. Form fields opt out via `.field input:focus { outline: none }` and carry their own violet border + halo instead. Don't add per-component focus styles; extend the shared rule.
-- **`prefers-reduced-motion` covers every autonomous animation.** Lenis is skipped in `App.tsx`, `.reveal` is neutralised in `global.css`, the tech marquee and the `panelIn` panel entrance stop in `components.css`, and `Macbook.tsx` multiplies its idle `Math.sin(t * …)` float/sway by an `idle` factor read from `motionPref` in [src/store.ts](src/store.ts) (a plain mutable object like `heroScroll`, so the frame loop can read it without re-rendering). Deliberately still moving: the scroll-driven choreography itself (that is the user's own input, and it carries the content), `.card`/`.btn` hover transforms, and the mobile menu's own open/close (they answer a user action). The menu's per-item stagger is decoration and does stop — its override is nested inside the nav's `max-width: 1000px` block rather than hoisted to a top-level one, because it has to beat the `transition-delay` set a few lines above it and a media query carries no specificity of its own, so only source order decides.
+- **`prefers-reduced-motion` covers every autonomous animation.** Lenis is skipped in `App.tsx`, `.reveal` is neutralised in `global.css`, the tech marquee and the `panelIn` panel entrance stop in `sections/tech.css` and `components/project-panel.css`, and `Macbook.tsx` multiplies its idle `Math.sin(t * …)` float/sway by an `idle` factor read from `motionPref` in [src/store.ts](src/store.ts) (a plain mutable object like `heroScroll`, so the frame loop can read it without re-rendering). Deliberately still moving: the scroll-driven choreography itself (that is the user's own input, and it carries the content), `.card`/`.btn` hover transforms, and the mobile menu's own open/close (they answer a user action). The menu's per-item stagger is decoration and does stop — its override is nested inside the nav's `max-width: 1000px` block rather than hoisted to a top-level one, because it has to beat the `transition-delay` set a few lines above it and a media query carries no specificity of its own, so only source order decides.
 
   The mobile menu panel also carries `visibility: hidden` while shut, with the visibility transition delayed by the fade so closing still animates. Before that it was moved off-screen with `translateY(-140%)`, which hides an element from view but leaves it in the tab order — a keyboard user at mobile width could tab into an invisible menu.
 - **The hero's eight projects still have no text equivalent.** `ProjectPanel` is `aria-hidden` and the on-screen copy is rasterised into a `CanvasTexture`, so `PANELS` / `PROJECTS` reach neither assistive tech nor non-JS crawlers. `/projects/` covers only the three `content.work.items` case studies, which are separate data — the two sets are not in sync by design.

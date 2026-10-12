@@ -37,6 +37,9 @@
   --rv-dur: 640ms;
   --rv-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --rv-step: 70ms;
+  /* --rv-ease spends 87% of its distance in the first third — right for something you
+     scroll past, a snap for a panel you watch open. See Styling in CLAUDE.md. */
+  --menu-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -74,7 +77,7 @@ a {
 }
 
 /* One keyboard ring for every interactive element. Form fields opt out in
-   components.css (.field input:focus) — they carry their own border + halo. */
+   components/contact.css (.field input:focus) — they carry their own border + halo. */
 :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 3px;
@@ -108,6 +111,10 @@ img {
   padding: 0 28px;
 }
 
+.container--narrow {
+  max-width: 860px;
+}
+
 .section {
   position: relative;
   padding: 128px 0;
@@ -115,6 +122,13 @@ img {
 
 .section--tight {
   padding: 96px 0;
+}
+
+/* after --tight on purpose: a phone gets the one padding, tight sections included */
+@media (max-width: 720px) {
+  .section {
+    padding: 88px 0;
+  }
 }
 
 /* Section rhythm: a hairline between neighbours plus a barely-there tint on every

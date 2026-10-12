@@ -5,15 +5,16 @@ import { describe, expect, it } from "vitest";
 const root = resolve(import.meta.dirname, "..");
 const read = (p: string) => readFileSync(resolve(root, p), "utf8");
 
-function walk(dir: string): string[] {
+function walk(dir: string, ext = /\.tsx?$/): string[] {
   return readdirSync(resolve(root, dir), { withFileTypes: true }).flatMap((e) => {
-    const p = join(dir, e.name);
-    if (e.isDirectory()) return walk(p);
-    return /\.tsx?$/.test(e.name) ? [p] : [];
+    const p = join(dir, e.name).replace(/\\/g, "/");
+    if (e.isDirectory()) return walk(p, ext);
+    return ext.test(e.name) ? [p] : [];
   });
 }
 
-const css = ["src/styles/global.css", "src/styles/components.css"].map(read).join("\n");
+const stylesheets = walk("src/styles", /\.css$/);
+const css = stylesheets.map(read).join("\n");
 const sources = walk("src").map((p) => [p, read(p)] as const);
 
 const unique = <T,>(xs: T[]) => [...new Set(xs)];
@@ -104,5 +105,25 @@ describe("state the components toggle, the CSS selects on", () => {
   it("styles the burger from its aria-expanded", () => {
     expect(read("src/components/Nav.tsx")).toMatch(/aria-expanded=\{/);
     expect(css).toContain('[aria-expanded="true"]');
+  });
+});
+
+// components.css is only a list of @imports. A partial left off it styles nothing, and
+// nothing fails: the rules simply never reach a page.
+describe("the stylesheet index", () => {
+  const index = read("src/styles/components.css");
+  const imported = [...index.matchAll(/@import "\.\/([^"]+)";/g)].map((m) => "src/styles/" + m[1]);
+  // the three every entry imports itself, in this order, ahead of the index
+  const entryLevel = ["src/styles/fonts.css", "src/styles/global.css", "src/styles/components.css"];
+
+  it("imports every partial exactly once", () => {
+    const partials = stylesheets.filter((p) => !entryLevel.includes(p));
+    expect([...imported].sort()).toEqual([...partials].sort());
+    expect(new Set(imported).size).toBe(imported.length);
+  });
+
+  it("holds nothing but imports", () => {
+    const rest = index.replace(/\/\*[\s\S]*?\*\//g, "").replace(/@import "[^"]+";/g, "");
+    expect(rest.trim()).toBe("");
   });
 });

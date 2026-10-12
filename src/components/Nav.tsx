@@ -9,7 +9,7 @@ export function Nav({ base = "" }: { base?: string }) {
   const { lang, setLang, menuOpen, setMenuOpen } = useUI();
 
   const links: [string, string][] = [
-    [c.nav.services, `${base}#services`],
+    [c.nav.products, `${base}#products`],
     [c.nav.process, `${base}#process`],
     [c.nav.work, "/projects/"],
     [c.nav.industries, `${base}#industries`],

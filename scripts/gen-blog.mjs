@@ -20,7 +20,7 @@ const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 const NAV_LINKS = [
-  { href: "/#services", en: "Services", sk: "Služby" },
+  { href: "/#products", en: "Products", sk: "Produkty" },
   { href: "/#process", en: "Process", sk: "Postup" },
   { href: "/projects/", en: "Work", sk: "Projekty" },
   { href: "/#industries", en: "Industries", sk: "Odvetvia" },

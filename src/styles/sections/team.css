@@ -1,0 +1,45 @@
+.team-grid {
+  display: grid;
+  /* auto-fit with a cap, so a two-person roster centres at a sane card width
+     instead of being stranded in the left half or stretched across the row. */
+  grid-template-columns: repeat(auto-fit, minmax(230px, 300px));
+  justify-content: center;
+  gap: 18px;
+}
+.person {
+  padding: 26px;
+}
+.person__av {
+  width: 52px;
+  height: 52px;
+  font-size: 16px;
+  margin-bottom: 18px;
+}
+.person h4 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+.person__role {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+/* home page: the link out to the About page */
+.team-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 34px;
+}
+
+@media (max-width: 1000px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+}
