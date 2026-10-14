@@ -111,7 +111,7 @@ const llms = `# ETEREO
 
 ## How ETEREO works
 
-A five-phase, evidence-first process: Audit → Architect → Build → Harden → Hand over. Each phase ends in something inspectable — a risk register, decision records, a working release, an evidence pack, and a full ownership hand-over to the client's team.
+Five phases: Discovery → Architecture → Build → Test & harden → Handover. Each ends in an output the client can verify — a risk & opportunity map, decision records, a working release, a readiness report, and full ownership of the code and the know-how.
 
 ## Industries
 

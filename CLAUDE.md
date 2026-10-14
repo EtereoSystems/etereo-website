@@ -220,7 +220,7 @@ Plain CSS, no framework: `global.css` (design tokens in `:root` — colours, fon
 
 **The build inlines them.** `scripts/inline-css.mjs` runs as `postbuild`, replaces the `<link rel="stylesheet">` in all ten built HTML documents with a `<style>` holding the same bytes, and deletes the now-unreferenced assets — so `dist/assets/` ships no CSS at all. It works on Vite's output, never on the sources, so there is still exactly one place styles live and nothing to keep in sync. Two things follow: `dist` HTML is ~36 kB larger (the host serves it brotli-compressed, which is what makes that affordable), and the stylesheet is no longer cached across pages, so a second page pays for it again. That is the right way round for a site people reach from search. If you ever add a stylesheet that should stay a request — something big and genuinely below the fold — this script is where to exempt it.
 
-Shared primitives live in `global.css` and are composed by every section: `.section` / `.section--tight`, `.container` / `.container--narrow`, `.section-head`, `.eyebrow`, `.card`, `.chip`, `.btn` (`--primary` / `--ghost`), `.reveal`, `.grid-bg`. Everything else is one file per component, and `components.css` holds nothing but `@import`s of them:
+Shared primitives live in `global.css` and are composed by every section: `.section` / `.section--tight`, `.container` / `.container--narrow`, `.section-head`, `.eyebrow`, `.card`, `.chip`, `.btn` (`--primary` / `--ghost`), `.reveal`, `.grid-bg`, `.sr-only`. Everything else is one file per component, and `components.css` holds nothing but `@import`s of them:
 
 | Folder | One file per | e.g. |
 |---|---|---|
@@ -238,7 +238,7 @@ Caveats worth knowing before editing:
 - **Type sizes are not tokenized.** Colours, font families and radii are `:root` tokens; font sizes are literal px (23 distinct values, several half-pixel one-offs like `14.5px`). To match an existing size, grep for it rather than guessing a scale.
 - **`.card` is one visual treatment shared by eight unrelated content types** (products, tech columns, work cases, engagement tiers, voices, team, articles, contact form), including a single hover lift + violet glow. Restyling `.card` changes all of them.
 - The three families are self-hosted (see Fonts above), not loaded from Google. Changing one means editing `scripts/fonts.mjs` and the matching `--font-*` token.
-- `.eyebrow` survives in exactly three places — Products (asked for by name when the section replaced Services), Work ("Selected work" qualifies a three-case list as non-exhaustive) and Contact ("Start here" is wayfinding at the end of a long page). It was removed from the other eight sections as decoration; don't reintroduce it as a default label above every heading.
+- `.eyebrow` survives in exactly four places — Products (asked for by name when the section replaced Services), Process (likewise asked for by name in its rewrite), Work ("Selected work" qualifies a three-case list as non-exhaustive) and Contact ("Start here" is wayfinding at the end of a long page). It was removed from the other seven sections as decoration; don't reintroduce it as a default label above every heading.
 
 ### Accessibility baseline
 

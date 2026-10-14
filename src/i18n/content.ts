@@ -18,7 +18,7 @@ export interface Phase {
   n: string;
   title: string;
   body: string;
-  artifact: string;
+  output: string;
 }
 export interface WorkCase {
   tag: string;
@@ -109,7 +109,7 @@ export interface Content {
     screenTitle: string;
   };
   products: { eyebrow: string; title: string; sub: string; featured: FeaturedProduct; items: Product[] };
-  process: { title: string; sub: string; items: Phase[] };
+  process: { eyebrow: string; title: string; sub: string; outputLabel: string; items: Phase[]; cta: string };
   tech: { title: string; sub: string; groups: { label: string; items: string[] }[] };
   work: { eyebrow: string; title: string; sub: string; note: string; all: string; items: WorkCase[] };
   industries: { title: string; items: Industry[] };
@@ -188,15 +188,21 @@ const en: Content = {
     ],
   },
   process: {
-    title: "A transformation runs on evidence, not enthusiasm",
-    sub: "Five phases, each ending in something you can inspect: a decision record, a working environment, a shipped release.",
+    eyebrow: "Process",
+    title: "How we build software: five phases, no surprises",
+    sub: "Every phase ends with an output you can verify – a decision, a working version or a deployed release. You know where your project stands before you have to ask.",
+    // read before each output label by screen readers only
+    outputLabel: "Output:",
+    // the no-break space keeps "AI Act" in one piece
     items: [
-      { n: "01", title: "Audit", body: "Two weeks inside your code, data and org chart.", artifact: "Risk register" },
-      { n: "02", title: "Architect", body: "Target state, sequencing and the trade-offs written down.", artifact: "Decision records" },
-      { n: "03", title: "Build", body: "Two-week increments, demoed to real users every time.", artifact: "Working release" },
-      { n: "04", title: "Harden", body: "Load, security, compliance and failure drills.", artifact: "Evidence pack" },
-      { n: "05", title: "Hand over", body: "Runbooks, pairing and on-call transition to your team.", artifact: "Ownership" },
+      { n: "01", title: "Discovery", body: "Two weeks mapping your processes, data and systems. We name the risks and the opportunities for AI automation.", output: "Risk & opportunity map" },
+      { n: "02", title: "Architecture", body: "Target state, sequencing and trade-offs documented up front, so key decisions aren't made mid-build.", output: "Decision records" },
+      { n: "03", title: "Build", body: "Two-week iterations, each ending with working software demoed to real users.", output: "Working release" },
+      { n: "04", title: "Test & harden", body: "Load testing, security, regulatory compliance (GDPR, AI\u00a0Act) and failure drills before go-live.", output: "Readiness report" },
+      { n: "05", title: "Handover", body: "Documentation, team training and a gradual transfer of operations. The code and the know-how stay with you.", output: "Full ownership" },
     ],
+    // no trailing arrow: the component draws it, hidden from screen readers
+    cta: "Book an intro call",
   },
   tech: {
     title: "Boring technology, chosen on purpose",
@@ -493,15 +499,20 @@ const sk: Content = {
     ],
   },
   process: {
-    title: "Transformácia stojí na dôkazoch, nie na nadšení",
-    sub: "Päť fáz a každá končí niečím, čo si viete overiť: rozhodnutím, funkčným prostredím, nasadeným vydaním.",
+    eyebrow: "Postup",
+    title: "Ako vyvíjame softvér: päť fáz, žiadne prekvapenia",
+    sub: "Každá fáza končí výstupom, ktorý si viete overiť – rozhodnutím, funkčnou verziou alebo nasadeným vydaním. Viete, kde projekt stojí, ešte predtým, ako sa opýtate.",
+    outputLabel: "Výstup:",
+    // no-break spaces keep a one-letter word off the end of a line, as Slovak typography asks,
+    // and "AI Act" in one piece
     items: [
-      { n: "01", title: "Audit", body: "Dva týždne v kóde, dátach a organizačnej štruktúre.", artifact: "Register rizík" },
-      { n: "02", title: "Architektúra", body: "Cieľový stav, poradie krokov a kompromisy čierne na bielom.", artifact: "Rozhodnutia" },
-      { n: "03", title: "Vývoj", body: "Dvojtýždňové prírastky, zakaždým odprezentované reálnym používateľom.", artifact: "Funkčné vydanie" },
-      { n: "04", title: "Spevnenie", body: "Záťaž, bezpečnosť, súlad s reguláciami a nácvik zlyhaní.", artifact: "Dôkazový balík" },
-      { n: "05", title: "Odovzdanie", body: "Runbooky, párové programovanie a prechod pohotovosti (on-call) na váš tím.", artifact: "Vlastníctvo" },
+      { n: "01", title: "Analýza", body: "Dva týždne mapujeme vaše procesy, dáta a systémy. Pomenujeme riziká aj príležitosti na AI automatizáciu.", output: "Mapa rizík a\u00a0príležitostí" },
+      { n: "02", title: "Návrh architektúry", body: "Cieľový stav, poradie krokov a kompromisy zdokumentované vopred, aby zásadné rozhodnutia nepadali počas vývoja.", output: "Zdokumentované rozhodnutia" },
+      { n: "03", title: "Vývoj", body: "Dvojtýždňové iterácie, po každej ukážka funkčného softvéru reálnym používateľom.", output: "Funkčná verzia" },
+      { n: "04", title: "Testovanie a\u00a0zabezpečenie", body: "Záťažové testy, bezpečnosť, súlad s reguláciami (GDPR, AI\u00a0Act) a nácvik výpadkov ešte pred ostrou prevádzkou.", output: "Report pripravenosti" },
+      { n: "05", title: "Odovzdanie", body: "Dokumentácia, zaškolenie vášho tímu a postupné prevzatie prevádzky. Kód aj know-how zostávajú vám.", output: "Plné vlastníctvo" },
     ],
+    cta: "Naplánovať úvodnú konzultáciu",
   },
   tech: {
     title: "Nudné technológie, zvolené zámerne",

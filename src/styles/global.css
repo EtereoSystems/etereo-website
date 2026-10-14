@@ -181,7 +181,7 @@ main > .section:nth-of-type(even) {
   margin: 22px 0 18px;
 }
 
-/* sections now lead with the heading itself; only Work still carries an eyebrow */
+/* most sections lead with the heading itself; the few with an eyebrow are listed in CLAUDE.md */
 .section-head h2:first-child {
   margin-top: 0;
 }
@@ -265,6 +265,19 @@ main > .section:nth-of-type(even) {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.02);
   display: inline-flex;
+}
+
+/* Read by screen readers, never painted. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ---------- reveal on scroll ---------- */
