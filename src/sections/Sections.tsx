@@ -80,23 +80,41 @@ export function Products() {
 
 export function Process() {
   const c = useContent();
+  const p = c.process;
   return (
-    <section id="process" className="section">
+    <section id="process" className="section process">
       <div className="container">
         <div className="section-head reveal">
-          <h2>{c.process.title}</h2>
-          <p>{c.process.sub}</p>
+          <div className="eyebrow">{p.eyebrow}</div>
+          <h2>{p.title}</h2>
+          <p>{p.sub}</p>
         </div>
-        <div className="timeline reveal">
-          <div className="timeline__line" />
-          {c.process.items.map((s) => (
-            <div className="tl" key={s.n}>
-              <div className="tl__dot">{s.n}</div>
-              <h4>{s.title}</h4>
-              <p>{s.body}</p>
-              <div className="tl__artifact">{s.artifact}</div>
-            </div>
+        {/* The <ol> carries the order, so the drawn numbers are hidden. role="list" because
+            Safari drops list semantics from a list styled with list-style: none. */}
+        <ol className="timeline reveal" role="list">
+          {p.items.map((s) => (
+            <li className="tl" key={s.n}>
+              <span className="tl__dot" aria-hidden="true">
+                {s.n}
+              </span>
+              <h3>{s.title}</h3>
+              <p className="tl__body">{s.body}</p>
+              <p className="tl__output">
+                <span className="sr-only">{p.outputLabel} </span>
+                {s.output}
+              </p>
+            </li>
           ))}
+        </ol>
+        <div className="process__action reveal">
+          <a href="#contact" className="btn btn--primary process__cta">
+            {/* one flex item with a no-break space, so a wrapped label keeps its arrow */}
+            <span>
+              {p.cta}
+              {" "}
+              <span aria-hidden="true">→</span>
+            </span>
+          </a>
         </div>
       </div>
     </section>

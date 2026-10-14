@@ -1,66 +1,197 @@
-.timeline {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 18px;
-  text-align: center;
+/* Five columns from 1001px up, a vertical rail below. Either way the connector is one
+   segment per step, from its circle's centre to the next one's, so it ends at 05. */
+.process {
+  --tl-dot: 52px;
+  --tl-gap: 24px;
+  scroll-margin-top: 24px;
 }
-.timeline__line {
+.process h2 {
+  text-wrap: balance;
+}
+.process p {
+  text-wrap: pretty;
+}
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+.tl {
+  position: relative;
+  min-width: 0;
+}
+.tl:not(:last-child)::after {
+  content: "";
   position: absolute;
-  top: 26px;
-  left: 8%;
-  right: 8%;
-  height: 1px;
   background: var(--line);
 }
 .tl__dot {
   position: relative;
   z-index: 1;
-  width: 52px;
-  height: 52px;
+  flex: none;
+  width: var(--tl-dot);
+  height: var(--tl-dot);
   border-radius: 50%;
   border: 1px solid var(--line);
   background: var(--bg);
   display: grid;
   place-items: center;
-  margin: 0 auto 22px;
   font-family: var(--font-mono);
   font-size: 14px;
   color: var(--text);
   box-shadow: 0 0 0 6px var(--bg), 0 8px 26px -12px var(--violet-glow);
 }
-.tl h4 {
+.tl h3 {
   font-size: 20px;
-  margin-bottom: 12px;
 }
-.tl p {
+.tl__body {
   color: var(--text-2);
   font-size: 14.5px;
-  max-width: 22ch;
-  margin: 0 auto;
 }
-/* grid already stretches every cell to the tallest; make the cell a column so the
-   artifact label can sit on the bottom edge and line up across all five phases */
-.tl {
-  display: flex;
-  flex-direction: column;
-}
-.tl__artifact {
-  margin-top: auto;
-  padding-top: 16px;
+/* --violet-2 on --bg is 5.9:1, so it clears AA at this size without a lighter purple */
+.tl__output {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--violet-2);
 }
+.process__action {
+  display: flex;
+  justify-content: center;
+  margin-top: 64px;
+}
+/* wraps rather than overflow once it goes full width on a phone */
+.process__cta {
+  white-space: normal;
+  text-align: center;
+  text-wrap: balance;
+}
+
+@media (min-width: 1001px) {
+  .timeline {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: var(--tl-gap);
+    text-align: center;
+  }
+  .tl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .tl:not(:last-child)::after {
+    top: calc(var(--tl-dot) / 2 - 0.5px);
+    left: 50%;
+    width: calc(100% + var(--tl-gap));
+    height: 1px;
+  }
+  .tl__dot {
+    margin-bottom: 22px;
+  }
+  /* fluid so a two-word title ("Návrh architektúry") stays on one line down to 1001px */
+  .tl h3 {
+    font-size: clamp(18px, 1.55vw, 20px);
+    margin-bottom: 12px;
+  }
+  .tl__output {
+    margin-top: auto;
+    padding-top: 16px;
+  }
+  /* All five share one row per part, so a title that wraps pushes every text down with
+     it and the outputs start on one line however long each text runs. */
+  @supports (grid-template-rows: subgrid) {
+    .tl {
+      display: grid;
+      grid-row: span 4;
+      grid-template-rows: subgrid;
+      align-items: start;
+      justify-items: center;
+    }
+    .tl__output {
+      margin-top: 0;
+    }
+  }
+}
 
 @media (max-width: 1000px) {
-  .timeline {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 34px 18px;
+  .process {
+    --tl-gap: 36px;
   }
-  .timeline__line {
-    display: none;
+  .process .container {
+    padding: 0 24px;
+  }
+  .process .section-head h2 {
+    font-size: 42px;
+  }
+  .timeline {
+    row-gap: var(--tl-gap);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .tl {
+    display: grid;
+    grid-template-columns: var(--tl-dot) minmax(0, 1fr);
+    column-gap: 22px;
+  }
+  .tl:not(:last-child)::after {
+    top: calc(var(--tl-dot) / 2);
+    bottom: calc(-1 * (var(--tl-gap) + var(--tl-dot) / 2));
+    left: calc(var(--tl-dot) / 2 - 0.5px);
+    width: 1px;
+  }
+  .tl__dot {
+    grid-area: 1 / 1;
+  }
+  /* as tall as the circle and centred on it, so a title that wraps stays level with it */
+  .tl h3 {
+    grid-area: 1 / 2;
+    display: flex;
+    align-items: center;
+    min-height: var(--tl-dot);
+  }
+  .tl__body {
+    grid-area: 2 / 2;
+    margin-top: 4px;
+    font-size: 15.5px;
+  }
+  .tl__output {
+    grid-area: 3 / 2;
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 720px) {
+  .process {
+    --tl-dot: 44px;
+    --tl-gap: 32px;
+  }
+  .process .container {
+    padding: 0 20px;
+  }
+  .process .section-head {
+    margin-bottom: 44px;
+  }
+  .process .section-head h2 {
+    font-size: clamp(28px, 8.4vw, 34px);
+  }
+  .tl {
+    column-gap: 16px;
+  }
+  .tl__dot {
+    font-size: 13px;
+  }
+  .tl h3 {
+    font-size: 19px;
+  }
+  .tl__body {
+    font-size: 15px;
+  }
+  .process__action {
+    margin-top: 48px;
+  }
+  .process__cta {
+    width: 100%;
   }
 }
