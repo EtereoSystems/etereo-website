@@ -1,3 +1,12 @@
+.tech {
+  scroll-margin-top: 24px;
+}
+.tech h2 {
+  text-wrap: balance;
+}
+.tech .section-head p {
+  text-wrap: pretty;
+}
 .tech-marquee {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
@@ -5,10 +14,14 @@
   margin-bottom: 44px;
 }
 .tech-marquee__row {
+  list-style: none;
+  margin: 0;
+  /* the trailing gap makes both runs exactly equal, so -50% lands on the seam */
+  padding: 0 14px 0 0;
   display: flex;
   gap: 14px;
   width: max-content;
-  animation: marquee 34s linear infinite;
+  animation: marquee 48s linear infinite;
 }
 .tech-marquee .chip {
   font-size: 14.5px;
@@ -20,28 +33,47 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .tech-marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
   .tech-marquee__row {
     animation: none;
     flex-wrap: wrap;
     justify-content: center;
     width: auto;
+    padding: 0;
+    gap: 10px;
+  }
+  .tech-marquee__row [aria-hidden="true"] {
+    display: none;
   }
 }
+
+/* Flex rather than grid so a short last row centres itself; each line stretches its
+   columns to the tallest one in it. */
 .tech-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  --tech-gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--tech-gap);
 }
 .tech-col {
-  padding: 24px;
+  flex: 0 0 calc((100% - 4 * var(--tech-gap)) / 5);
+  min-width: 0;
+  padding: 24px 22px;
 }
+/* --text-3 falls under 4.5:1 on a card at this size; --text-2 clears AA */
 .tech-col__label {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.2em;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  line-height: 1.4;
   text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 16px;
+  color: var(--text-2);
+  margin-bottom: 14px;
 }
 .tech-col ul {
   list-style: none;
@@ -51,6 +83,7 @@
 .tech-col li {
   color: var(--text-2);
   font-size: 15px;
+  line-height: 1.45;
   padding: 9px 0;
   border-bottom: 1px solid var(--line-soft);
 }
@@ -58,14 +91,20 @@
   border-bottom: none;
 }
 
-@media (max-width: 1000px) {
-  .tech-grid {
-    grid-template-columns: repeat(2, 1fr);
+@media (max-width: 1279px) {
+  .tech-col {
+    flex-basis: calc((100% - 2 * var(--tech-gap)) / 3);
   }
 }
 
-@media (max-width: 720px) {
-  .tech-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 1023px) {
+  .tech-col {
+    flex-basis: calc((100% - var(--tech-gap)) / 2);
+  }
+}
+
+@media (max-width: 767px) {
+  .tech-col {
+    flex-basis: 100%;
   }
 }

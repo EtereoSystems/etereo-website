@@ -1,9 +1,21 @@
+.voices-section {
+  scroll-margin-top: 24px;
+}
+.voices-section h2 {
+  text-wrap: balance;
+}
 .voices {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
 }
+/* two quotes sit centred at card width rather than stretched across three columns */
+.voices--pair {
+  grid-template-columns: repeat(2, minmax(0, 380px));
+  justify-content: center;
+}
 .voice {
+  min-width: 0;
   padding: 28px;
   margin: 0;
   display: flex;
@@ -16,6 +28,16 @@
   font-size: 18.5px;
   line-height: 1.5;
   color: var(--text);
+  quotes: "\201C" "\201D";
+}
+.voice blockquote:lang(sk) {
+  quotes: "\201E" "\201C";
+}
+.voice blockquote p::before {
+  content: open-quote;
+}
+.voice blockquote p::after {
+  content: close-quote;
 }
 .voice figcaption {
   display: flex;
@@ -24,35 +46,43 @@
   margin-top: auto;
   padding-top: 24px;
 }
-.voice__av,
-.person__av {
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: radial-gradient(circle at 32% 28%, #9d8bff, #4a38b8);
-  color: #fff;
-  font-family: var(--font-mono);
-  font-weight: 600;
-}
 .voice__av {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   font-size: 13px;
-  flex-shrink: 0;
 }
-.voice figcaption strong {
+.voice__id {
+  flex: 1;
+  min-width: 0;
+}
+.voice__id strong {
   display: block;
   font-weight: 500;
   font-size: 15px;
 }
-.voice figcaption em {
-  font-style: normal;
-  color: var(--text-3);
-  font-size: 13px;
+.voice__role {
+  color: var(--text-2);
+  font-size: 13.5px;
+}
+.voice__role a {
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 0.18em;
+}
+.voice__role a:hover {
+  color: var(--text);
 }
 
-@media (max-width: 1000px) {
-  .voices {
-    grid-template-columns: 1fr;
+@media (max-width: 1023px) {
+  .voices,
+  .voices--pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .voices,
+  .voices--pair {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

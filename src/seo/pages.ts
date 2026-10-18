@@ -32,13 +32,13 @@ export const META: Record<Page, Record<Lang, { title: string; description: strin
     en: {
       title: "Projects — ETEREO | Selected software work",
       description:
-        "Real systems ETEREO's founders have designed, built and shipped — confidential government and defence platforms, a Schneider Electric DCIM platform, an offline AI assistant for BEUMER Group, and Aperia in the app stores.",
+        "Real systems the ETEREO team has designed, built and shipped — confidential government and defence platforms, a Schneider Electric DCIM platform, an offline AI assistant for BEUMER Group, and Aperia in the app stores.",
       ogLocale: "en_GB",
     },
     sk: {
       title: "Projekty — ETEREO | Vybraná softvérová práca",
       description:
-        "Reálne systémy, ktoré zakladatelia ETEREO navrhli, postavili a dodali — dôverné vládne a obranné platformy, DCIM platforma Schneider Electric, offline AI asistent pre BEUMER Group a Aperia v obchodoch s aplikáciami.",
+        "Reálne systémy, ktoré tím ETEREO navrhol, postavil a dodal — dôverné vládne a obranné platformy, DCIM platforma Schneider Electric, offline AI asistent pre BEUMER Group a Aperia v obchodoch s aplikáciami.",
       ogLocale: "sk_SK",
     },
   },
@@ -46,13 +46,13 @@ export const META: Record<Page, Record<Lang, { title: string; description: strin
     en: {
       title: "About us — ETEREO | Software house in Bratislava, Slovakia",
       description:
-        "ETEREO s.r.o. is a Slovak software house founded in 2026 by Patrik Klimko and Matej Kučera. Remote-first, based in Bratislava, working in English and Slovak — the people who scope the work are the people who ship it.",
+        "ETEREO s.r.o. is a Slovak software house founded in 2026. Remote-first, based in Bratislava, working in English and Slovak — the people who scope the work are the people who ship it.",
       ogLocale: "en_GB",
     },
     sk: {
       title: "O nás — ETEREO | Softvérová firma v Bratislave",
       description:
-        "ETEREO s.r.o. je slovenská softvérová firma, ktorú v roku 2026 založili Patrik Klimko a Matej Kučera. Remote-first, so sídlom v Bratislave, pracujeme slovensky aj anglicky — ľudia, ktorí prácu nacenia, ju aj dodajú.",
+        "ETEREO s.r.o. je slovenská softvérová firma založená v roku 2026. Remote-first, so sídlom v Bratislave, pracujeme slovensky aj anglicky — ľudia, ktorí prácu nacenia, ju aj dodajú.",
       ogLocale: "sk_SK",
     },
   },

@@ -27,7 +27,7 @@ function readEnvFile() {
   return out;
 }
 const env = readEnvFile();
-const SITE_URL = (process.env.VITE_SITE_URL || env.VITE_SITE_URL || "https://www.etereo.sk").replace(/\/+$/, "");
+const SITE_URL = (process.env.VITE_SITE_URL || env.VITE_SITE_URL || "https://www.etereosystems.com").replace(/\/+$/, "");
 const today = new Date().toISOString().slice(0, 10);
 
 if (!existsSync(pub)) mkdirSync(pub, { recursive: true });
@@ -102,7 +102,7 @@ writeFileSync(resolve(pub, "sitemap.xml"), sitemap);
 // ── llms.txt (the "AI SEO" file: a clean, quotable brief for LLMs) ───────────────
 const llms = `# ETEREO
 
-> ETEREO (legal name ETEREO s.r.o.) is a Slovakia-based software house that rebuilds the systems established companies already run on. Founded in 2026 by Patrik Klimko and Matej Kučera, ETEREO delivers AI process automation, custom software and system modernisation, SaaS products, web & mobile applications, and cloud & DevOps with one accountable team — strategy, architecture and delivery together. Remote-first, based in Bratislava, working across Slovakia, Central Europe and internationally, in English and Slovak.
+> ETEREO (legal name ETEREO s.r.o.) is a Slovakia-based software house that rebuilds the systems established companies already run on. Founded in 2026, ETEREO delivers AI process automation, custom software and system modernisation, SaaS products, web & mobile applications, and cloud & DevOps with one accountable team — strategy, architecture and delivery together. Remote-first, based in Bratislava, working across Slovakia, Central Europe and internationally, in English and Slovak.
 
 ## Products
 
@@ -121,21 +121,23 @@ Five phases: Discovery → Architecture → Build → Test & harden → Handover
 
 ## Industries
 
-Financial services, healthcare, logistics & mobility, energy & utilities, retail & commerce, and public sector — regulated, operational, high-consequence domains.
+Financial services, healthcare, logistics & transport, energy & utilities, retail & e-commerce, and public sector — industries where downtime, bad data or a compliance gap costs real money.
 
 ## Technology
 
-TypeScript, React / Next.js, Astro; Go, Python, .NET; PostgreSQL, ClickHouse, Kafka; Swift/SwiftUI, Kotlin/Compose, React Native; AWS, Azure, GCP, Kubernetes, Terraform, OpenTelemetry.
+TypeScript, React / Next.js, Vue / Nuxt, Astro; Node.js, .NET, Python, Go; PostgreSQL, ClickHouse, Kafka; Swift/SwiftUI, Kotlin/Compose, React Native; AWS, Azure, GCP, Docker, Kubernetes, Terraform, OpenTelemetry; LLM APIs (OpenAI, Anthropic, Azure OpenAI), RAG and vector databases, AI agents, document processing and OCR, LLM evaluation and monitoring.
 
 ## Ways to engage
 
-- **Assessment** — fixed fee, 2–3 weeks: a written read on the system before committing to a programme.
-- **Delivery squad** — 3–18 months: a full accountable team shipping in two-week increments.
-- **Embedded engineers** — rolling monthly: senior specialists inside existing teams.
+- **Assessment** — fixed fee, 2–3 weeks: a written review of systems and processes before committing to a full project.
+- **Delivery team** — 3–18 months, the recommended model: a complete team accountable for shipped outcomes, in two-week iterations.
+- **Embedded engineers** — rolling monthly: senior specialists inside an existing team.
 
-## Case studies
+## Selected work
 
-Three programmes are described in full at ${SITE_URL}/projects/ — a core banking replatform migrated with zero planned downtime, a dispatch SaaS taken from zero to 40 enterprise tenants, and an offline-first clinician app on a compliance-first platform. Illustrative until real client work is published.
+- **Real Reality** (https://realreality.sk) — listings portal for a Bratislava-based real estate agency: property for sale and rent, plus development projects.
+- **Aperia** (https://aperiaskin.com) — website and custom mobile app for skin analysis: skin scans with per-zone scores, cycle and habit tracking, and plain-language insights, in 7 localized versions.
+- **Systems for the Danish government** — development on systems for Danish public institutions; project details are under NDA.
 
 ## Contact
 
@@ -143,7 +145,7 @@ Three programmes are described in full at ${SITE_URL}/projects/ — a core banki
 - Location: Bratislava, Slovakia (remote-first, CET)
 - Website: ${SITE_URL}/
 - About ETEREO: ${SITE_URL}/about/
-- Case studies: ${SITE_URL}/projects/
+- Selected work: ${SITE_URL}/projects/
 - Blog: ${SITE_URL}/blog/
 
 ## Articles
@@ -162,7 +164,7 @@ ETEREO (ETEREO s.r.o.) je slovenská softvérová firma so sídlom v Bratislave.
 
 ## Notes
 
-- Founded 2026. As a new company, ETEREO does not claim historical project counts or client rosters; case studies shown on the website are labelled illustrative until real client work is published.
+- Founded 2026. As a new company, ETEREO does not claim historical project counts or client rosters.
 `;
 writeFileSync(resolve(pub, "llms.txt"), llms);
 

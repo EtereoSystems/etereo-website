@@ -22,21 +22,6 @@ export interface Phase {
   body: string;
   output: string;
 }
-export interface WorkCase {
-  tag: string;
-  kind: string;
-  duration: string;
-  title: string;
-  /** one-sentence teaser for the home page */
-  body: string;
-  stack: string;
-  stats: { value: string; label: string }[];
-  /** long form, rendered only on /projects/ */
-  challenge: string;
-  approach: string[];
-  outcome: string;
-}
-
 export interface BlogPage {
   title: string;
   intro: string;
@@ -52,7 +37,6 @@ export interface AboutPage {
   facts: { label: string; value: string }[];
   teamTitle: string;
   teamIntro: string;
-  note: string;
   back: string;
   cta: { title: string; body: string; action: string; work: string };
 }
@@ -60,9 +44,8 @@ export interface AboutPage {
 export interface CasePage {
   title: string;
   intro: string;
-  note: string;
   back: string;
-  labels: { challenge: string; approach: string; outcome: string; stack: string; duration: string; kind: string };
+  labels: { challenge: string; approach: string; outcome: string; stack: string };
   cta: { title: string; body: string; action: string };
 }
 export interface Industry {
@@ -70,7 +53,10 @@ export interface Industry {
   title: string;
   body: string;
 }
+/** The `?type=` an engagement card puts in its contact link; see contactPreset.ts. */
+export type EngagementType = "assessment" | "team" | "embedded";
 export interface Engagement {
+  type: EngagementType;
   title: string;
   badge: string;
   cadence: string;
@@ -79,12 +65,14 @@ export interface Engagement {
   cta: string;
   featured?: boolean;
 }
-export interface Person {
-  initials: string;
-  name: string;
-  role: string;
+export interface TeamCard {
+  label: string;
+  title: string;
   body: string;
 }
+/** The contact form's topic chips, in display order; each language labels them in `contact.topics`. */
+export const TOPICS = ["ai", "custom", "modernization", "saas", "web", "cloud", "assessment", "team-extension"] as const;
+export type TopicId = (typeof TOPICS)[number];
 export interface Faq {
   q: string;
   a: string;
@@ -112,12 +100,22 @@ export interface Content {
   };
   products: { eyebrow: string; title: string; sub: string; more: string; featured: FeaturedProduct; items: Product[] };
   process: { eyebrow: string; title: string; sub: string; outputLabel: string; items: Phase[]; cta: string };
-  tech: { title: string; sub: string; groups: { label: string; items: string[] }[] };
-  work: { eyebrow: string; title: string; sub: string; note: string; all: string; items: WorkCase[] };
-  industries: { title: string; items: Industry[] };
-  engage: { title: string; items: Engagement[] };
-  voices: { title: string; items: { quote: string; name: string; role: string }[] };
-  team: { title: string; all: string; people: Person[] };
+  tech: { eyebrow: string; title: string; sub: string; groups: { label: string; items: string[] }[] };
+  // the projects themselves are in src/data/work.ts; `visit` + project title + `newTab` is the link's name
+  work: { eyebrow: string; title: string; sub: string; visit: string; newTab: string; confidential: string; all: string };
+  industries: { eyebrow: string; title: string; sub: string; items: Industry[] };
+  engage: { eyebrow: string; title: string; sub: string; items: Engagement[] };
+  // the quotes themselves are in src/data/testimonials.ts
+  voices: { eyebrow: string; title: string; linkedin: string };
+  team: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+    all: string;
+    /** disciplines, not people; the order matches the icons in Sections.tsx */
+    core: [TeamCard, TeamCard];
+    network: TeamCard;
+  };
   insights: { title: string; items: Article[] };
   faq: { title: string; items: Faq[] };
   contact: {
@@ -127,16 +125,24 @@ export interface Content {
     formTitle: string;
     formSub: string;
     name: string;
+    namePh: string;
     email: string;
+    emailPh: string;
     company: string;
-    need: string;
-    needs: string[];
+    companyPh: string;
+    topicsLegend: string;
+    topics: Record<TopicId, string>;
     context: string;
     contextPh: string;
+    consent: string;
+    privacy: string;
     submit: string;
+    sending: string;
     sent: string;
-    disclaimer: string;
-    channels: { label: string; value: string }[];
+    /** `{email}` is replaced by a mailto link */
+    error: string;
+    errors: { name: string; email: string; context: string; consent: string };
+    channels: { label: string; value: string; href?: string }[];
   };
   footer: {
     blurb: string;
@@ -150,7 +156,7 @@ export interface Content {
 }
 
 const en: Content = {
-  nav: { products: "Products", process: "Process", work: "Work", industries: "Industries", about: "About us", insights: "Blog", start: "Start a project" },
+  nav: { products: "Products", process: "Process", work: "Projects", industries: "Industries", about: "About us", insights: "Blog", start: "Start a project" },
   hero: {
     badge: "Digital transformation engineering",
     tagline: "Custom software and system modernization for the business you already run.",
@@ -209,63 +215,69 @@ const en: Content = {
     cta: "Book an intro call",
   },
   tech: {
+    eyebrow: "Technology",
     title: "Boring technology, chosen on purpose",
-    sub: "We pick stacks your team can hire for and your auditors can live with — then document every decision.",
+    sub: "We choose stacks you can hire for and your auditors can live with – and document every decision so your team can take over at any time.",
     groups: [
-      { label: "Product & web", items: ["TypeScript", "React / Next.js", "Astro", "Design systems", "Accessibility (WCAG 2.2)"] },
-      { label: "Backend & data", items: ["Go, Python, .NET", "PostgreSQL, ClickHouse", "Kafka, event sourcing", "GraphQL & REST", "Warehouse & ETL"] },
+      { label: "Product & web", items: ["TypeScript", "React / Next.js", "Vue / Nuxt", "Astro", "Design systems", "Accessibility (WCAG 2.2)"] },
+      { label: "Backend & data", items: ["Node.js, .NET, Python, Go", "PostgreSQL, ClickHouse", "Kafka, event sourcing", "GraphQL & REST", "Warehouse & ETL"] },
       { label: "Mobile", items: ["Swift / SwiftUI", "Kotlin / Compose", "React Native", "Offline-first sync", "Release automation"] },
-      { label: "Platform", items: ["AWS, Azure, GCP", "Kubernetes, Terraform", "GitHub Actions", "OpenTelemetry, Grafana", "SOC 2 tooling"] },
+      { label: "Platform", items: ["AWS, Azure, GCP", "Docker, Kubernetes, Terraform", "GitHub Actions", "OpenTelemetry, Grafana", "SOC 2 tooling"] },
+      { label: "AI", items: ["LLM APIs (OpenAI, Anthropic, Azure OpenAI)", "RAG & vector databases", "AI agents & orchestration", "Document processing & OCR", "LLM evaluation & monitoring"] },
     ],
   },
   work: {
     eyebrow: "Selected work",
-    all: "Read the full case studies",
-    title: "In their own numbers",
-    note: "Illustrative case studies for this draft — swap in your real client names and metrics.",
-    sub: "",
-    items: [
-      { tag: "Banking", kind: "Core replatform", duration: "18 months", title: "A 22-year-old core banking stack, migrated without a single planned outage", body: "We sliced a monolithic core into domain services and moved 4.1M customer records in nightly batches, running old and new in parallel for eleven weeks before the final cutover.", challenge: "The core had accreted 22 years of undocumented behaviour, and the nightly batch no longer fit in a night. Every previous attempt had been planned as one cutover weekend, and every one had been called off.", approach: ["Read the code and traced the data before proposing anything — six weeks of audit produced a dependency map and a risk register the board could act on.", "Sliced the monolith along domain boundaries, starting where the regulatory weight was lightest.", "Ran old and new in parallel for eleven weeks, reconciling both ledgers nightly until the delta held at zero.", "Moved 4.1M customer records in nightly batches, each one reversible until the following morning."], outcome: "The final cutover took the system down for no planned minutes at all. Release cadence went from twelve a week to thirty-one, and infrastructure cost fell 71% once the legacy estate was switched off.", stack: "Go · PostgreSQL · Kafka · Kubernetes · AWS", stats: [ { value: "0", label: "Planned downtime hours" }, { value: "-71%", label: "Infrastructure cost" }, { value: "4.1M", label: "Records migrated" }, { value: "12→31", label: "Releases per week" } ] },
-      { tag: "Logistics", kind: "SaaS product", duration: "9 months", title: "A dispatch product built from zero to 40 enterprise tenants", body: "Multi-tenant routing and telemetry with hardware integrations across 6,000 vehicles, plus the billing and entitlement layer that let sales move upmarket.", challenge: "The client sold dispatch software to single-depot operators and could not move upmarket. Every enterprise deal stalled on the same three things: tenant isolation, per-seat billing, and an audit trail nobody had built.", approach: ["Designed multi-tenancy into the data layer before any feature work — retrofitting it later is what had killed the previous attempt.", "Built billing and entitlements as a product surface rather than a wrapper around a payment provider.", "Integrated three generations of in-cab hardware across 6,000 vehicles, none of which spoke the same protocol.", "Put route and idle telemetry into ClickHouse so operators could answer cost-per-kilometre questions themselves."], outcome: "Forty enterprise tenants inside the first year, 18% lower fuel spend across the connected fleet, and 99.98% uptime through two peak seasons.", stack: "TypeScript · Next.js · ClickHouse · Terraform", stats: [ { value: "40", label: "Enterprise tenants" }, { value: "18%", label: "Fuel cost reduction" }, { value: "6k", label: "Connected vehicles" }, { value: "99.98%", label: "Uptime" } ] },
-      { tag: "Healthcare", kind: "Mobile + platform", duration: "12 months", title: "Clinician mobile app on a compliance-first data platform", body: "Offline-first records for field clinicians in low-connectivity regions, on a platform with a full audit trail and data-residency controls built in from day one.", challenge: "Field clinicians worked in regions where connectivity dropped for hours, and the existing app lost data when it did. The platform behind it could not evidence where patient records physically lived.", approach: ["Made the app offline-first by default: every record writes locally and syncs when it can, with conflicts surfaced to the clinician instead of resolved silently.", "Built the audit trail into the write path, so coverage is a property of the system rather than a report someone remembers to run.", "Enforced data residency at the storage layer, with per-region keys and no cross-region replication.", "Shipped iOS and Android from a shared domain core, keeping the interface native on both."], outcome: "Thirty-four minutes back per clinician per day, complete audit coverage across five live regions, and zero data-residency findings in two external reviews.", stack: "Swift · Kotlin · Go · PostgreSQL", stats: [ { value: "34 min", label: "Saved per clinician daily" }, { value: "100%", label: "Audit trail coverage" }, { value: "5", label: "Regions live" }, { value: "0", label: "Data-residency findings" } ] },
-    ],
+    title: "What we've built",
+    sub: "From a real estate portal and a consumer mobile app to government systems.",
+    visit: "Visit website",
+    newTab: "opens in a new tab",
+    confidential: "Confidential",
+    all: "See more projects",
   },
   industries: {
-    title: "Regulated, operational, high-consequence",
+    eyebrow: "Industries",
+    title: "Industries where reliability matters",
+    sub: "We work where downtime, bad data or a compliance gap costs real money.",
     items: [
-      { n: "01", title: "Financial services", body: "Core systems, payments, and the audit trail to prove it." },
-      { n: "02", title: "Healthcare", body: "Clinical workflow and records under strict residency rules." },
-      { n: "03", title: "Logistics & mobility", body: "Fleet, routing and telemetry at operational scale." },
-      { n: "04", title: "Energy & utilities", body: "Field operations, metering and asset intelligence." },
-      { n: "05", title: "Retail & commerce", body: "Omnichannel platforms, inventory truth, checkout speed." },
-      { n: "06", title: "Public sector", body: "Citizen services built to accessibility and procurement standards." },
+      { n: "01", title: "Financial services", body: "Internal systems, payments and reporting with the audit trail regulators expect." },
+      { n: "02", title: "Healthcare", body: "Scheduling, records and patient communication with strict protection of sensitive data." },
+      { n: "03", title: "Logistics & transport", body: "Route planning, fleet tracking and automated processing of shipping documents." },
+      { n: "04", title: "Energy & utilities", body: "Field operations, metering and asset management in one clear system." },
+      { n: "05", title: "Retail & e-commerce", body: "E-shops, inventory and customer support connected so the numbers always match." },
+      { n: "06", title: "Public sector", body: "Citizen services that meet accessibility and public procurement requirements." },
     ],
   },
   engage: {
+    eyebrow: "Engagement",
     title: "Three ways to start",
+    sub: "Start with a small, clearly scoped step or go straight to a full team. The scope can change as the project does.",
     items: [
-      { title: "Assessment", badge: "Fixed fee", cadence: "2–3 weeks", body: "A written read on your system before anyone commits to a programme.", points: ["Architecture and code audit", "Risk register and dependency map", "Sequenced modernisation plan", "Board-ready cost estimate"], cta: "Scope an assessment" },
-      { title: "Delivery squad", badge: "Most common", cadence: "3–18 months", body: "A full team — product, design, engineering, platform — accountable for shipped outcomes.", points: ["4–8 senior people, one lead", "Two-week increments, demoed live", "Your repos, your cloud, your IP", "Exit points at every phase"], cta: "Talk about a squad", featured: true },
-      { title: "Embedded engineers", badge: "Flexible", cadence: "Rolling monthly", body: "Senior specialists inside your existing teams, on your board and your standups.", points: ["Staff or lead named up front", "30-day rolling commitment", "Knowledge transfer built in", "Scale up or down quarterly"], cta: "Check availability" },
+      { type: "assessment", title: "Assessment", badge: "Fixed fee", cadence: "2–3 weeks", body: "A written review of your systems and processes before you commit to a full project.", points: ["Architecture and code review", "Risk and dependency map", "AI automation opportunities", "Step-by-step plan and cost estimate for leadership"], cta: "Scope an assessment" },
+      { type: "team", title: "Delivery team", badge: "Recommended", cadence: "3–18 months", body: "A complete team – product, design, engineering and infrastructure – accountable for shipped outcomes, not billed hours.", points: ["Senior team with one accountable lead", "Two-week iterations, demoed live", "Ongoing visibility into status, budget and risks", "Tests and documentation built into development"], cta: "Talk about your project", featured: true },
+      { type: "embedded", title: "Embedded engineers", badge: "Flexible", cadence: "Rolling monthly", body: "Senior specialists inside your existing team – on your board and in your standups.", points: ["Specific engineer introduced up front", "30-day rolling commitment", "Knowledge transfer included", "Scale up or down quarterly"], cta: "Check availability" },
     ],
   },
   voices: {
-    title: "Client voices",
-    items: [
-      { quote: "They found three failure modes our own team had normalised. The audit alone was worth the programme.", name: "A. Reyes", role: "CTO, financial services (placeholder)" },
-      { quote: "First release in four weeks, and it was real software in production — not a prototype.", name: "M. Kaur", role: "VP Product, logistics (placeholder)" },
-      { quote: "Our engineers are better than they were a year ago. That was the part I did not expect to buy.", name: "J. Lindqvist", role: "Head of Engineering, health (placeholder)" },
-    ],
+    eyebrow: "Testimonials",
+    title: "What our clients say",
+    // read before the person's name, as the LinkedIn link's accessible name
+    linkedin: "LinkedIn profile:",
   },
   team: {
-    title: "You meet the engineers, not the sales team",
+    eyebrow: "Team",
+    title: "You meet engineers, not salespeople",
+    intro: "On the first call and throughout the project, you talk directly to the people who design and build your software.",
     all: "Read more about us",
-    people: [
-      { initials: "PK", name: "Patrik Klimko", role: "Co-founder · Engineering", body: "Product and platform engineering, from first architecture to production run." },
-      { initials: "MK", name: "Matej Kučera", role: "Co-founder · Engineering", body: "Systems, data and delivery — turning messy operations into software that holds." },
-      { initials: "—", name: "Your senior lead", role: "Named per engagement", body: "Every programme gets one accountable lead who stays from audit to hand-over." },
-      { initials: "+", name: "A small senior bench", role: "Specialists on call", body: "Mobile, cloud and data specialists pulled in exactly when the work needs them." },
+    core: [
+      { label: "Core team", title: "Architecture & engineering", body: "Product and platform engineering, from the first architecture to running in production." },
+      { label: "Core team", title: "Backend, integrations & cloud", body: "Integrations and APIs for enterprise platforms running dozens of microservices on .NET and Azure." },
     ],
+    network: {
+      label: "Extended team",
+      title: "A vetted specialist network",
+      body: "Senior designers, mobile and DevOps engineers brought in as each project needs. Every project has one accountable lead.",
+    },
   },
   insights: {
     title: "Notes from inside the work",
@@ -383,38 +395,58 @@ const en: Content = {
     items: [
       { q: "How do you start on a legacy system nobody fully understands?", a: "We run a two-week audit: read the code, trace the data, interview the people who keep it alive. You get a dependency map, a risk register, and a sequenced plan — whether or not you continue with us." },
       { q: "Can you work alongside our in-house engineers?", a: "Yes — most of our work is embedded. We pair, review, and document as we go so your team owns the system when we leave, not just the deliverable." },
-      { q: "What does an engagement typically cost?", a: "An assessment is a fixed fee. Delivery squads and embedded engineers are priced monthly against a named team. You get a board-ready estimate before any build starts." },
+      { q: "What does an engagement typically cost?", a: "An assessment is a fixed fee. Delivery teams and embedded engineers are priced monthly against a named team. You get a board-ready estimate before any build starts." },
       { q: "How do you handle compliance and data residency?", a: "Residency, audit trails and access control are architecture decisions we take on day one, not features bolted on before launch. We document the evidence auditors ask for as we build." },
     ],
   },
   contact: {
     eyebrow: "Start here",
-    title: "Tell us what is breaking.",
-    sub: "A 45-minute call with two engineers — no discovery fee, no deck. You leave with a written read on scope, risk, and the shape of a first release.",
-    formTitle: "Book a discovery call",
-    formSub: "Two engineers, 45 minutes, no fee.",
+    title: "Tell us what you're building – or what's broken.",
+    sub: "A 45-minute call with two engineers – no fee, no sales deck. You leave with a clear view of the scope, the risks and the next step.",
+    formTitle: "Book an intro call",
+    formSub: "Two engineers, 45 minutes, free.",
     name: "Name",
+    namePh: "Jane Smith",
     email: "Work email",
+    emailPh: "jane@company.com",
     company: "Company",
-    need: "What do you need",
-    needs: ["Legacy modernisation", "SaaS product", "Mobile app", "Web platform", "Team augmentation", "Cloud & DevOps"],
+    companyPh: "Company name",
+    topicsLegend: "What do you need help with",
+    topics: {
+      ai: "AI automation",
+      custom: "Custom software",
+      modernization: "System modernization",
+      saas: "SaaS product",
+      web: "Web & mobile app",
+      cloud: "Cloud & DevOps",
+      assessment: "Assessment",
+      "team-extension": "Team extension",
+    },
     context: "Context",
-    contextPh: "What is the system today, and what has to be true in six months?",
+    contextPh: "What are you dealing with today, and what should work six months from now?",
+    consent: "I agree to the processing of my personal data to respond to my inquiry.",
+    privacy: "Privacy policy",
     submit: "Request a call",
-    sent: "Thanks — we'll reply within two working days.",
-    disclaimer: "Contact details are placeholders in this draft.",
+    sending: "Sending…",
+    sent: "Thank you! We'll get back to you within one business day.",
+    error: "Something went wrong. Please try again or email us at {email}.",
+    errors: {
+      name: "Please enter your name.",
+      email: "Please enter a valid email.",
+      context: "Tell us a few words about your project.",
+      consent: "We need your consent to process your data.",
+    },
     channels: [
-      { label: "New business", value: "info@etereosystems.com" },
-      { label: "Studio", value: "Bratislava, Slovakia" },
-      { label: "Hours", value: "Remote-first · CET" },
+      { label: "New business", value: "info@etereosystems.com", href: "mailto:info@etereosystems.com" },
+      { label: "Office", value: "Bratislava, Slovakia" },
+      { label: "Availability", value: "Remote and on-site · CET (UTC+1)" },
     ],
   },
   casePage: {
-    title: "Three programmes, described in full",
-    intro: "Each of these ran as one accountable team from audit to hand-over. The numbers are the ones the client measured.",
-    note: "Illustrative case studies for this draft — swap in your real client names and metrics.",
+    title: "Selected work",
+    intro: "Real systems we've designed, built and shipped — from confidential government and defence platforms to consumer products live in the app stores.",
     back: "Back to the site",
-    labels: { challenge: "The problem", approach: "What we did", outcome: "Where it landed", stack: "Stack", duration: "Duration", kind: "Engagement" },
+    labels: { challenge: "The problem", approach: "What we did", outcome: "Where it landed", stack: "Stack" },
     cta: { title: "Have something that looks like one of these?", body: "A fixed-fee assessment puts a written read on your system in two to three weeks — whether or not a programme follows.", action: "Book a discovery call" },
   },
   aboutPage: {
@@ -428,7 +460,7 @@ const en: Content = {
     factsTitle: "The essentials",
     facts: [
       { label: "Founded", value: "2026, Bratislava" },
-      { label: "Founders", value: "Patrik Klimko and Matej Kučera" },
+      { label: "Team", value: "A senior core team and a vetted specialist network" },
       { label: "Legal entity", value: "ETEREO s.r.o." },
       { label: "How we work", value: "Remote-first, CET hours" },
       { label: "Languages", value: "English and Slovak" },
@@ -436,7 +468,6 @@ const en: Content = {
     ],
     teamTitle: "Who you actually work with",
     teamIntro: "A small senior bench rather than a pyramid. You meet the engineers on the first call, and they are the ones who stay.",
-    note: "ETEREO is a newly founded company. We do not claim historical project counts or client rosters — the case studies on this site are labelled illustrative until real client work is published.",
     back: "Back to the site",
     cta: {
       title: "Want to talk to the people who would do the work?",
@@ -521,63 +552,68 @@ const sk: Content = {
     cta: "Naplánovať úvodnú konzultáciu",
   },
   tech: {
-    title: "Nudné technológie, zvolené zámerne",
-    sub: "Vyberáme stacky, na ktoré viete nabrať ľudí a ktoré prejdú aj auditom — a každé rozhodnutie zdokumentujeme.",
+    eyebrow: "Technológie",
+    title: "Overené technológie, zvolené zámerne",
+    sub: "Vyberáme technológie, pre ktoré nájdete ľudí na trhu a ktoré obstoja pri audite. Každé rozhodnutie zdokumentujeme, aby ho váš tím mohol kedykoľvek prevziať.",
     groups: [
-      { label: "Produkt a web", items: ["TypeScript", "React / Next.js", "Astro", "Dizajnové systémy", "Prístupnosť (WCAG 2.2)"] },
-      { label: "Backend a dáta", items: ["Go, Python, .NET", "PostgreSQL, ClickHouse", "Kafka, event sourcing", "GraphQL a REST", "Dátový sklad a ETL"] },
+      { label: "Web a produkt", items: ["TypeScript", "React / Next.js", "Vue / Nuxt", "Astro", "Dizajnové systémy", "Prístupnosť (WCAG 2.2)"] },
+      { label: "Backend a dáta", items: ["Node.js, .NET, Python, Go", "PostgreSQL, ClickHouse", "Kafka, event sourcing", "GraphQL a REST", "Dátový sklad a ETL"] },
       { label: "Mobil", items: ["Swift / SwiftUI", "Kotlin / Compose", "React Native", "Offline-first synchronizácia", "Automatizácia vydávania"] },
-      { label: "Platforma", items: ["AWS, Azure, GCP", "Kubernetes, Terraform", "GitHub Actions", "OpenTelemetry, Grafana", "Nástroje pre SOC 2"] },
+      { label: "Platforma", items: ["AWS, Azure, GCP", "Docker, Kubernetes, Terraform", "GitHub Actions", "OpenTelemetry, Grafana", "Nástroje pre SOC 2"] },
+      { label: "AI", items: ["LLM API (OpenAI, Anthropic, Azure OpenAI)", "RAG a vektorové databázy", "AI agenti a orchestrácia", "Spracovanie dokumentov a OCR", "Evaluácia a monitoring LLM"] },
     ],
   },
   work: {
     eyebrow: "Vybrané projekty",
-    all: "Čítať celé prípadové štúdie",
-    title: "V ich vlastných číslach",
-    note: "Ilustratívne prípadové štúdie pre tento návrh — nahradíte ich skutočnými klientmi a číslami.",
-    sub: "",
-    items: [
-      { tag: "Bankovníctvo", kind: "Prestavba jadra", duration: "18 mesiacov", title: "22-ročné jadro banky sme zmigrovali bez jediného plánovaného výpadku", body: "Monolitické jadro sme rozdelili na doménové služby a v nočných dávkach presunuli 4,1 mil. záznamov klientov. Staré a nové riešenie bežali paralelne jedenásť týždňov, až potom prišlo finálne prepnutie.", challenge: "Jadro nazbieralo 22 rokov nezdokumentovaného správania a nočná dávka sa už do noci nezmestila. Každý predchádzajúci pokus bol naplánovaný ako jeden cutover víkend — a každý bol zrušený.", approach: ["Najprv sme čítali kód a stopovali dáta, až potom navrhovali: šesť týždňov auditu dalo mapu závislostí a register rízík, s ktorým vedelo vedenie pracovať.", "Monolit sme krájali po doménových hraniciach, počnúc miestami s najmenšou regulatórnou váhou.", "Staré a nové bežalo paralelne jedenásť týždňov, s nočnou rekonciliáciou oboch účtovných kníh, kým bol rozdiel stabilne nulový.", "4,1 milióna záznamov klientov sme presúvali v nočných dávkach — každú vratnú až do nasledujúceho rána."], outcome: "Finálne prepnutie nezhaslo systém ani na minútu plánovaného výpadku. Frekvencia vydaní stúpla z dvanástich na tridsaťjeden týždenne a náklady na infraštruktúru klesli o 71 % po odstavení starého prostredia.", stack: "Go · PostgreSQL · Kafka · Kubernetes · AWS", stats: [ { value: "0", label: "Hodín plánovaného výpadku" }, { value: "-71%", label: "Náklady na infraštruktúru" }, { value: "4,1M", label: "Presunutých záznamov" }, { value: "12→31", label: "Vydaní za týždeň" } ] },
-      { tag: "Logistika", kind: "SaaS produkt", duration: "9 mesiacov", title: "Dispečerský produkt od nuly po 40 firemných zákazníkov", body: "Multi-tenant smerovanie a telemetria s hardvérovými integráciami naprieč 6 000 vozidlami — plus fakturačná vrstva a vrstva oprávnení, vďaka ktorej mohol obchod cieliť na väčších klientov.", challenge: "Klient predával dispečerský softvér prevádzkam s jedným depom a nevedel sa posunúť vyššie. Každý firemný obchod zastal na tom istom: izolácia tenantov, fakturácia za používateľa a auditná stopa, ktorú nikto nepostavil.", approach: ["Multi-tenancy sme navrhli priamo do dátovej vrstvy ešte pred akákoľvek funkcionalitou — dodatočné dorábanie je presne to, čo zabilo predchádzajúci pokus.", "Fakturáciu a oprávnenia sme postavili ako súčasť produktu, nie ako obal okolo platobnej brány.", "Integrovali sme tri generácie palubného hardvéru naprieč 6 000 vozidlami, z ktorých ani jedna nehovorila rovnakým protokolom.", "Telemetriu trás a prestojov sme dali do ClickHouse, aby si prevádzka vedela odpovedať na otázky o nákladoch na kilometer sama."], outcome: "Štyridsať firemných zákazníkov v prvom roku, o 18 % nižšie náklady na palivo naprieč pripojenou flotilou a dostupnosť 99,98 % cez dve sezónne špičky.", stack: "TypeScript · Next.js · ClickHouse · Terraform", stats: [ { value: "40", label: "Firemných zákazníkov" }, { value: "18%", label: "Úspora paliva" }, { value: "6k", label: "Pripojených vozidiel" }, { value: "99,98%", label: "Dostupnosť" } ] },
-      { tag: "Zdravotníctvo", kind: "Mobil + platforma", duration: "12 mesiacov", title: "Mobilná aplikácia pre lekárov na dátovej platforme s dôrazom na súlad s reguláciami", body: "Offline-first záznamy pre lekárov v teréne v regiónoch so slabým pripojením — na platforme, ktorá mala plnú auditnú stopu a kontrolu rezidencie dát zabudovanú od prvého dňa.", challenge: "Lekári v teréne pracovali v regiónoch, kde pripojenie vypadávalo na hodiny — a vtedy vtedajšia aplikácia strácala dáta. Platforma za ňou zároveň nevedela preukázať, kde záznamy pacientov fyzicky ležia.", approach: ["Aplikáciu sme urobili offline-first: každý záznam sa zapíše lokálne a synchronizuje, keď sa dá, pričom konflikty vidí lekár — neriešia sa poticho.", "Auditnú stopu sme zabudovali priamo do zápisovej cesty, takže pokrytie je vlastnosťou systému, nie reportom, ktorý si niekto musí spomenúť spustiť.", "Rezidenciu dát sme vynútili na úrovni úložiska, s kľúčmi pre každý región a bez cezregionálnej replikácie.", "iOS aj Android sme postavili nad spoločným doménovým jadrom, s natívnym rozhraním na oboch."], outcome: "Tridsaťštyri minút späť na lekára a deň, plné pokrytie auditom v piatich živých regiónoch a nula nálezov k rezidencii dát v dvoch externých previerkach.", stack: "Swift · Kotlin · Go · PostgreSQL", stats: [ { value: "34 min", label: "Ušetrených na lekára denne" }, { value: "100%", label: "Pokrytie auditnou stopou" }, { value: "5", label: "Regiónov v prevádzke" }, { value: "0", label: "Nálezov k rezidencii dát" } ] },
-    ],
+    title: "Na čom sme pracovali",
+    sub: "Od realitného portálu cez mobilnú aplikáciu až po systémy pre verejnú správu.",
+    visit: "Pozrieť web",
+    newTab: "otvorí sa na novej karte",
+    confidential: "Dôverné",
+    all: "Pozrieť ďalšie projekty",
   },
   industries: {
-    title: "Regulované, prevádzkové, kde chyby veľa stoja",
+    eyebrow: "Odvetvia",
+    title: "Odvetvia, kde na spoľahlivosti záleží",
+    sub: "Pracujeme tam, kde výpadok, chyba v dátach alebo nesúlad s reguláciou stojí skutočné peniaze.",
     items: [
-      { n: "01", title: "Finančné služby", body: "Jadrové systémy, platby a auditná stopa, ktorá to doloží." },
-      { n: "02", title: "Zdravotníctvo", body: "Klinické procesy a záznamy pod prísnymi pravidlami rezidencie dát." },
-      { n: "03", title: "Logistika a mobilita", body: "Vozový park, smerovanie a telemetria v prevádzkovom rozsahu." },
-      { n: "04", title: "Energetika", body: "Terénne operácie, meranie a prehľad o aktívach." },
-      { n: "05", title: "Retail a e-commerce", body: "Omnichannel platformy, presné zásoby, rýchlosť pokladne." },
-      { n: "06", title: "Verejný sektor", body: "Služby pre občanov podľa štandardov prístupnosti a verejného obstarávania." },
+      { n: "01", title: "Finančné služby", body: "Interné systémy, platby a reporting s auditnou stopou, ktorú vyžaduje regulátor." },
+      { n: "02", title: "Zdravotníctvo", body: "Objednávky, záznamy a komunikácia s pacientmi pri dôslednej ochrane citlivých dát." },
+      { n: "03", title: "Logistika a doprava", body: "Plánovanie trás, sledovanie vozidiel a automatické spracovanie prepravných dokumentov." },
+      { n: "04", title: "Energetika a utility", body: "Terénne zásahy, odpočty a správa majetku v jednom prehľadnom systéme." },
+      { n: "05", title: "Retail a e-commerce", body: "E-shopy, sklady a zákaznícka podpora prepojené tak, aby čísla vždy sedeli." },
+      { n: "06", title: "Verejný sektor", body: "Služby pre občanov v súlade s pravidlami prístupnosti a verejného obstarávania." },
     ],
   },
   engage: {
+    eyebrow: "Spolupráca",
     title: "Tri spôsoby, ako začať",
+    sub: "Začnite malým, presne ohraničeným krokom alebo rovno celým tímom. Rozsah sa môže meniť spolu s projektom.",
     items: [
-      { title: "Audit", badge: "Fixná cena", cadence: "2–3 týždne", body: "Písomné posúdenie vášho systému skôr, než sa ktokoľvek zaviaže k celému programu.", points: ["Audit architektúry a kódu", "Register rizík a mapa závislostí", "Postupný plán modernizácie", "Odhad nákladov pre vedenie"], cta: "Naplánovať audit" },
-      { title: "Dodávkový tím", badge: "Najčastejšie", cadence: "3–18 mesiacov", body: "Kompletný tím — produkt, dizajn, vývoj, platforma — zodpovedný za dodané výsledky.", points: ["4–8 seniorov, jeden vedúci", "Dvojtýždňové prírastky naživo", "Vaše repozitáre, váš cloud, vaše IP", "Výstupné body v každej fáze"], cta: "Poďme sa baviť o tíme", featured: true },
-      { title: "Inžinieri vo vašom tíme", badge: "Flexibilné", cadence: "Mesačne", body: "Seniorní špecialisti priamo vo vašich tímoch — na vašej nástenke aj standupoch.", points: ["Menovaný člen alebo vedúci vopred", "30-dňový záväzok, obnovovaný", "Prenos know-how v cene", "Škálovanie po kvartáloch"], cta: "Overiť dostupnosť" },
+      { type: "assessment", title: "Audit a analýza", badge: "Fixná cena", cadence: "2–3 týždne", body: "Písomné posúdenie vašich systémov a procesov skôr, než sa zaviažete k celému projektu.", points: ["Audit architektúry a kódu", "Mapa rizík a závislostí", "Príležitosti na AI automatizáciu", "Plán krokov a odhad nákladov pre vedenie"], cta: "Naplánovať audit" },
+      { type: "team", title: "Projektový tím", badge: "Odporúčané", cadence: "3–18 mesiacov", body: "Kompletný tím – produkt, dizajn, vývoj a infraštruktúra – zodpovedný za dodané výsledky, nie za odpracované hodiny.", points: ["Seniorný tím a jeden zodpovedný vedúci", "Dvojtýždňové iterácie s ukážkou naživo", "Priebežný prehľad o stave, rozpočte a rizikách", "Testy a dokumentácia ako súčasť vývoja"], cta: "Poďme prebrať váš projekt", featured: true },
+      { type: "embedded", title: "Inžinieri vo vašom tíme", badge: "Flexibilné", cadence: "Mesačne", body: "Seniorní špecialisti priamo vo vašom tíme – na vašej nástenke aj standupoch.", points: ["Konkrétny človek predstavený vopred", "Mesačný záväzok s automatickým predĺžením", "Odovzdanie know-how v cene", "Navýšenie alebo zníženie kapacity po kvartáloch"], cta: "Overiť dostupnosť" },
     ],
   },
   voices: {
-    title: "Hlasy klientov",
-    items: [
-      { quote: "Našli tri spôsoby zlyhania, ktoré náš tím už bral ako normu. Len ten audit sa oplatil za celý program.", name: "A. Reyes", role: "CTO, finančné služby (ukážka)" },
-      { quote: "Prvé vydanie za štyri týždne — a bol to reálny softvér v produkcii, nie prototyp.", name: "M. Kaur", role: "VP Product, logistika (ukážka)" },
-      { quote: "Naši inžinieri sú dnes lepší než pred rokom. To som teda nečakal, že si kúpim.", name: "J. Lindqvist", role: "Head of Engineering, zdravotníctvo (ukážka)" },
-    ],
+    eyebrow: "Referencie",
+    title: "Čo hovoria klienti",
+    linkedin: "LinkedIn profil:",
   },
   team: {
+    eyebrow: "Tím",
     title: "Stretnete inžinierov, nie obchodníkov",
+    intro: "Na úvodnom hovore aj počas celého projektu hovoríte priamo s ľuďmi, ktorí váš softvér navrhujú a stavajú.",
     all: "Prečítajte si viac o nás",
-    people: [
-      { initials: "PK", name: "Patrik Klimko", role: "Spoluzakladateľ · Vývoj", body: "Produktové a platformové inžinierstvo — od prvej architektúry po produkčnú prevádzku." },
-      { initials: "MK", name: "Matej Kučera", role: "Spoluzakladateľ · Vývoj", body: "Systémy, dáta a dodávka — z chaotickej prevádzky robíme softvér, ktorý drží." },
-      { initials: "—", name: "Váš senior lead", role: "Menovaný pre každý projekt", body: "Každý program má jedného zodpovedného vedúceho — od auditu až po odovzdanie." },
-      { initials: "+", name: "Malý seniorný tím", role: "Špecialisti na zavolanie", body: "Mobil, cloud a dáta zapojíme presne vtedy, keď si to práca vyžiada." },
+    core: [
+      { label: "Kmeňový tím", title: "Architektúra a vývoj", body: "Produktový a platformový vývoj – od prvej architektúry až po produkčnú prevádzku." },
+      { label: "Kmeňový tím", title: "Backend, integrácie a cloud", body: "Integrácie a API pre enterprise platformy s desiatkami mikroslužieb v .NET a Azure." },
     ],
+    network: {
+      label: "Rozšírený tím",
+      title: "Overená sieť špecialistov",
+      body: "Seniorní dizajnéri, mobilní a DevOps inžinieri, ktorých zapájame podľa potreby projektu. Každý projekt má jedného zodpovedného vedúceho.",
+    },
   },
   insights: {
     title: "Poznámky priamo z práce",
@@ -695,38 +731,58 @@ const sk: Content = {
     items: [
       { q: "Ako začnete na starom systéme, ktorému už nikto úplne nerozumie?", a: "Spravíme dvojtýždňový audit: prečítame kód, vystopujeme dáta a vypočujeme ľudí, ktorí systém držia pri živote. Dostanete mapu závislostí, register rizík a postupný plán — či už s nami budete pokračovať, alebo nie." },
       { q: "Viete pracovať spolu s našimi internými inžiniermi?", a: "Áno — väčšina našej práce je práve takáto, priamo vo vašom tíme. Párujeme, robíme code review a dokumentujeme priebežne, aby po nás váš tím vlastnil systém, nie len výstup." },
-      { q: "Koľko taký projekt zvyčajne stojí?", a: "Audit je za fixnú cenu. Dodávkové tímy aj inžinierov vo vašom tíme účtujeme mesačne za konkrétny menovaný tím. Odhad pre vedenie dostanete ešte pred začiatkom vývoja." },
+      { q: "Koľko taký projekt zvyčajne stojí?", a: "Audit je za fixnú cenu. Projektové tímy aj inžinierov vo vašom tíme účtujeme mesačne za konkrétny menovaný tím. Odhad pre vedenie dostanete ešte pred začiatkom vývoja." },
       { q: "Ako riešite súlad s reguláciami a rezidenciu dát?", a: "Rezidencia dát, auditné stopy a riadenie prístupu sú u nás architektonické rozhodnutia z prvého dňa, nie funkcie prilepené tesne pred spustením. Dôkazy, ktoré audítori žiadajú, dokumentujeme priebežne." },
     ],
   },
   contact: {
     eyebrow: "Začnite tu",
-    title: "Povedzte nám, čo sa láme.",
-    sub: "45-minútový hovor s dvoma inžiniermi — žiaden poplatok, žiadna prezentácia. Odídete s písomným posúdením rozsahu, rizika a podoby prvého vydania.",
+    title: "Povedzte nám, čo staviate – alebo čo nefunguje.",
+    sub: "45-minútový hovor s dvoma inžiniermi – bez poplatku a bez prezentácie. Odídete s jasnou predstavou o rozsahu, rizikách a ďalšom kroku.",
     formTitle: "Dohodnúť si úvodný hovor",
     formSub: "Dvaja inžinieri, 45 minút, zdarma.",
     name: "Meno",
+    namePh: "Ján Novák",
     email: "Pracovný e-mail",
+    emailPh: "jan@firma.sk",
     company: "Firma",
-    need: "Čo potrebujete",
-    needs: ["Modernizácia systému", "SaaS produkt", "Mobilná aplikácia", "Webová platforma", "Posila tímu", "Cloud a DevOps"],
+    companyPh: "Názov firmy",
+    topicsLegend: "S čím potrebujete pomôcť",
+    topics: {
+      ai: "AI automatizácia",
+      custom: "Softvér na mieru",
+      modernization: "Modernizácia systému",
+      saas: "SaaS produkt",
+      web: "Web a mobilná aplikácia",
+      cloud: "Cloud a DevOps",
+      assessment: "Audit",
+      "team-extension": "Posila tímu",
+    },
     context: "Kontext",
-    contextPh: "Aký je ten systém dnes a čo má platiť o šesť mesiacov?",
+    contextPh: "Čo dnes riešite a čo by malo fungovať o šesť mesiacov?",
+    consent: "Súhlasím so spracovaním osobných údajov za účelom odpovede na môj dopyt.",
+    privacy: "Zásady ochrany osobných údajov",
     submit: "Požiadať o hovor",
-    sent: "Ďakujeme — ozveme sa do dvoch pracovných dní.",
-    disclaimer: "Kontaktné údaje sú v tomto návrhu zástupné.",
+    sending: "Odosielame…",
+    sent: "Ďakujeme! Ozveme sa vám do jedného pracovného dňa.",
+    error: "Odoslanie sa nepodarilo. Skúste to znova alebo nám napíšte na {email}.",
+    errors: {
+      name: "Vyplňte meno.",
+      email: "Zadajte platný e-mail.",
+      context: "Napíšte nám pár slov o projekte.",
+      consent: "Potrebujeme váš súhlas so spracovaním údajov.",
+    },
     channels: [
-      { label: "Nová spolupráca", value: "info@etereosystems.com" },
-      { label: "Štúdio", value: "Bratislava, Slovensko" },
-      { label: "Dostupnosť", value: "Na diaľku · SEČ" },
+      { label: "Nová spolupráca", value: "info@etereosystems.com", href: "mailto:info@etereosystems.com" },
+      { label: "Sídlo", value: "Bratislava, Slovensko" },
+      { label: "Dostupnosť", value: "Na diaľku aj osobne · SEČ (UTC+1)" },
     ],
   },
   casePage: {
-    title: "Tri programy, popísané celé",
-    intro: "Každý z nich viedol jeden zodpovedný tím od auditu po odovzdanie. Čísla sú tie, ktoré meral klient.",
-    note: "Ilustratívne prípadové štúdie pre tento návrh — nahradíte ich skutočnými klientmi a číslami.",
+    title: "Vybraná práca",
+    intro: "Reálne systémy, ktoré sme navrhli, postavili a dodali — od dôverných vládnych a obranných platforiem po spotrebiteľské produkty v obchodoch s aplikáciami.",
     back: "Späť na stránku",
-    labels: { challenge: "Problém", approach: "Čo sme urobili", outcome: "Ako to dopadlo", stack: "Technológie", duration: "Trvanie", kind: "Spolupráca" },
+    labels: { challenge: "Problém", approach: "Čo sme urobili", outcome: "Ako to dopadlo", stack: "Technológie" },
     cta: { title: "Máte niečo podobné?", body: "Audit za fixnú cenu dá písomný pohľad na váš systém za dva až tri týždne — či už po ňom nasleduje program, alebo nie.", action: "Dohodnúť úvodný hovor" },
   },
   aboutPage: {
@@ -740,7 +796,7 @@ const sk: Content = {
     factsTitle: "Základné údaje",
     facts: [
       { label: "Založené", value: "2026, Bratislava" },
-      { label: "Zakladatelia", value: "Patrik Klimko a Matej Kučera" },
+      { label: "Tím", value: "Seniorný kmeňový tím a overená sieť špecialistov" },
       { label: "Právna forma", value: "ETEREO s.r.o." },
       { label: "Ako pracujeme", value: "Remote-first, stredoeurópsky čas" },
       { label: "Jazyky", value: "Slovensky a anglicky" },
@@ -748,7 +804,6 @@ const sk: Content = {
     ],
     teamTitle: "S kým naozaj pracujete",
     teamIntro: "Malá seniorná lavička namiesto pyramídy. Inžinierov stretnete hneď na prvom hovore — a oni pri projekte aj ostanú.",
-    note: "ETEREO je novozaložená firma. Netvrdíme, koľko projektov máme za sebou ani aký máme zoznam klientov — prípadové štúdie na tejto stránke sú označené ako ilustratívne, kým nezverejníme skutočnú klientsku prácu.",
     back: "Späť na stránku",
     cta: {
       title: "Chcete hovoriť s ľuďmi, ktorí to budú robiť?",

@@ -20,6 +20,9 @@
   --violet-glow: rgba(109, 84, 240, 0.55);
   --sky: #9db4ff;
   --focus: #a99cff;
+  /* form validation */
+  --error: #ff8f8f;
+  --error-line: rgba(255, 143, 143, 0.45);
 
   --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
   --font-body: "Inter", "Space Grotesk", system-ui, sans-serif;
@@ -181,7 +184,7 @@ main > .section:nth-of-type(even) {
   margin: 22px 0 18px;
 }
 
-/* most sections lead with the heading itself; the few with an eyebrow are listed in CLAUDE.md */
+/* a section without an eyebrow leads with the heading itself; CLAUDE.md lists which have one */
 .section-head h2:first-child {
   margin-top: 0;
 }

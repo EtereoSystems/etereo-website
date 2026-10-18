@@ -91,7 +91,7 @@ function jsonLd(post) {
       keywords: post.keywords.en,
       datePublished: post.date,
       dateModified: post.date,
-      author: { "@type": "Person", name: post.author },
+      author: { "@id": "%VITE_SITE_URL%/#organization" },
       publisher: { "@id": "%VITE_SITE_URL%/#organization" },
       mainEntityOfPage: { "@type": "WebPage", "@id": url },
       image: "%VITE_SITE_URL%/og.svg",
@@ -147,7 +147,7 @@ function page(post) {
     <title>${esc(post.title.en)} — ETEREO</title>
     <meta name="description" content="${esc(post.description.en)}" />
     <meta name="keywords" content="${esc(post.keywords.en)}" />
-    <meta name="author" content="${esc(post.author)}" />
+    <meta name="author" content="ETEREO" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
 
     <link rel="canonical" href="${url}" />
@@ -206,7 +206,7 @@ function page(post) {
             <p class="article__lead"><span data-en="${esc(post.excerpt.en)}" data-sk="${esc(
               post.excerpt.sk,
             )}">${esc(post.excerpt.en)}</span></p>
-            <div class="article__byline">${i18nSpan("By " + post.author, "Autor: " + post.author)}</div>
+            <div class="article__byline">${i18nSpan("By the ETEREO team", "Autor: tím ETEREO")}</div>
 
             <div class="article__body" data-lang-body="en">${post.body.en}</div>
             <div class="article__body" data-lang-body="sk" hidden>${post.body.sk}</div>

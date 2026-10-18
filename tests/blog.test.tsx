@@ -20,7 +20,6 @@ describe("POSTS", () => {
     expect(post.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(Number.isNaN(Date.parse(post.date))).toBe(false);
     expect(post.readMin).toBeGreaterThan(0);
-    expect(post.author.trim()).not.toBe("");
 
     for (const field of ["tag", "keywords", "title", "description", "excerpt", "body"] as const) {
       for (const lang of LANGS) {

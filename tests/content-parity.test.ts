@@ -40,9 +40,9 @@ describe("content", () => {
     }
   });
 
-  // Declared on the interface, blank in both languages, and read by nothing: the Work
-  // section renders `note` in the slot a sub would take. Listed so a NEW blank still fails.
-  const KNOWN_BLANK = new Set(["work.sub"]);
+  // Fields deliberately left blank in every language. Listed by path so a NEW blank still
+  // fails; empty since `work.sub` was given copy.
+  const KNOWN_BLANK = new Set<string>();
 
   it.each(LANGS)("%s has no blank copy", (lang) => {
     for (const [path, value] of leaves(content[lang])) {
@@ -52,8 +52,7 @@ describe("content", () => {
   });
 
   it.each(LANGS)("%s has no placeholder copy left in", (lang) => {
-    // "TBD"/"Lorem" reaching production is the failure mode; the site's own
-    // "illustrative" disclaimers are deliberate copy and stay.
+    // "TBD"/"Lorem" reaching production is the failure mode.
     const banned = /\b(lorem ipsum|todo|tbd|fixme|xxx+|placeholder text)\b/i;
     for (const [path, value] of leaves(content[lang])) {
       if (typeof value !== "string") continue;

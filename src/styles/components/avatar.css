@@ -1,0 +1,38 @@
+/* Person.tsx: shared by testimonials, the team cards and the About roster. Each sets its
+   own size; roster__av, later in the cascade, swaps the fill for an outline. */
+.avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #9d8bff, #4a38b8);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+.avatar--photo {
+  object-fit: cover;
+  background: var(--panel-2);
+}
+/* the extended team is a group on call, not the core: no fill, a dashed ring */
+.avatar--network {
+  background: transparent;
+  border: 1px dashed var(--line);
+  color: var(--violet-2);
+}
+
+.linkedin {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text-2);
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+.linkedin:hover {
+  color: var(--text);
+  border-color: rgba(139, 120, 255, 0.45);
+}

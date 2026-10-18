@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useContent } from "../i18n";
 import { useUI } from "../store";
+import { TESTIMONIALS, type Testimonial } from "../data/testimonials";
+import { WORK_PROJECTS } from "../data/work";
+import { Avatar, LinkedInLink, TeamIcon, type TeamIconKind } from "../components/Person";
+import { contactHref, openContact } from "../components/contactPreset";
 
 function ProductTags({ tags }: { tags: string[] }) {
   return (
@@ -43,7 +47,11 @@ export function Products() {
             <p className="prod__lead">{f.subtitle}</p>
             <p>{f.body}</p>
             <div className="prod__action">
-              <a href="#contact" className="btn btn--primary prod__cta">
+              <a
+                href={contactHref(lang, { product: "ai" })}
+                onClick={(e) => openContact(e, { product: "ai" })}
+                className="btn btn--primary prod__cta"
+              >
                 {/* one flex item with a no-break space, so a wrapped label keeps its arrow */}
                 <span>
                   {f.cta}
@@ -138,30 +146,35 @@ export function Process() {
   );
 }
 
+const TECH_CHIPS = ["OpenTelemetry", "GraphQL", "TypeScript", "Node.js", "Go", "Python", "Rust", "Java", ".NET", "React", "Vue", "Next.js", "Swift", "Kotlin", "Docker", "Azure", "LLM"];
+
 export function Tech() {
   const c = useContent();
-  const chips = ["OpenTelemetry", "GraphQL", "TypeScript", "Go", "Python", "Rust", "Java", ".NET", "React", "Next.js", "Swift", "Kotlin"];
+  const t = c.tech;
   return (
-    <section id="tech" className="section">
+    <section id="tech" className="section tech">
       <div className="container">
         <div className="section-head reveal">
-          <h2>{c.tech.title}</h2>
-          <p>{c.tech.sub}</p>
+          <div className="eyebrow">{t.eyebrow}</div>
+          <h2>{t.title}</h2>
+          <p>{t.sub}</p>
         </div>
-        <div className="tech-marquee reveal" aria-hidden>
-          <div className="tech-marquee__row">
-            {[...chips, ...chips].map((t, i) => (
-              <span className="chip" key={i}>
-                {t}
-              </span>
+        <div className="tech-marquee reveal">
+          {/* The loop needs the chips twice; the second run is hidden from screen readers, and
+              from view too once reduced motion stops the scroll. role="list" as in Process. */}
+          <ul className="tech-marquee__row" role="list">
+            {[...TECH_CHIPS, ...TECH_CHIPS].map((name, i) => (
+              <li className="chip" key={i} aria-hidden={i >= TECH_CHIPS.length || undefined}>
+                {name}
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
         <div className="tech-grid">
-          {c.tech.groups.map((g) => (
+          {t.groups.map((g) => (
             <div className="card tech-col reveal" key={g.label}>
-              <div className="tech-col__label">{g.label}</div>
-              <ul>
+              <h3 className="tech-col__label">{g.label}</h3>
+              <ul role="list">
                 {g.items.map((it) => (
                   <li key={it}>{it}</li>
                 ))}
@@ -176,37 +189,63 @@ export function Tech() {
 
 export function Work() {
   const c = useContent();
+  const lang = useUI((s) => s.lang);
+  const w = c.work;
   return (
-    <section id="work" className="section">
+    <section id="work" className="section work-section">
       <div className="container">
         <div className="section-head reveal">
-          <div className="eyebrow">{c.work.eyebrow}</div>
-          <h2>{c.work.title}</h2>
-          <p>{c.work.note}</p>
+          <div className="eyebrow">{w.eyebrow}</div>
+          <h2>{w.title}</h2>
+          <p>{w.sub}</p>
         </div>
         <div className="work-list">
-          {c.work.items.map((w) => (
-            <article className="card work reveal" key={w.title}>
+          {WORK_PROJECTS.map((p) => (
+            <article className="card work reveal" key={p.id}>
               <div className="work__left">
                 <div className="work__meta">
-                  <span className="chip">{w.tag}</span>
+                  <span className="chip">{p.tag[lang]}</span>
                 </div>
-                <h3>{w.title}</h3>
+                <h3>{p.title[lang]}</h3>
+                <p className="work__desc">{p.description[lang]}</p>
+                {p.url ? (
+                  <a
+                    className="work__link"
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${w.visit}: ${p.title[lang]} (${w.newTab})`}
+                  >
+                    {w.visit}
+                    {" "}
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                ) : (
+                  p.confidential && (
+                    <span className="work__badge">
+                      <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="4.5" y="10.5" width="15" height="10" rx="2" />
+                        <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" />
+                      </svg>
+                      {w.confidential}
+                    </span>
+                  )
+                )}
               </div>
-              <div className="work__stats">
-                {w.stats.slice(0, 2).map((st) => (
-                  <div className="work__stat" key={st.label}>
-                    <div className="work__val">{st.value}</div>
-                    <div className="work__lbl">{st.label}</div>
+              <dl className="work__cells">
+                {p.cells.map((cell) => (
+                  <div className="work__cell" key={cell.label.en}>
+                    <dt className="work__lbl">{cell.label[lang]}</dt>
+                    <dd className="work__val">{cell.value[lang]}</dd>
                   </div>
                 ))}
-              </div>
+              </dl>
             </article>
           ))}
         </div>
         <div className="work-more">
           <a href="/projects/" className="btn btn--ghost">
-            {c.work.all}
+            {w.all}
           </a>
         </div>
       </div>
@@ -216,21 +255,26 @@ export function Work() {
 
 export function Industries() {
   const c = useContent();
+  const ind = c.industries;
   return (
-    <section id="industries" className="section">
+    <section id="industries" className="section industries">
       <div className="container">
         <div className="section-head reveal">
-          <h2>{c.industries.title}</h2>
+          <div className="eyebrow">{ind.eyebrow}</div>
+          <h2>{ind.title}</h2>
+          <p>{ind.sub}</p>
         </div>
-        <div className="ind-grid reveal">
-          {c.industries.items.map((it) => (
-            <div className="ind" key={it.n}>
-              <div className="ind__n">{it.n}</div>
-              <h4>{it.title}</h4>
+        <ul className="ind-grid reveal" role="list">
+          {ind.items.map((it) => (
+            <li className="ind" key={it.n}>
+              <span className="ind__n" aria-hidden="true">
+                {it.n}
+              </span>
+              <h3>{it.title}</h3>
               <p>{it.body}</p>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );
@@ -238,14 +282,18 @@ export function Industries() {
 
 export function Engage() {
   const c = useContent();
+  const lang = useUI((s) => s.lang);
+  const en = c.engage;
   return (
-    <section id="engage" className="section">
+    <section id="engage" className="section engagement">
       <div className="container">
         <div className="section-head reveal">
-          <h2>{c.engage.title}</h2>
+          <div className="eyebrow">{en.eyebrow}</div>
+          <h2>{en.title}</h2>
+          <p>{en.sub}</p>
         </div>
         <div className="engage-grid">
-          {c.engage.items.map((e) => (
+          {en.items.map((e) => (
             <article className={"card engage reveal" + (e.featured ? " engage--featured" : "")} key={e.title}>
               <div className="engage__head">
                 <h3>{e.title}</h3>
@@ -253,12 +301,17 @@ export function Engage() {
               </div>
               <div className="engage__cadence">{e.cadence}</div>
               <p className="engage__body">{e.body}</p>
-              <ul className="engage__points">
+              <ul className="engage__points" role="list">
                 {e.points.map((p) => (
                   <li key={p}>{p}</li>
                 ))}
               </ul>
-              <a href="#contact" className={"btn " + (e.featured ? "btn--primary" : "btn--ghost")}>
+              {/* the contact form preselects the matching topic from ?type= */}
+              <a
+                href={contactHref(lang, { type: e.type })}
+                onClick={(ev) => openContact(ev, { type: e.type })}
+                className={"btn engage__cta " + (e.featured ? "btn--primary" : "btn--ghost")}
+              >
                 {e.cta}
               </a>
             </article>
@@ -269,24 +322,41 @@ export function Engage() {
   );
 }
 
-export function Voices() {
+export function Voices({ items = TESTIMONIALS }: { items?: Testimonial[] }) {
   const c = useContent();
+  const lang = useUI((s) => s.lang);
+  const shown = items.filter((t) => t.consent);
+  // a single quote reads as cherry-picked, so the section waits for a second one
+  if (shown.length < 2) return null;
   return (
-    <section className="section section--tight">
+    <section id="testimonials" className="section section--tight voices-section">
       <div className="container">
         <div className="section-head reveal">
+          <div className="eyebrow">{c.voices.eyebrow}</div>
           <h2>{c.voices.title}</h2>
         </div>
-        <div className="voices">
-          {c.voices.items.map((v, i) => (
-            <figure className="card voice reveal" key={i}>
-              <blockquote>“{v.quote}”</blockquote>
+        <div className={"voices" + (shown.length === 2 ? " voices--pair" : "")}>
+          {shown.map((t) => (
+            <figure className="card voice reveal" key={t.id}>
+              <blockquote>
+                <p>{t.quote[lang]}</p>
+              </blockquote>
               <figcaption>
-                <span className="voice__av">{v.name.split(" ").map((s) => s[0]).join("")}</span>
-                <span>
-                  <strong>{v.name}</strong>
-                  <em>{v.role}</em>
+                <Avatar name={t.name} photo={t.photo} className="voice__av" />
+                <span className="voice__id">
+                  <strong>{t.name}</strong>
+                  <span className="voice__role">
+                    {t.role[lang]},{" "}
+                    {t.companyUrl ? (
+                      <a href={t.companyUrl} target="_blank" rel="noopener noreferrer">
+                        {t.company}
+                      </a>
+                    ) : (
+                      t.company
+                    )}
+                  </span>
                 </span>
+                {t.linkedin && <LinkedInLink href={t.linkedin} label={`${c.voices.linkedin} ${t.name}`} />}
               </figcaption>
             </figure>
           ))}
@@ -296,26 +366,33 @@ export function Voices() {
   );
 }
 
+// one per card: the two core disciplines, then the network
+const TEAM_ICONS: TeamIconKind[] = ["engineering", "integrations", "network"];
+
 export function Team() {
   const c = useContent();
+  const t = c.team;
   return (
-    <section id="team" className="section">
+    <section id="team" className="section team">
       <div className="container">
         <div className="section-head reveal">
-          <h2>{c.team.title}</h2>
+          <div className="eyebrow">{t.eyebrow}</div>
+          <h2>{t.title}</h2>
+          <p>{t.intro}</p>
         </div>
-        <div className="team-grid">
-          {c.team.people.map((p) => (
-            <article className="card person reveal" key={p.name}>
-              <div className="person__av">{p.initials}</div>
-              <h4>{p.name}</h4>
-              <div className="person__role">{p.role}</div>
-            </article>
+        <ul className="team-grid" role="list">
+          {[...t.core, t.network].map((m, i) => (
+            <li className={"card team-card reveal" + (m === t.network ? " team-card--network" : "")} key={m.title}>
+              <TeamIcon kind={TEAM_ICONS[i]} className="team-card__icon" />
+              <p className="team-card__label">{m.label}</p>
+              <h3>{m.title}</h3>
+              <p className="team-card__body">{m.body}</p>
+            </li>
           ))}
-        </div>
+        </ul>
         <div className="team-more">
           <a href="/about/" className="btn btn--ghost">
-            {c.team.all}
+            {t.all}
           </a>
         </div>
       </div>

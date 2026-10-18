@@ -1,28 +1,54 @@
+.team {
+  scroll-margin-top: 24px;
+}
+.team h2,
+.team-card h3 {
+  text-wrap: balance;
+}
 .team-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: grid;
-  /* auto-fit with a cap, so a two-person roster centres at a sane card width
-     instead of being stranded in the left half or stretched across the row. */
-  grid-template-columns: repeat(auto-fit, minmax(230px, 300px));
-  justify-content: center;
-  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
 }
-.person {
-  padding: 26px;
+.team-card {
+  min-width: 0;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
-.person__av {
-  width: 52px;
-  height: 52px;
-  font-size: 16px;
-  margin-bottom: 18px;
+.team-card__icon {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 20px;
 }
-.person h4 {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-.person__role {
+/* on a card, so --text-2: --text-3 falls under 4.5:1 there */
+.team-card__label {
   font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-3);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+.team-card h3 {
+  font-size: 21px;
+}
+.team-card__body {
+  margin-top: 12px;
+  color: var(--text-2);
+  font-size: 15.5px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+/* the extended team: an open outline instead of the raised card */
+.team-card--network {
+  border-style: dashed;
+  background: transparent;
+  box-shadow: none;
 }
 
 /* home page: the link out to the About page */
@@ -32,14 +58,18 @@
   margin-top: 34px;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1023px) {
   .team-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* the core team side by side, the network underneath: no orphan in a 2-column row */
+  .team-card--network {
+    grid-column: 1 / -1;
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   .team-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }

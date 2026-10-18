@@ -36,7 +36,7 @@ Comments say *why*, never what the code already says. Keep them to 1-3 lines, pl
 - `index.html` via Vite's `%VITE_SITE_URL%` substitution (static copy for crawlers that don't run JS — keep it in sync with `src/seo/SeoHead.tsx`)
 - `scripts/seo.mjs`, which **generates** `public/robots.txt`, `public/sitemap.xml` (one EN + one SK entry per page in its `paths` array), `public/llms.txt` — never edit them by hand, and they are **not tracked** — `.gitignore` covers all three, and they were untracked with `git rm --cached` once it turned out the ignore rule had landed after they were already committed (ignore rules do nothing for a path git already tracks, so every build kept dirtying the working tree). Nothing needs committing: the deploy runs `npm run build`, whose `prebuild` regenerates them into `public/` before Vite copies that into `dist/`.
 
-Copy `.env.example` → `.env` for local work. CI overrides it: `.github/workflows/deploy.yml` builds with `VITE_SITE_URL=https://www.etereosystems.com` (note: differs from the `etereo.sk` default in `src/config.ts` and `.env.example`).
+Copy `.env.example` → `.env` for local work. Every default — `src/config.ts`, `scripts/seo.mjs`, `.env.example` — is `https://www.etereosystems.com`, the domain the contact email uses and the one `.github/workflows/deploy.yml` builds with.
 
 ## Deployment
 
@@ -72,10 +72,10 @@ The suite is not unit coverage of components — it is the invariants this repo'
 | `choreo.test.ts` | `LX` length tracks `PROJECT_COUNT`, every project gets a reachable stretch of scroll, splash/handoff boundaries, `window.__P` override |
 | `projects.test.ts` | `PANELS` per language lines up with `PROJECTS`, each screen spec has what `screenTexture.ts` draws, and every slug's `.webp` is on disk |
 | `blog.test.tsx` | 106 posts have both languages and balanced body HTML, `content.insights.items` mirrors `POSTS` exactly (title, tag, date, newest first), and pagination shows all of them across 11 pages with none repeated |
+| `people-contact.test.tsx` | Testimonials stay hidden below two consented quotes (and the shipped data has none); Team renders its three cards; the contact form's validation, `aria-describedby` wiring, `?type=` / `?product=` preselection, and that an unwired submit ends in the error state, never "sent" |
+| `work.test.tsx` | every Projects card renders its tag, title, description and both cells in both languages with no blank `{ sk, en }` string (`src/data/` is outside content-parity); a `url` becomes one new-tab link with `noopener noreferrer` and an `aria-label` that starts with the visible label; a `confidential` project gets the badge and no link, and none is both |
 
-Two gaps are **recorded in the tests rather than hidden**, each with the offending name listed so the assertion still fires on anything new:
-- `content.work.sub` is blank in both languages and read by nothing — the Work section renders `note` in that slot (`KNOWN_BLANK` in `content-parity.test.ts`).
-- `ecostruxure-it`, `beumer-localchat` and `aperia` have EN `role`/`challenge`/`approach`/`outcome` with no Slovak counterpart, so their `/projects/?p=<slug>` detail sections are empty in SK (`LONG_FORM_GAP` in `projects.test.ts`). Shrinking either list keeps the suite green; growing it turns it red.
+One gap is **recorded in the tests rather than hidden**, with the offending names listed so the assertion still fires on anything new: `ecostruxure-it`, `beumer-localchat` and `aperia` have EN `role`/`challenge`/`approach`/`outcome` with no Slovak counterpart, so their `/projects/?p=<slug>` detail sections are empty in SK (`LONG_FORM_GAP` in `projects.test.ts`). Shrinking the list keeps the suite green; growing it turns it red. `KNOWN_BLANK` in `content-parity.test.ts` is the same mechanism for copy left blank in every language, and is currently empty.
 
 `npm run lint` fails on oxlint *errors* only — the ~12 pre-existing warnings in `src/three/` and `App.tsx` do not block a merge. Adding `--deny-warnings` means fixing those first.
 
@@ -134,13 +134,14 @@ Adding a page means: a new `<name>/index.html` (copy the static crawler block fr
 
 Subpages share one set of chrome classes — `.subpage`, `.page-head`, `.page-back`, `.page-intro`, `.page-note`, `.page-cta` — so a third page inherits the frame for free. That chrome lives in `styles/pages/subpage.css`; page-specific classes (`.case*`, `.about-*`, `.roster`, `.facts`) are in that page's own file beside it.
 
-`Nav` takes a `base` prop that prefixes its in-page anchors — `""` on the home page, `"/"` on a subpage so `#products` becomes `/#products`. Three nav items are exceptions that link straight to a subpage from every page:
+`Nav` takes a `base` prop that prefixes its in-page anchors — `""` on the home page, `"/"` on a subpage so `#products` becomes `/#products`. Two nav items are exceptions that link straight to a subpage from every page:
 
 | Nav item | Target | Home page still has |
 |---|---|---|
-| Work | `/projects/` | `#work` teaser + ghost link (`work.all`) |
 | About us | `/about/` | `#team` teaser + ghost link (`team.all`) |
 | Blog | `/blog/` | nothing — the Blog section was removed outright |
+
+"Projects" (`nav.work`, once "Use cases") was a third and went to `/projects/`; it now scrolls to the home page's `#work` like the in-page items. `/projects/` is reached from the footer's Company column, the About page CTA, and the ghost link under the home page's `#work` cards (`work.all`).
 
 `content.insights.items` therefore renders only on `/blog/`; there is no `Blog` component any more, and `.insights-*` / `.article*` CSS went with it.
 
@@ -208,9 +209,15 @@ Only *explicit* choices are persisted — a switcher click (via `setLang`, which
 
 Country/IP is deliberately **not** used. The site is static on shared hosting with no Cloudflare in front, so geo would need a third-party round trip before first paint, and geography is a weak proxy for language for a company whose stated market (`SITE.areaServed`) is cross-border.
 
-`WorkCase` carries both lengths of the same case study: `body` is the one-sentence teaser the home page shows, while `challenge` / `approach` / `outcome` are rendered only on `/projects/`. `casePage` holds that page's own framing copy and its section labels. Both languages must stay in step — the `Content` interface will not let one drift.
+The Projects section (`#work`) shows real, published work only. The projects are `WORK_PROJECTS` in [src/data/work.ts](src/data/work.ts), each string as `{ sk, en }` like the testimonials, with the section copy and link/badge labels in `content.work`. A project with a `url` gets a "Visit website ↗" link out; one marked `confidential` gets a lock badge and no link instead. It replaced scenario cards (typical briefs, no client), which had in turn replaced invented case studies — so a project goes in only once the client is happy for it to be named, and its cells carry facts, not estimated figures. `casePage` holds `/projects/`'s title, intro, section labels and CTA; that page's project data is `PANELS`, not `content`. Both languages must stay in step — the `Content` interface will not let one drift.
 
 The first section is **Products** (`#products`), which replaced a six-card Services section. It still carries an empty `<span id="services">` pinned to its top, so old `/#services` links land in the same place; `render.test.tsx` keeps it. P/01 is `content.products.featured` (its own type, with a list and a CTA to `#contact`); P/02–P/05 are `items`, with no links until product subpages exist.
+
+Testimonials live outside `content.ts`, in [src/data/testimonials.ts](src/data/testimonials.ts), each string as `{ sk, en }`; the section copy around them stays in `content`. `Voices` renders only `consent: true` entries and **renders nothing below two** — one quote reads as cherry-picked.
+
+The site names **no individuals**: the Team section and the About roster are disciplines (`team.core`) plus the specialist network (`team.network`), not people, and blog posts are authored by the company (`By the ETEREO team`, JSON-LD `author` → the Organization). Don't reintroduce a person's name, a founders list or a `founders` field in structured data without asking.
+
+The contact form's chips are `TOPICS` in `content.ts`, multi-select. `?type=assessment|team|embedded` and `?product=ai|custom|saas|web|cloud` preselect one ([contactPreset.ts](src/components/contactPreset.ts)); `type=team` is valid but has no chip, since a delivery team is an engagement shape rather than a topic. The engagement cards and the P/01 CTA link that way, but intercept the click: a changed query string would reload the page and restart the hero.
 
 Section markup lives in one file, [src/sections/Sections.tsx](src/sections/Sections.tsx), one exported component per section; `App.tsx` composes them. Subpages live in [src/pages/](src/pages/) instead and compose `Nav` / `Footer` directly. Scroll-in animation is opt-in per element by adding the `reveal` class — `useReveal()` observes them once on mount, so elements added after mount won't animate.
 
@@ -236,9 +243,10 @@ The menu also opens and closes at different speeds — 440 ms out, 280 ms back �
 
 Caveats worth knowing before editing:
 - **Type sizes are not tokenized.** Colours, font families and radii are `:root` tokens; font sizes are literal px (23 distinct values, several half-pixel one-offs like `14.5px`). To match an existing size, grep for it rather than guessing a scale.
-- **`.card` is one visual treatment shared by eight unrelated content types** (products, tech columns, work cases, engagement tiers, voices, team, articles, contact form), including a single hover lift + violet glow. Restyling `.card` changes all of them.
+- **`.card` is one visual treatment shared by eight unrelated content types** (products, tech columns, projects, engagement tiers, voices, team, articles, contact form), including a single hover lift + violet glow. Restyling `.card` changes all of them.
 - The three families are self-hosted (see Fonts above), not loaded from Google. Changing one means editing `scripts/fonts.mjs` and the matching `--font-*` token.
-- `.eyebrow` survives in exactly four places — Products (asked for by name when the section replaced Services), Process (likewise asked for by name in its rewrite), Work ("Selected work" qualifies a three-case list as non-exhaustive) and Contact ("Start here" is wayfinding at the end of a long page). It was removed from the other seven sections as decoration; don't reintroduce it as a default label above every heading.
+- `.eyebrow` is on nine sections. Products, Process, Tech, Projects, Industries, Engagement, Testimonials and Team each got theirs because a rewrite asked for one by name. Contact has "Start here" as wayfinding at the end of a long page. FAQ has none; don't reintroduce it as a default label above every heading.
+- **Breakpoints differ by section.** Tech, Projects, Industries and Engagement break at 1280 / 1024 / 768, and Testimonials, Team and Contact at 1024 / 768, as their rewrites specified. Everything else still breaks at 1000 / 720. Their small uppercase labels on cards use `--text-2`, because `--text-3` drops below 4.5:1 on a card inside a tinted band.
 
 ### Accessibility baseline
 
@@ -248,12 +256,13 @@ The first two items are solved — extend them rather than working around them. 
 - **`prefers-reduced-motion` covers every autonomous animation.** Lenis is skipped in `App.tsx`, `.reveal` is neutralised in `global.css`, the tech marquee and the `panelIn` panel entrance stop in `sections/tech.css` and `components/project-panel.css`, and `Macbook.tsx` multiplies its idle `Math.sin(t * …)` float/sway by an `idle` factor read from `motionPref` in [src/store.ts](src/store.ts) (a plain mutable object like `heroScroll`, so the frame loop can read it without re-rendering). Deliberately still moving: the scroll-driven choreography itself (that is the user's own input, and it carries the content), `.card`/`.btn` hover transforms, and the mobile menu's own open/close (they answer a user action). The menu's per-item stagger is decoration and does stop — its override is nested inside the nav's `max-width: 1000px` block rather than hoisted to a top-level one, because it has to beat the `transition-delay` set a few lines above it and a media query carries no specificity of its own, so only source order decides.
 
   The mobile menu panel also carries `visibility: hidden` while shut, with the visibility transition delayed by the fade so closing still animates. Before that it was moved off-screen with `translateY(-140%)`, which hides an element from view but leaves it in the tab order — a keyboard user at mobile width could tab into an invisible menu.
-- **The hero's eight projects still have no text equivalent.** `ProjectPanel` is `aria-hidden` and the on-screen copy is rasterised into a `CanvasTexture`, so `PANELS` / `PROJECTS` reach neither assistive tech nor non-JS crawlers. `/projects/` covers only the three `content.work.items` case studies, which are separate data — the two sets are not in sync by design.
-- `--text-3` (#737d96) is 4.86:1 on `--bg` and is used at 11–13px throughout; input placeholders (#5b6480) are 3.41:1, below AA.
-- The contact form's `.need-chip` group is single-select built from `<button>`s without `aria-pressed`, the success swap has no `aria-live`, and inputs carry no `name` attributes.
+- **The hero's eight projects still have no text equivalent.** `ProjectPanel` is `aria-hidden` and the on-screen copy is rasterised into a `CanvasTexture`, so on the home page `PANELS` / `PROJECTS` reach neither assistive tech nor non-JS crawlers. `/projects/` renders the same `PANELS` text as HTML, but nothing in the hero links to it.
+- `--text-3` (#737d96) is 4.86:1 on `--bg` and is used at 11–13px throughout. The contact form's labels and placeholders were moved off it (labels to `--text-2`, placeholders from #5b6480 to `--text-3`); elsewhere it is unchanged.
 
 ## Content caveats
 
-Case studies, stats, testimonials, contact details and the footer legal line are illustrative placeholders for a newly founded company (see README). The contact form is front-end only — it simulates a submit and posts nowhere.
+The footer legal line is a placeholder for a newly founded company (see README). There are no testimonials yet: `src/data/testimonials.ts` is empty on purpose, so the section is hidden. There are no client metrics on the home page: the Projects section names four real projects with facts only, and the Danish government work stays under NDA (see Content & i18n).
+
+**The contact form is not wired.** `submitInquiry()` in `Contact.tsx` is a `// TODO` that rejects, so a valid submit ends in the error state with a prefilled `mailto:` link — deliberately not a fake "sent". The consent checkbox's privacy-policy link is plain text until `SITE.privacyUrl` is set; no privacy page exists yet.
 
 Three projects (`ecostruxure-it`, `beumer-localchat`, `aperia`) carry their long-form `challenge`/`approach`/`outcome` in English only, so those detail sections are missing on the Slovak `/projects/?p=<slug>`. Recorded in `projects.test.ts` (see Testing) rather than left to be rediscovered.

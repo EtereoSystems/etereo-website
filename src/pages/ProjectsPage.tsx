@@ -11,9 +11,6 @@ import { PROJECTS, PANELS, PROJECT_COUNT } from "../i18n/projects";
 // TODO: migrate these labels into content.ts alongside the rest of the copy.
 const L = {
   en: {
-    hubTitle: "Selected work",
-    hubIntro:
-      "Real systems we've designed, built and shipped — from confidential government and defence platforms to consumer products live in the app stores.",
     search: "Search projects…",
     noResults: "No projects match that.",
     view: "View project",
@@ -28,9 +25,6 @@ const L = {
     draft: "A full write-up of this project is on the way. Here's the short version for now.",
   },
   sk: {
-    hubTitle: "Vybraná práca",
-    hubIntro:
-      "Reálne systémy, ktoré sme navrhli, postavili a dodali — od dôverných vládnych a obranných platforiem po spotrebiteľské produkty v obchodoch s aplikáciami.",
     search: "Hľadať projekty…",
     noResults: "Žiadny projekt nezodpovedá.",
     view: "Zobraziť projekt",
@@ -122,8 +116,8 @@ function ProjectHub({
           <a className="page-back" href={withLang("/")}>
             {c.casePage.back}
           </a>
-          <h1 className="reveal">{t.hubTitle}</h1>
-          <p className="page-intro reveal">{t.hubIntro}</p>
+          <h1 className="reveal">{c.casePage.title}</h1>
+          <p className="page-intro reveal">{c.casePage.intro}</p>
           <div className="psearch reveal">
             <input
               type="search"
