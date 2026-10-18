@@ -2,6 +2,8 @@ import type { Lang } from "../store";
 
 export interface Product {
   id: string;
+  /** links to the generated /services/<slug>/ detail page */
+  slug: string;
   title: string;
   body: string;
   tags: string[];
@@ -108,7 +110,7 @@ export interface Content {
     screenTag: string;
     screenTitle: string;
   };
-  products: { eyebrow: string; title: string; sub: string; featured: FeaturedProduct; items: Product[] };
+  products: { eyebrow: string; title: string; sub: string; more: string; featured: FeaturedProduct; items: Product[] };
   process: { eyebrow: string; title: string; sub: string; outputLabel: string; items: Phase[]; cta: string };
   tech: { title: string; sub: string; groups: { label: string; items: string[] }[] };
   work: { eyebrow: string; title: string; sub: string; note: string; all: string; items: WorkCase[] };
@@ -163,8 +165,10 @@ const en: Content = {
     eyebrow: "Products",
     title: "Software, AI and cloud under one roof",
     sub: "Five clearly defined products with a fixed scope, process and accountability. Each one is delivered by the same senior team, goes through the same architecture review and ships the same way – from the first analysis to production.",
+    more: "How we do it",
     featured: {
       id: "P/01",
+      slug: "ai-process-automation",
       title: "AI process automation",
       badge: "AI-first",
       subtitle: "AI agents take over the repetitive work. Your people focus on decisions.",
@@ -181,10 +185,10 @@ const en: Content = {
       cta: "See what can be automated",
     },
     items: [
-      { id: "P/02", title: "Custom software & system modernization", body: "Business systems built around how you actually work – not around a vendor's roadmap. We modernize legacy platforms piece by piece while your business keeps running, with no risky overnight migrations.", tags: ["Architecture", "Integrations", "Data migration"] },
-      { id: "P/03", title: "SaaS product development", body: "Multi-tenant platforms from the first release to scale: billing, permissions, admin and analytics – including the unglamorous parts that decide whether a product succeeds.", tags: ["Multi-tenancy", "Subscriptions & billing", "Analytics"] },
-      { id: "P/04", title: "Web & mobile applications", body: "Websites, portals, e-shops and iOS and Android apps designed for performance, accessibility and long-term growth – with automated releases and app store operations.", tags: ["Next.js", "React Native", "Headless CMS"] },
-      { id: "P/05", title: "Cloud & DevOps", body: "Infrastructure as code, CI/CD, monitoring and cost control on AWS and Azure – so shipping a new version becomes routine, not an event.", tags: ["AWS / Azure", "Kubernetes", "Terraform"] },
+      { id: "P/02", slug: "custom-software-modernization", title: "Custom software & system modernization", body: "Business systems built around how you actually work – not around a vendor's roadmap. We modernize legacy platforms piece by piece while your business keeps running, with no risky overnight migrations.", tags: ["Architecture", "Integrations", "Data migration"] },
+      { id: "P/03", slug: "saas-product-development", title: "SaaS product development", body: "Multi-tenant platforms from the first release to scale: billing, permissions, admin and analytics – including the unglamorous parts that decide whether a product succeeds.", tags: ["Multi-tenancy", "Subscriptions & billing", "Analytics"] },
+      { id: "P/04", slug: "web-mobile-applications", title: "Web & mobile applications", body: "Websites, portals, e-shops and iOS and Android apps designed for performance, accessibility and long-term growth – with automated releases and app store operations.", tags: ["Next.js", "React Native", "Headless CMS"] },
+      { id: "P/05", slug: "cloud-devops", title: "Cloud & DevOps", body: "Infrastructure as code, CI/CD, monitoring and cost control on AWS and Azure – so shipping a new version becomes routine, not an event.", tags: ["AWS / Azure", "Kubernetes", "Terraform"] },
     ],
   },
   process: {
@@ -475,8 +479,10 @@ const sk: Content = {
     eyebrow: "Produkty",
     title: "Softvér, AI a cloud pod jednou strechou",
     sub: "Päť jasne definovaných produktov s pevným rozsahom, procesom a zodpovednosťou. Za každým stojí ten istý seniorný tím, rovnaká architektonická revízia a rovnaký spôsob nasadenia – od prvej analýzy až po prevádzku.",
+    more: "Ako to robíme",
     featured: {
       id: "P/01",
+      slug: "ai-process-automation",
       title: "AI automatizácia procesov",
       badge: "AI-first",
       subtitle: "Opakovanú prácu prevezmú AI agenti. Vaši ľudia sa venujú rozhodovaniu.",
@@ -492,10 +498,10 @@ const sk: Content = {
       cta: "Zistiť, čo sa dá automatizovať",
     },
     items: [
-      { id: "P/02", title: "Softvér na mieru a modernizácia systémov", body: "Firemné systémy postavené okolo toho, ako reálne pracujete – nie okolo roadmapy dodávateľa. Staršie platformy modernizujeme po častiach a za plnej prevádzky, bez rizikových migrácií zo dňa na deň.", tags: ["Architektúra", "Integrácie", "Migrácia dát"] },
-      { id: "P/03", title: "Vývoj SaaS produktov", body: "Multi-tenant platformy od prvej verzie až po škálovanie: fakturácia, oprávnenia, administrácia a analytika – vrátane tých nezáživných častí, ktoré rozhodujú o úspechu produktu.", tags: ["Multi-tenancy", "Predplatné a fakturácia", "Analytika"] },
-      { id: "P/04", title: "Webové a mobilné aplikácie", body: "Weby, portály, e-shopy a aplikácie pre iOS a Android navrhnuté na výkon, prístupnosť a dlhodobý rozvoj – s automatizovaným vydávaním a prevádzkou v app storoch.", tags: ["Next.js", "React Native", "Headless CMS"] },
-      { id: "P/05", title: "Cloud a DevOps", body: "Infraštruktúra ako kód, CI/CD, monitoring a kontrola nákladov na AWS aj Azure – aby nasadenie novej verzie bolo rutinou, nie udalosťou.", tags: ["AWS / Azure", "Kubernetes", "Terraform"] },
+      { id: "P/02", slug: "custom-software-modernization", title: "Softvér na mieru a modernizácia systémov", body: "Firemné systémy postavené okolo toho, ako reálne pracujete – nie okolo roadmapy dodávateľa. Staršie platformy modernizujeme po častiach a za plnej prevádzky, bez rizikových migrácií zo dňa na deň.", tags: ["Architektúra", "Integrácie", "Migrácia dát"] },
+      { id: "P/03", slug: "saas-product-development", title: "Vývoj SaaS produktov", body: "Multi-tenant platformy od prvej verzie až po škálovanie: fakturácia, oprávnenia, administrácia a analytika – vrátane tých nezáživných častí, ktoré rozhodujú o úspechu produktu.", tags: ["Multi-tenancy", "Predplatné a fakturácia", "Analytika"] },
+      { id: "P/04", slug: "web-mobile-applications", title: "Webové a mobilné aplikácie", body: "Weby, portály, e-shopy a aplikácie pre iOS a Android navrhnuté na výkon, prístupnosť a dlhodobý rozvoj – s automatizovaným vydávaním a prevádzkou v app storoch.", tags: ["Next.js", "React Native", "Headless CMS"] },
+      { id: "P/05", slug: "cloud-devops", title: "Cloud a DevOps", body: "Infraštruktúra ako kód, CI/CD, monitoring a kontrola nákladov na AWS aj Azure – aby nasadenie novej verzie bolo rutinou, nie udalosťou.", tags: ["AWS / Azure", "Kubernetes", "Terraform"] },
     ],
   },
   process: {

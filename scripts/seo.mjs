@@ -9,6 +9,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { POSTS } from "./blog-posts.mjs";
+import { SERVICES } from "./services.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
@@ -66,6 +67,8 @@ const paths = [
   { path: "/", priority: "1.0" },
   { path: "/projects/", priority: "0.8" },
   { path: "/about/", priority: "0.8" },
+  // the five service detail pages — primary commercial landing pages
+  ...SERVICES.map((s) => ({ path: `/services/${s.slug}/`, priority: "0.9" })),
   { path: "/blog/", priority: "0.7" },
   // one clean-path entry per blog article (both EN and SK variants added below)
   ...POSTS.map((p) => ({ path: `/blog/${p.slug}/`, priority: "0.6" })),
@@ -108,6 +111,9 @@ const llms = `# ETEREO
 - **SaaS product development** — multi-tenant platforms from the first release to scale: billing, permissions, admin and analytics.
 - **Web & mobile applications** — websites, portals, e-shops and iOS and Android apps designed for performance, accessibility (WCAG 2.2) and long-term growth, with automated releases and app store operations.
 - **Cloud & DevOps** — infrastructure as code, CI/CD, monitoring and cost control on AWS and Azure.
+
+Each product has a page describing the full delivery workflow (English and Slovak, append ?lang=sk):
+${SERVICES.map((s) => `- ${s.title.en} — ${SITE_URL}/services/${s.slug}/`).join("\n")}
 
 ## How ETEREO works
 

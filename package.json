@@ -7,9 +7,9 @@
     "seo": "node scripts/seo.mjs",
     "blog": "node scripts/gen-blog.mjs",
     "fonts": "node scripts/fonts.mjs",
-    "predev": "node scripts/gen-blog.mjs && node scripts/seo.mjs",
+    "predev": "node scripts/gen-blog.mjs && node scripts/gen-services.mjs && node scripts/seo.mjs",
     "dev": "vite",
-    "prebuild": "node scripts/gen-blog.mjs && node scripts/seo.mjs",
+    "prebuild": "node scripts/gen-blog.mjs && node scripts/gen-services.mjs && node scripts/seo.mjs",
     "build": "tsc -b && vite build",
     "postbuild": "node scripts/inline-css.mjs",
     "lint": "oxlint",
@@ -17,7 +17,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "verify": "npm run typecheck && npm run lint && npm run test",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "services": "node scripts/gen-services.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

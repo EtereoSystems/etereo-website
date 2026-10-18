@@ -118,6 +118,24 @@
 .prod__action {
   margin-top: auto;
   padding-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+/* "How we do it →" link to the service detail page */
+.prod__more {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--violet-2);
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+.prod__more:hover {
+  transform: translateX(3px);
+}
+.prod__more--card {
+  margin-top: 22px;
 }
 /* wraps rather than overflow once it goes full width on a phone */
 .prod__cta {

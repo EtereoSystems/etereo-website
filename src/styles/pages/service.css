@@ -1,0 +1,229 @@
+/* Service detail pages — generated static pages at /services/<slug>/ (scripts/gen-services.mjs).
+   Shares the subpage chrome (.subpage, .page-head, .page-back, .page-intro, .page-cta) and adds
+   the workflow/deliverables/FAQ blocks specific to a service page. */
+
+.service-page .page-head {
+  padding-bottom: 36px;
+}
+.svc-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.svc-badge__n {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+.svc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.svc-head__cta {
+  margin-top: 30px;
+}
+
+/* shared prose treatment for every HTML body block on the page */
+.svc-intro,
+.svc-approach,
+.svc-flow__body,
+.svc-faq__a {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text-2);
+  max-width: 68ch;
+}
+.svc-intro > p,
+.svc-approach > p,
+.svc-flow__body > p,
+.svc-faq__a > p {
+  margin: 0 0 18px;
+}
+.svc-intro > p:last-child,
+.svc-approach > p:last-child,
+.svc-flow__body > p:last-child,
+.svc-faq__a > p:last-child {
+  margin-bottom: 0;
+}
+.svc-intro strong,
+.svc-approach strong,
+.svc-flow__body strong,
+.svc-faq__a strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.svc-intro em,
+.svc-approach em,
+.svc-flow__body em,
+.svc-faq__a em {
+  color: var(--text);
+  font-style: italic;
+}
+.svc-intro {
+  font-size: 18.5px;
+  color: var(--text);
+}
+
+.svc-section {
+  border-top: 1px solid var(--line-soft);
+  padding-top: 44px;
+}
+.svc-h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(23px, 3vw, 31px);
+  letter-spacing: -0.01em;
+  margin-bottom: 30px;
+}
+
+/* the delivery workflow — a numbered vertical flow with a connecting rail */
+.svc-flow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.svc-flow__step {
+  position: relative;
+  padding: 0 0 34px 60px;
+}
+.svc-flow__step::before {
+  /* the rail connecting the step numbers */
+  content: "";
+  position: absolute;
+  left: 19px;
+  top: 40px;
+  bottom: -6px;
+  width: 1px;
+  background: var(--line);
+}
+.svc-flow__step:last-child {
+  padding-bottom: 0;
+}
+.svc-flow__step:last-child::before {
+  display: none;
+}
+.svc-flow__n {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--violet-2);
+}
+.svc-flow__step h3 {
+  font-size: 19px;
+  line-height: 1.25;
+  margin: 7px 0 10px;
+}
+.svc-flow__out {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  color: var(--text-3);
+}
+.svc-flow__out span[data-en] {
+  color: var(--violet-2);
+}
+
+/* what you get */
+.svc-deliver {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 30px;
+  max-width: 68ch;
+}
+.svc-deliver li {
+  position: relative;
+  padding-left: 28px;
+  color: var(--text-2);
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+.svc-deliver__tick {
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 14px;
+  height: 8px;
+  border-left: 2px solid var(--violet-2);
+  border-bottom: 2px solid var(--violet-2);
+  transform: rotate(-45deg);
+}
+
+/* FAQ */
+.svc-faq {
+  display: grid;
+  gap: 0;
+  max-width: 72ch;
+}
+.svc-faq__item {
+  padding: 22px 0;
+  border-top: 1px solid var(--line-soft);
+}
+.svc-faq__item:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.svc-faq__item h3 {
+  font-size: 17.5px;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+
+/* other products */
+.svc-related {
+  margin-top: 48px;
+  padding-top: 30px;
+  border-top: 1px solid var(--line-soft);
+}
+.svc-related__title {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 16px;
+}
+.svc-related ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.svc-related li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  transition: color 0.18s ease;
+}
+.svc-related li a:hover {
+  color: var(--violet-2);
+}
+.svc-related__name {
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .svc-deliver {
+    grid-template-columns: 1fr;
+  }
+}
