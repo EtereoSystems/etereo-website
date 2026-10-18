@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useContent } from "../i18n";
+import { useUI } from "../store";
 
 function ProductTags({ tags }: { tags: string[] }) {
   return (
@@ -15,7 +16,10 @@ function ProductTags({ tags }: { tags: string[] }) {
 
 export function Products() {
   const c = useContent();
+  const lang = useUI((s) => s.lang);
   const { featured: f, items } = c.products;
+  // keep the chosen language across the jump to a static /services/ page
+  const svc = (slug: string) => (lang === "sk" ? `/services/${slug}/?lang=sk` : `/services/${slug}/`);
   return (
     <section id="products" className="section products">
       {/* This section was #services; links to that still land here, at the same spot. */}
@@ -47,6 +51,13 @@ export function Products() {
                   <span aria-hidden="true">→</span>
                 </span>
               </a>
+              <a href={svc(f.slug)} className="prod__more">
+                <span>
+                  {c.products.more}
+                  {" "}
+                  <span aria-hidden="true">→</span>
+                </span>
+              </a>
             </div>
           </div>
           <div className="prod--featured__side">
@@ -69,7 +80,13 @@ export function Products() {
               <h3>{s.title}</h3>
               <p>{s.body}</p>
               <ProductTags tags={s.tags} />
-              {/* TODO: link to product subpage when created */}
+              <a href={svc(s.slug)} className="prod__more prod__more--card">
+                <span>
+                  {c.products.more}
+                  {" "}
+                  <span aria-hidden="true">→</span>
+                </span>
+              </a>
             </article>
           ))}
         </div>

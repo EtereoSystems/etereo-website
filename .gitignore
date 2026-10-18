@@ -23,5 +23,8 @@ public/llms.txt
 # generated static blog post pages (from scripts/gen-blog.mjs on predev/prebuild)
 blog/*/
 
+# generated static service pages (from scripts/gen-services.mjs on predev/prebuild)
+services/*/
+
 # local archives
 *.tgz
