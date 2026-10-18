@@ -11,7 +11,7 @@ export function Nav({ base = "" }: { base?: string }) {
   const links: [string, string][] = [
     [c.nav.products, `${base}#products`],
     [c.nav.process, `${base}#process`],
-    [c.nav.work, "/projects/"],
+    [c.nav.work, `${base}#work`],
     [c.nav.industries, `${base}#industries`],
     [c.nav.about, "/about/"],
     [c.nav.insights, "/blog/"],

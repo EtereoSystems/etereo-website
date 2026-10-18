@@ -8,7 +8,6 @@ export const POSTS = [
     slug: "strangler-fig-legacy-migration",
     date: "2026-03-04",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Architecture", sk: "Architektúra" },
     keywords: {
       en: "strangler fig pattern, legacy migration, incremental modernization, legacy system replacement, avoid big-bang rewrite",
@@ -84,7 +83,6 @@ export const POSTS = [
     slug: "two-week-software-audit",
     date: "2026-04-15",
     readMin: 7,
-    author: "Matej Kučera",
     tag: { en: "Delivery", sk: "Dodávka" },
     keywords: {
       en: "software audit, architecture review, technical due diligence, modernization roadmap, legacy assessment deliverables",
@@ -152,7 +150,6 @@ export const POSTS = [
     slug: "cut-cloud-costs-without-a-freeze",
     date: "2026-05-20",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Platform", sk: "Platforma" },
     keywords: {
       en: "reduce cloud costs, cloud cost optimization, aws azure cost reduction, cloud waste, finops, right-sizing",
@@ -208,7 +205,6 @@ export const POSTS = [
     slug: "rewrite-replatform-or-refactor",
     date: "2026-06-24",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Strategy", sk: "Stratégia" },
     keywords: {
       en: "rewrite vs refactor, replatform, legacy modernization strategy, when to rewrite software, application modernization decision",
@@ -264,7 +260,6 @@ export const POSTS = [
     slug: "saas-on-a-legacy-core",
     date: "2026-07-29",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Integration", sk: "Integrácia" },
     keywords: {
       en: "saas on legacy system, integration patterns, anti-corruption layer, change data capture, api gateway, event streaming",
@@ -320,7 +315,6 @@ export const POSTS = [
     slug: "offline-first-and-on-premise",
     date: "2026-09-02",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Engineering", sk: "Inžinierstvo" },
     keywords: {
       en: "offline-first architecture, on-premise software, air-gapped, data sovereignty, local-first, running AI on-premise, private LLM",
@@ -376,7 +370,6 @@ export const POSTS = [
     slug: "how-much-does-it-cost-to-build-custom-software",
     date: "2026-01-14",
     readMin: 10,
-    author: "Patrik Klimko",
     tag: { en: "Cost", sk: "Náklady" },
     keywords: {
       en: "cost to build custom software, custom software development cost, how much does custom software cost, software development pricing",
@@ -446,7 +439,6 @@ export const POSTS = [
     slug: "how-much-does-it-cost-to-build-a-web-app",
     date: "2026-01-28",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Cost", sk: "Náklady" },
     keywords: {
       en: "cost to build a web app, web application development cost, how much does a web app cost, web app pricing",
@@ -516,7 +508,6 @@ export const POSTS = [
     slug: "how-much-does-it-cost-to-build-a-mobile-app",
     date: "2026-02-11",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Cost", sk: "Náklady" },
     keywords: {
       en: "cost to build a mobile app, mobile app development cost, how much does an app cost, iOS Android app price",
@@ -586,7 +577,6 @@ export const POSTS = [
     slug: "how-much-does-it-cost-to-build-an-mvp",
     date: "2026-02-25",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Cost", sk: "Náklady" },
     keywords: {
       en: "cost to build an MVP, MVP development cost, how much does an MVP cost, minimum viable product price startup",
@@ -656,7 +646,6 @@ export const POSTS = [
     slug: "how-long-does-it-take-to-build-custom-software",
     date: "2026-03-18",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Timeline", sk: "Časový plán" },
     keywords: {
       en: "how long does it take to build custom software, software development timeline, time to build an app, software project duration",
@@ -726,7 +715,6 @@ export const POSTS = [
     slug: "custom-software-vs-off-the-shelf",
     date: "2026-04-01",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Build vs buy", sk: "Postaviť či kúpiť" },
     keywords: {
       en: "custom software vs off-the-shelf, build vs buy software, custom vs packaged software, should we build or buy software",
@@ -796,7 +784,6 @@ export const POSTS = [
     slug: "no-code-vs-custom-software",
     date: "2026-04-29",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Build vs buy", sk: "Postaviť či kúpiť" },
     keywords: {
       en: "no-code vs custom software, low-code vs custom development, when to use no-code, no-code limitations",
@@ -860,7 +847,6 @@ export const POSTS = [
     slug: "how-to-choose-a-software-development-company",
     date: "2026-06-03",
     readMin: 10,
-    author: "Patrik Klimko",
     tag: { en: "Hiring", sk: "Výber partnera" },
     keywords: {
       en: "how to choose a software development company, questions to ask a software developer, hiring a software development agency, choosing a development partner",
@@ -930,7 +916,6 @@ export const POSTS = [
     slug: "fixed-price-vs-time-and-materials",
     date: "2026-06-17",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Pricing", sk: "Cenotvorba" },
     keywords: {
       en: "fixed price vs time and materials, software project pricing models, fixed price software contract, time and materials contract",
@@ -994,7 +979,6 @@ export const POSTS = [
     slug: "nearshore-software-development-in-europe",
     date: "2026-05-13",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Sourcing", sk: "Sourcing" },
     keywords: {
       en: "nearshore software development Europe, nearshore vs offshore, outsourcing software development Central Europe, nearshore development partner Slovakia",
@@ -1064,7 +1048,6 @@ export const POSTS = [
     slug: "how-to-build-a-saas-product",
     date: "2026-07-08",
     readMin: 10,
-    author: "Patrik Klimko",
     tag: { en: "SaaS", sk: "SaaS" },
     keywords: {
       en: "how to build a SaaS product, build a SaaS from scratch, SaaS development, how to create a SaaS application, SaaS MVP",
@@ -1134,7 +1117,6 @@ export const POSTS = [
     slug: "how-to-build-an-mvp",
     date: "2026-07-22",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Product", sk: "Produkt" },
     keywords: {
       en: "how to build an MVP, minimum viable product guide, MVP development steps, how to build a minimum viable product, MVP scope",
@@ -1204,7 +1186,6 @@ export const POSTS = [
     slug: "how-to-build-a-custom-crm",
     date: "2026-08-05",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Systems", sk: "Systémy" },
     keywords: {
       en: "how to build a custom CRM, custom CRM development, build your own CRM, custom vs off-the-shelf CRM, bespoke CRM system",
@@ -1274,7 +1255,6 @@ export const POSTS = [
     slug: "how-to-build-an-internal-tool",
     date: "2026-08-19",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Systems", sk: "Systémy" },
     keywords: {
       en: "how to build an internal tool, internal tools for business, custom admin panel, replace spreadsheets with software, internal business software",
@@ -1344,7 +1324,6 @@ export const POSTS = [
     slug: "how-to-build-a-custom-erp",
     date: "2026-09-09",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Systems", sk: "Systémy" },
     keywords: {
       en: "how to build a custom ERP, custom ERP development, build ERP from scratch, custom vs off-the-shelf ERP, bespoke ERP system",
@@ -1414,7 +1393,6 @@ export const POSTS = [
     slug: "how-to-build-a-customer-portal",
     date: "2026-09-16",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Systems", sk: "Systémy" },
     keywords: {
       en: "how to build a customer portal, customer portal development, client portal software, self-service portal, build a client portal",
@@ -1484,7 +1462,6 @@ export const POSTS = [
     slug: "how-to-build-a-booking-system",
     date: "2026-09-23",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Systems", sk: "Systémy" },
     keywords: {
       en: "how to build a booking system, custom scheduling software, appointment booking system, reservation system development, online booking software",
@@ -1554,7 +1531,6 @@ export const POSTS = [
     slug: "the-software-development-process-explained",
     date: "2026-01-07",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Process", sk: "Proces" },
     keywords: {
       en: "software development process, software development steps, how software is built, software development lifecycle explained, custom software process",
@@ -1624,7 +1600,6 @@ export const POSTS = [
     slug: "signs-your-business-needs-custom-software",
     date: "2026-02-04",
     readMin: 7,
-    author: "Patrik Klimko",
     tag: { en: "Strategy", sk: "Stratégia" },
     keywords: {
       en: "signs you need custom software, when to build custom software, do I need custom software, outgrown off-the-shelf software, when to replace spreadsheets",
@@ -1706,7 +1681,6 @@ export const POSTS = [
     slug: "how-to-automate-a-manual-business-process",
     date: "2026-03-25",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Automation", sk: "Automatizácia" },
     keywords: {
       en: "how to automate a business process, business process automation, automate manual work, workflow automation software, automate repetitive tasks",
@@ -1775,7 +1749,6 @@ export const POSTS = [
     slug: "custom-software-for-logistics-and-transport",
     date: "2026-09-24",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Logistics", sk: "Logistika" },
     keywords: {
       en: "custom logistics software, TMS development, WMS integration, fleet and track and trace software, freight software partner",
@@ -1871,7 +1844,6 @@ export const POSTS = [
     slug: "custom-software-for-manufacturing",
     date: "2026-09-12",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Manufacturing", sk: "Výroba" },
     keywords: {
       en: "custom manufacturing software, MES development, production scheduling software, shop floor system, machine and PLC integration",
@@ -1967,7 +1939,6 @@ export const POSTS = [
     slug: "custom-software-for-healthcare",
     date: "2026-08-27",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Healthcare", sk: "Zdravotníctvo" },
     keywords: {
       en: "custom healthcare software, GDPR medical data, HL7 FHIR integration, medical device software MDR, healthcare software partner EU",
@@ -2065,7 +2036,6 @@ export const POSTS = [
     slug: "custom-software-for-fintech",
     date: "2026-08-12",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Fintech", sk: "Fintech" },
     keywords: {
       en: "custom fintech software, ledger integrity double-entry, PSD2 open banking, KYC AML DORA compliance, payments software partner",
@@ -2160,7 +2130,6 @@ export const POSTS = [
     slug: "custom-software-for-retail-and-ecommerce",
     date: "2026-07-31",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Retail", sk: "Retail" },
     keywords: {
       en: "custom software for retail, custom e-commerce development, headless commerce, order management system, omnichannel retail software",
@@ -2264,7 +2233,6 @@ export const POSTS = [
     slug: "staff-augmentation-vs-dedicated-team",
     date: "2026-09-25",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Teams", sk: "Tímy" },
     keywords: {
       en: "staff augmentation vs dedicated team, engagement models software, dedicated development team, managed team vs staff augmentation, how to hire developers",
@@ -2368,7 +2336,6 @@ export const POSTS = [
     slug: "how-to-outsource-software-development",
     date: "2026-09-05",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Outsourcing", sk: "Outsourcing" },
     keywords: {
       en: "how to outsource software development, choosing a software development partner, software outsourcing contract, IP ownership outsourcing, nearshore software development",
@@ -2474,7 +2441,6 @@ export const POSTS = [
     slug: "in-house-vs-outsourcing-software-development",
     date: "2026-08-22",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Sourcing", sk: "Sourcing" },
     keywords: {
       en: "in-house vs outsourcing software development, build vs buy software team, cost of hiring developers, outsourcing software development, embedded development team",
@@ -2573,7 +2539,6 @@ export const POSTS = [
     slug: "fractional-cto-when-you-need-one",
     date: "2026-07-15",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Leadership", sk: "Vedenie" },
     keywords: {
       en: "fractional CTO, part-time CTO, technical leadership for SMEs, when to hire a CTO, technical due diligence, managing a dev shop",
@@ -2681,7 +2646,6 @@ export const POSTS = [
     slug: "how-to-manage-a-remote-development-team",
     date: "2026-06-27",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Delivery", sk: "Dodávka" },
     keywords: {
       en: "manage remote development team, nearshore development, managing external developers, software delivery cadence, sprint demos, working with a dev team",
@@ -2789,7 +2753,6 @@ export const POSTS = [
     slug: "from-spreadsheets-to-custom-software",
     date: "2026-09-19",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Automation", sk: "Automatizácia" },
     keywords: {
       en: "spreadsheet to software, replace Excel, when Excel is not enough, business process software, custom software vs spreadsheet, spreadsheet risk",
@@ -2889,7 +2852,6 @@ export const POSTS = [
     slug: "connecting-your-business-tools-system-integration",
     date: "2026-06-10",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Integration", sk: "Integrácia" },
     keywords: {
       en: "system integration, connect business tools, iPaaS vs custom integration, integration hub, source of truth, API and webhooks explained",
@@ -2992,7 +2954,6 @@ export const POSTS = [
     slug: "cloud-migration-guide-for-business",
     date: "2026-05-27",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Cloud", sk: "Cloud" },
     keywords: {
       en: "cloud migration guide, migrate to AWS Azure GCP, lift and shift vs refactor, cloud migration strategy, GDPR data residency cloud",
@@ -3088,7 +3049,6 @@ export const POSTS = [
     slug: "how-to-reduce-technical-debt",
     date: "2026-05-06",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Engineering", sk: "Inžinierstvo" },
     keywords: {
       en: "how to reduce technical debt, technical debt symptoms, paying down tech debt, delivery slowing down, technical debt assessment",
@@ -3184,7 +3144,6 @@ export const POSTS = [
     slug: "monolith-to-microservices-when-its-worth-it",
     date: "2026-04-22",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Architecture", sk: "Architektúra" },
     keywords: {
       en: "monolith to microservices, when to use microservices, modular monolith, distributed systems tax, Conway's law architecture",
@@ -3280,7 +3239,6 @@ export const POSTS = [
     slug: "adding-ai-to-your-product",
     date: "2026-09-27",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "AI", sk: "AI" },
     keywords: {
       en: "adding AI to your product, when to use LLM features, AI hallucination reliability, human in the loop AI, AI product evaluations",
@@ -3375,7 +3333,6 @@ export const POSTS = [
     slug: "how-much-does-custom-ai-software-cost",
     date: "2026-04-08",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "AI", sk: "AI" },
     keywords: {
       en: "custom AI software cost, cost of building AI, AI development pricing, LLM API vs self-hosting, AI project budget, AI running costs",
@@ -3481,7 +3438,6 @@ export const POSTS = [
     slug: "ai-automation-for-business-processes",
     date: "2026-03-11",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "AI", sk: "AI" },
     keywords: {
       en: "AI process automation, automate business processes, document extraction AI, support triage automation, human-in-the-loop, AI vs rules automation",
@@ -3585,7 +3541,6 @@ export const POSTS = [
     slug: "how-to-build-an-ai-assistant-for-your-business",
     date: "2026-02-18",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "AI", sk: "AI" },
     keywords: {
       en: "build an AI assistant, internal AI chatbot, customer support AI assistant, grounded AI assistant, AI assistant access control, chatbot deflection rate",
@@ -3693,7 +3648,6 @@ export const POSTS = [
     slug: "ai-on-your-own-data-rag-explained",
     date: "2026-07-01",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "AI", sk: "AI" },
     keywords: {
       en: "RAG explained, AI on your own data, retrieval augmented generation, private data AI, RAG vs fine-tuning, EU data residency AI",
@@ -3796,7 +3750,6 @@ export const POSTS = [
     slug: "custom-software-for-real-estate",
     date: "2026-09-26",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Real estate", sk: "Reality" },
     keywords: {
       en: "custom software for real estate, property management software, real estate CRM, tenant portal, lease management system",
@@ -3894,7 +3847,6 @@ export const POSTS = [
     slug: "custom-software-for-construction",
     date: "2026-09-13",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Construction", sk: "Stavebníctvo" },
     keywords: {
       en: "custom software for construction, construction project management, estimating and bidding software, site data capture, subcontractor management",
@@ -3996,7 +3948,6 @@ export const POSTS = [
     slug: "custom-software-for-insurance",
     date: "2026-08-29",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Insurance", sk: "Poisťovníctvo" },
     keywords: {
       en: "custom software for insurance, policy administration system, claims workflow software, underwriting rules engine, insurance legacy modernization",
@@ -4098,7 +4049,6 @@ export const POSTS = [
     slug: "custom-software-for-education",
     date: "2026-08-08",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Education", sk: "Vzdelávanie" },
     keywords: {
       en: "custom software for education, e-learning platform development, learning management system, student information system, edtech accessibility",
@@ -4201,7 +4151,6 @@ export const POSTS = [
     slug: "custom-software-for-hospitality-and-restaurants",
     date: "2026-07-25",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Hospitality", sk: "Pohostinstvo" },
     keywords: {
       en: "hospitality software, restaurant management system, custom POS, reservation system, hotel software integration",
@@ -4309,7 +4258,6 @@ export const POSTS = [
     slug: "custom-software-for-energy-and-utilities",
     date: "2026-07-04",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Energy", sk: "Energetika" },
     keywords: {
       en: "energy software development, utility billing system, SCADA integration, grid monitoring software, metering data platform",
@@ -4415,7 +4363,6 @@ export const POSTS = [
     slug: "how-to-build-a-marketplace-platform",
     date: "2026-09-20",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Product", sk: "Produkt" },
     keywords: {
       en: "build a marketplace platform, two-sided marketplace, marketplace liquidity, split payments escrow, marketplace trust and safety",
@@ -4527,7 +4474,6 @@ export const POSTS = [
     slug: "how-to-build-an-inventory-management-system",
     date: "2026-09-06",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Systems", sk: "Systémy" },
     keywords: {
       en: "build inventory management system, custom inventory software, multi-location stock control, barcode scanning inventory, inventory integration accounting",
@@ -4634,7 +4580,6 @@ export const POSTS = [
     slug: "how-to-build-a-business-dashboard",
     date: "2026-08-15",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Analytics", sk: "Analytika" },
     keywords: {
       en: "business dashboard, BI dashboard, reporting tool, single source of truth, Power BI vs custom dashboard, KPI dashboard",
@@ -4750,7 +4695,6 @@ export const POSTS = [
     slug: "how-to-build-a-field-service-management-app",
     date: "2026-06-30",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Systems", sk: "Systémy" },
     keywords: {
       en: "field service management app, dispatch scheduling software, offline mobile app for technicians, proof of work, work order software",
@@ -4864,7 +4808,6 @@ export const POSTS = [
     slug: "how-to-build-a-document-management-system",
     date: "2026-06-13",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Systems", sk: "Systémy" },
     keywords: {
       en: "document management system, DMS, document metadata and search, version control, access control and audit trail, SharePoint vs custom DMS",
@@ -4978,7 +4921,6 @@ export const POSTS = [
     slug: "how-to-build-a-workflow-automation-tool",
     date: "2026-06-06",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Automation", sk: "Automatizácia" },
     keywords: {
       en: "workflow automation tool, approval workflow software, business process automation, process mapping, no-code vs custom workflow, cycle time",
@@ -5091,7 +5033,6 @@ export const POSTS = [
     slug: "how-to-choose-a-technology-stack",
     date: "2026-07-18",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Strategy", sk: "Stratégia" },
     keywords: {
       en: "how to choose a technology stack, technology stack for custom software, choosing programming language, tech stack selection, avoid vendor lock-in",
@@ -5205,7 +5146,6 @@ export const POSTS = [
     slug: "web-app-vs-mobile-app-vs-pwa",
     date: "2026-05-30",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Platforms", sk: "Platformy" },
     keywords: {
       en: "web app vs mobile app, native app vs PWA, progressive web app, which platform to build, cost of native mobile app",
@@ -5317,7 +5257,6 @@ export const POSTS = [
     slug: "how-to-write-a-software-brief",
     date: "2026-05-16",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Delivery", sk: "Dodávka" },
     keywords: {
       en: "how to write a software brief, software project brief, request for proposal software, get comparable bids, software requirements document",
@@ -5431,7 +5370,6 @@ export const POSTS = [
     slug: "software-maintenance-and-support-explained",
     date: "2026-05-02",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Support", sk: "Podpora" },
     keywords: {
       en: "software maintenance cost, software support explained, ongoing maintenance budget, software SLA tiers, cost of neglecting maintenance",
@@ -5542,7 +5480,6 @@ export const POSTS = [
     slug: "how-to-scale-software-after-mvp",
     date: "2026-04-25",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Scaling", sk: "Škálovanie" },
     keywords: {
       en: "scaling software after MVP, from MVP to production, technical debt after MVP, database scaling, observability before optimization",
@@ -5646,7 +5583,6 @@ export const POSTS = [
     slug: "gdpr-and-custom-software",
     date: "2026-04-11",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Compliance", sk: "Súlad" },
     keywords: {
       en: "GDPR custom software, data protection by design, data minimization, right to erasure, EU data residency processors",
@@ -5746,7 +5682,6 @@ export const POSTS = [
     slug: "the-european-accessibility-act-and-your-software",
     date: "2026-03-28",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Accessibility", sk: "Prístupnosť" },
     keywords: {
       en: "European Accessibility Act, EAA software, WCAG compliance, accessible e-commerce, digital accessibility EU",
@@ -5846,7 +5781,6 @@ export const POSTS = [
     slug: "security-for-custom-software",
     date: "2026-03-14",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Security", sk: "Bezpečnosť" },
     keywords: {
       en: "custom software security, secure software development, application security basics, secrets management, penetration testing",
@@ -5947,7 +5881,6 @@ export const POSTS = [
     slug: "custom-software-for-automotive",
     date: "2026-09-18",
     readMin: 9,
-    author: "Matej Kučera",
     tag: { en: "Automotive", sk: "Automotive" },
     keywords: {
       en: "custom software automotive, automotive manufacturing software, MES plant integration, EDI OEM integration, automotive traceability software",
@@ -6051,7 +5984,6 @@ export const POSTS = [
     slug: "custom-software-for-pharma-and-life-sciences",
     date: "2026-09-07",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Pharma", sk: "Farmácia" },
     keywords: {
       en: "custom software pharma, life sciences software, computer system validation CSV, data integrity ALCOA, LIMS integration, serialization traceability",
@@ -6155,7 +6087,6 @@ export const POSTS = [
     slug: "custom-software-for-professional-services",
     date: "2026-08-24",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Professional services", sk: "Profesionálne služby" },
     keywords: {
       en: "custom software professional services, PSA software alternative, time and billing software, resource utilization software, client portal custom build",
@@ -6259,7 +6190,6 @@ export const POSTS = [
     slug: "custom-software-for-wholesale-and-distribution",
     date: "2026-08-01",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Distribution", sk: "Distribúcia" },
     keywords: {
       en: "custom software wholesale distribution, distributor ERP software, customer specific pricing software, B2B ordering portal, EDI integration distribution",
@@ -6356,7 +6286,6 @@ export const POSTS = [
     slug: "custom-software-for-agriculture",
     date: "2026-07-11",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Agritech", sk: "Agritech" },
     keywords: {
       en: "custom software for agriculture, agritech software, farm management system, crop and herd tracking, traceability field to buyer",
@@ -6464,7 +6393,6 @@ export const POSTS = [
     slug: "ai-agents-for-business",
     date: "2026-09-21",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "AI", sk: "AI" },
     keywords: {
       en: "AI agents for business, what is an AI agent, AI agent use cases, agent guardrails and oversight, when to use an agent vs workflow",
@@ -6564,7 +6492,6 @@ export const POSTS = [
     slug: "predictive-analytics-for-business",
     date: "2026-09-14",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "AI", sk: "AI" },
     keywords: {
       en: "predictive analytics for business, demand forecasting, churn prediction, predictive maintenance, forecasting with your own data",
@@ -6668,7 +6595,6 @@ export const POSTS = [
     slug: "computer-vision-for-business",
     date: "2026-08-31",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "AI", sk: "AI" },
     keywords: {
       en: "computer vision for business, automated quality inspection, image recognition use cases, edge vs cloud vision, vision data labeling",
@@ -6765,7 +6691,6 @@ export const POSTS = [
     slug: "how-to-choose-an-ai-use-case",
     date: "2026-08-17",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "AI", sk: "AI" },
     keywords: {
       en: "how to choose an AI use case, best first AI project, AI use case selection, where to start with AI, AI pilot for business",
@@ -6871,7 +6796,6 @@ export const POSTS = [
     slug: "is-your-data-ready-for-ai",
     date: "2026-06-20",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "AI", sk: "AI" },
     keywords: {
       en: "is your data ready for AI, data readiness for AI, AI data preparation, data quality for machine learning, data governance for AI",
@@ -6977,7 +6901,6 @@ export const POSTS = [
     slug: "how-to-build-a-mobile-app-for-your-business",
     date: "2026-05-23",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Mobile", sk: "Mobil" },
     keywords: {
       en: "how to build a mobile app for business, native vs cross-platform, mobile app development guide, app store approval, mobile app backend",
@@ -7083,7 +7006,6 @@ export const POSTS = [
     slug: "how-to-build-an-api-first-platform",
     date: "2026-05-09",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Platforms", sk: "Platformy" },
     keywords: {
       en: "how to build an API-first platform, API-first architecture, API as a product, API versioning and contracts, public vs internal API",
@@ -7188,7 +7110,6 @@ export const POSTS = [
     slug: "how-to-build-a-data-warehouse",
     date: "2026-04-18",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Data", sk: "Dáta" },
     keywords: {
       en: "build a data warehouse, analytics pipeline, ETL vs ELT, single source of truth, unified reporting, data modeling",
@@ -7300,7 +7221,6 @@ export const POSTS = [
     slug: "how-to-modernize-a-legacy-database",
     date: "2026-04-04",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Data", sk: "Dáta" },
     keywords: {
       en: "modernize a legacy database, database migration, data integrity, incremental migration, replace old database, dual-run migration",
@@ -7412,7 +7332,6 @@ export const POSTS = [
     slug: "how-to-build-a-progressive-web-app",
     date: "2026-03-21",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Platforms", sk: "Platformy" },
     keywords: {
       en: "build a progressive web app, PWA, installable web app, offline web app, PWA vs native, one codebase mobile",
@@ -7514,7 +7433,6 @@ export const POSTS = [
     slug: "what-happens-in-a-software-discovery-phase",
     date: "2026-03-07",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Delivery", sk: "Dodávka" },
     keywords: {
       en: "software discovery phase, why pay for discovery, scoping software projects, fixed-fee discovery, de-risk software project, software requirements",
@@ -7615,7 +7533,6 @@ export const POSTS = [
     slug: "how-to-avoid-scope-creep",
     date: "2026-02-28",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Delivery", sk: "Dodávka" },
     keywords: {
       en: "avoid scope creep, software project scope, change control process, definition of done, managing requirements",
@@ -7717,7 +7634,6 @@ export const POSTS = [
     slug: "how-to-budget-for-a-software-project",
     date: "2026-02-21",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Cost", sk: "Náklady" },
     keywords: {
       en: "software project budget, how to budget software, software development cost, project contingency, phased software funding",
@@ -7819,7 +7735,6 @@ export const POSTS = [
     slug: "proof-of-concept-vs-prototype-vs-mvp",
     date: "2026-02-07",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Product", sk: "Produkt" },
     keywords: {
       en: "proof of concept vs prototype vs mvp, what to build first, poc prototype mvp difference, minimum viable product, validate an idea",
@@ -7921,7 +7836,6 @@ export const POSTS = [
     slug: "how-to-do-technical-due-diligence",
     date: "2026-01-21",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Strategy", sk: "Stratégia" },
     keywords: {
       en: "technical due diligence, software due diligence checklist, tech dd before acquisition, code audit for investors, technical risk assessment",
@@ -8016,7 +7930,6 @@ export const POSTS = [
     slug: "custom-software-for-legal",
     date: "2026-09-29",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Legal", sk: "Legaltech" },
     keywords: {
       en: "custom software for law firms, legal case management software, document automation for lawyers, legaltech development, matter management system",
@@ -8118,7 +8031,6 @@ export const POSTS = [
     slug: "custom-software-for-recruitment-and-staffing",
     date: "2026-09-11",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Recruitment", sk: "Nábor" },
     keywords: {
       en: "custom software for recruitment agencies, staffing agency software, ATS alternative, candidate matching software, recruitment CRM development",
@@ -8214,7 +8126,6 @@ export const POSTS = [
     slug: "custom-software-for-travel-and-tourism",
     date: "2026-09-03",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Travel", sk: "Cestovný ruch" },
     keywords: {
       en: "custom software for travel agencies, tour operator booking system, reservation software development, DMC software, travel booking platform",
@@ -8308,7 +8219,6 @@ export const POSTS = [
     slug: "custom-software-for-telecom",
     date: "2026-08-04",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Telecom", sk: "Telekomunikácie" },
     keywords: {
       en: "custom software for telecom, telecom billing software, OSS BSS modernization, ISP self-service portal, usage-based rating system",
@@ -8399,7 +8309,6 @@ export const POSTS = [
     slug: "custom-software-for-nonprofits",
     date: "2026-08-28",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Nonprofit", sk: "Neziskový sektor" },
     keywords: {
       en: "custom software for nonprofits, nonprofit membership management, donor database, fundraising software, grant reporting tools",
@@ -8501,7 +8410,6 @@ export const POSTS = [
     slug: "how-to-build-an-e-commerce-platform",
     date: "2026-08-21",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "E-commerce", sk: "E-commerce" },
     keywords: {
       en: "build ecommerce platform, headless commerce, outgrown Shopify, custom checkout, B2B ecommerce architecture",
@@ -8601,7 +8509,6 @@ export const POSTS = [
     slug: "how-to-build-a-subscription-billing-system",
     date: "2026-08-14",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "SaaS", sk: "SaaS" },
     keywords: {
       en: "subscription billing system, build vs Stripe Billing, proration and dunning, SaaS invoicing VAT, MRR churn metrics",
@@ -8697,7 +8604,6 @@ export const POSTS = [
     slug: "how-to-build-a-learning-management-system",
     date: "2026-08-07",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Systems", sk: "Systémy" },
     keywords: {
       en: "build a learning management system, custom LMS, SCORM xAPI, LMS accessibility, Moodle vs custom LMS",
@@ -8790,7 +8696,6 @@ export const POSTS = [
     slug: "how-to-build-a-helpdesk-tool",
     date: "2026-07-24",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Systems", sk: "Systémy" },
     keywords: {
       en: "build a helpdesk tool, custom customer support software, ticketing system, SLA management, knowledge base deflection",
@@ -8898,7 +8803,6 @@ export const POSTS = [
     slug: "how-to-build-a-quoting-tool",
     date: "2026-07-17",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Systems", sk: "Systémy" },
     keywords: {
       en: "build a quoting tool, CPQ software, configure price quote, pricing rules engine, quote approval workflow",
@@ -9000,7 +8904,6 @@ export const POSTS = [
     slug: "cloud-vs-on-premise",
     date: "2026-07-03",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Cloud", sk: "Cloud" },
     keywords: {
       en: "cloud vs on-premise, private cloud, data residency, cloud cost vs on-prem, hybrid infrastructure decision",
@@ -9092,7 +8995,6 @@ export const POSTS = [
     slug: "how-to-choose-a-cloud-provider",
     date: "2026-06-26",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Cloud", sk: "Cloud" },
     keywords: {
       en: "how to choose a cloud provider, AWS vs Azure vs Google Cloud, cloud vendor lock-in, EU data residency, multi-cloud mistake",
@@ -9187,7 +9089,6 @@ export const POSTS = [
     slug: "how-to-ensure-software-quality",
     date: "2026-06-12",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Quality", sk: "Kvalita" },
     keywords: {
       en: "software quality, software testing explained, QA process, automated testing, user acceptance testing, how to ensure quality software",
@@ -9289,7 +9190,6 @@ export const POSTS = [
     slug: "software-uptime-and-reliability",
     date: "2026-05-29",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Reliability", sk: "Spoľahlivosť" },
     keywords: {
       en: "software uptime, reliability, high availability, monitoring and alerting, disaster recovery, service level agreement, what does 99.9 percent uptime mean",
@@ -9391,7 +9291,6 @@ export const POSTS = [
     slug: "total-cost-of-ownership-of-software",
     date: "2026-05-15",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Cost", sk: "Náklady" },
     keywords: {
       en: "total cost of ownership software, TCO custom software, software maintenance cost, build vs buy TCO, lifetime cost of software, ongoing software costs",
@@ -9487,7 +9386,6 @@ export const POSTS = [
     slug: "digital-transformation-guide",
     date: "2026-04-24",
     readMin: 9,
-    author: "Patrik Klimko",
     tag: { en: "Strategy", sk: "Stratégia" },
     keywords: {
       en: "digital transformation, what is digital transformation, why digital transformation fails, digital transformation strategy, legacy modernization, business transformation with software",
@@ -9586,7 +9484,6 @@ export const POSTS = [
     slug: "how-to-rescue-a-failing-software-project",
     date: "2026-04-10",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Delivery", sk: "Dodávka" },
     keywords: {
       en: "rescue failing software project, software project recovery, troubled software project, project turnaround, independent software review",
@@ -9690,7 +9587,6 @@ export const POSTS = [
     slug: "how-to-switch-software-vendors",
     date: "2026-03-27",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Sourcing", sk: "Sourcing" },
     keywords: {
       en: "switch software vendors, change software supplier, software vendor handover, source code ownership, migrate away from development agency",
@@ -9796,7 +9692,6 @@ export const POSTS = [
     slug: "how-to-plan-a-software-roadmap",
     date: "2026-03-13",
     readMin: 8,
-    author: "Matej Kučera",
     tag: { en: "Strategy", sk: "Stratégia" },
     keywords: {
       en: "software roadmap, product roadmap planning, now next later roadmap, prioritize software features, outcome-based roadmap",
@@ -9900,7 +9795,6 @@ export const POSTS = [
     slug: "how-to-measure-software-roi",
     date: "2026-02-27",
     readMin: 8,
-    author: "Patrik Klimko",
     tag: { en: "Strategy", sk: "Stratégia" },
     keywords: {
       en: "software ROI, measure return on software investment, software project value, justify software spend, baseline and measure software",

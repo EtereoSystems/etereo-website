@@ -1,5 +1,6 @@
 import { SITE, langUrl } from "../config";
 import { content } from "../i18n/content";
+import { PANELS } from "../i18n/projects";
 import type { Lang } from "../store";
 
 /**
@@ -61,7 +62,6 @@ function professionalService(lang: Lang) {
       "@type": "ImageObject",
       url: `${SITE.url}/favicon.svg`,
     },
-    founders: SITE.founders.map((name) => ({ "@type": "Person", name })),
     foundingDate: "2026",
     knowsLanguage: ["en", "sk"],
     address: {
@@ -156,11 +156,11 @@ function casesPage(lang: Lang) {
     breadcrumb: { "@id": `${url}#breadcrumb` },
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: c.work.items.map((w, i) => ({
+      itemListElement: PANELS[lang].map((p, i) => ({
         "@type": "ListItem",
         position: i + 1,
-        name: w.title,
-        description: w.body,
+        name: p.name,
+        description: p.blurb,
       })),
     },
   };

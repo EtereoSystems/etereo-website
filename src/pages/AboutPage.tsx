@@ -4,6 +4,9 @@ import { SeoHead } from "../seo/SeoHead";
 import { useLangSync } from "../components/useLangSync";
 import { useReveal } from "../components/useReveal";
 import { useContent } from "../i18n";
+import { TeamIcon, type TeamIconKind } from "../components/Person";
+
+const ROSTER_ICONS: TeamIconKind[] = ["engineering", "integrations", "network"];
 
 export default function AboutPage() {
   const c = useContent();
@@ -54,16 +57,14 @@ export default function AboutPage() {
             <h2 className="reveal">{a.teamTitle}</h2>
             <p className="about-team__intro reveal">{a.teamIntro}</p>
             <ul className="roster">
-              {c.team.people.map((p) => (
-                <li className="roster__row reveal" key={p.name}>
-                  <span className="roster__av" aria-hidden>
-                    {p.initials}
-                  </span>
+              {[...c.team.core, c.team.network].map((m, i) => (
+                <li className="roster__row reveal" key={m.title}>
+                  <TeamIcon kind={ROSTER_ICONS[i]} className="roster__av" />
                   <div className="roster__id">
-                    <h3>{p.name}</h3>
-                    <div className="roster__role">{p.role}</div>
+                    <h3>{m.title}</h3>
+                    <div className="roster__role">{m.label}</div>
                   </div>
-                  <p className="roster__body">{p.body}</p>
+                  <p className="roster__body">{m.body}</p>
                 </li>
               ))}
             </ul>

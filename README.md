@@ -44,9 +44,10 @@ src/
 
 ## Notes / honest-content reminders
 
-- The stats, case studies ("Selected work") and testimonials are **illustrative placeholders** for a newly founded company — replace with real numbers/clients before launch, or reframe. They're clearly labelled in the copy.
+- Testimonials live in `src/data/testimonials.ts`, empty for now. Add only real quotes with written consent (`consent: true`); the section appears once there are two.
+- The Projects section (`src/data/work.ts`) lists real work only. Add a project only once the client is happy to be named; mark NDA work `confidential: true` and leave out its `url`.
 - Contact details (`info@etereosystems.com`, address) and the footer legal line are placeholders — fill in your real IČO / DIČ / registered seat.
-- The contact form is front-end only (simulated submit). Wire it to your email/CRM/endpoint when ready.
+- The contact form is not wired: `submitInquiry()` in `src/components/Contact.tsx` is a TODO, and until it posts somewhere every submit ends in an error message with a prefilled email link. It also needs a privacy policy page (`SITE.privacyUrl` in `src/config.ts`).
 
 ## 3D model
 

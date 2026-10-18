@@ -9,7 +9,7 @@
  * else needs touching.
  */
 
-const RAW_URL = (import.meta.env.VITE_SITE_URL as string | undefined) || "https://www.etereo.sk";
+const RAW_URL = (import.meta.env.VITE_SITE_URL as string | undefined) || "https://www.etereosystems.com";
 // normalise: no trailing slash
 export const SITE_URL = RAW_URL.replace(/\/+$/, "");
 
@@ -22,8 +22,9 @@ export const SITE = {
   /** one-liner used as a default meta description fallback */
   slogan: "Software engineering & digital transformation",
   email: "info@etereosystems.com",
-  /** founders — used in Organization structured data */
-  founders: ["Patrik Klimko", "Matej Kučera"],
+  /** linked from the contact form's consent checkbox; shown as plain text while null */
+  // TODO: no privacy policy page exists yet — set this (e.g. "/privacy/") once it does
+  privacyUrl: null as string | null,
   address: {
     city: "Bratislava",
     region: "Bratislavský kraj",
