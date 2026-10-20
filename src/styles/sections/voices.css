@@ -54,6 +54,19 @@
   display: flex;
   flex-direction: column;
 }
+.voice__stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 16px;
+}
+.voice__star {
+  width: 16px;
+  height: 16px;
+  fill: var(--star);
+}
+.voice__star--off {
+  fill: var(--line);
+}
 .voice blockquote {
   margin: 0;
   font-family: var(--font-display);

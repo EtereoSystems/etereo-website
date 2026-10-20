@@ -84,6 +84,23 @@ describe("testimonials", () => {
       expect(a.getAttribute("rel")).toBe("noopener noreferrer");
     }
   });
+
+  it("draws a rating as one labelled image of five stars, and nothing without one", () => {
+    const { container } = render(<Voices dev={false} items={[{ ...quote("a"), rating: 4 }, quote("b")]} />);
+    const [stars, ...rest] = screen.getAllByRole("img", { name: "Rated 4 out of 5" });
+    expect(rest).toEqual([]);
+    expect(stars.querySelectorAll("svg")).toHaveLength(5);
+    expect(stars.querySelectorAll(".voice__star--off")).toHaveLength(1);
+    expect(container.querySelectorAll(".voices-set:not([aria-hidden]) .voice__stars")).toHaveLength(1);
+  });
+
+  it("shows only the role when there is no company, with no dangling separator", () => {
+    const t = { ...quote("x"), company: undefined, industry: { en: "Hospitality", sk: "Gastronómia" } };
+    const { container } = render(<Voices dev={false} items={[t, quote("y")]} />);
+    const card = container.querySelector(".voices-set:not([aria-hidden]) .voice")!;
+    expect(card.querySelector(".voice__role")?.textContent).toBe("CTO");
+    expect(card.querySelector(".voice__industry")?.textContent).toBe("Hospitality");
+  });
 });
 
 describe("team", () => {

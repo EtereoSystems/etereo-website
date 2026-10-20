@@ -337,6 +337,19 @@ export function Engage() {
 const MIN_RUN = 6;
 let warnedMock = false;
 
+// one labelled image, so a screen reader hears the rating once rather than five glyphs
+function Stars({ n, label }: { n: number; label: string }) {
+  return (
+    <span className="voice__stars" role="img" aria-label={label}>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <svg key={i} className={"voice__star" + (i < n ? "" : " voice__star--off")} viewBox="0 0 20 18.2" aria-hidden="true">
+          <polygon points="10,0.5 12.35,6.76 19.04,7.06 13.8,11.24 15.58,17.69 10,14 4.42,17.69 6.2,11.24 0.96,7.06 7.65,6.76" />
+        </svg>
+      ))}
+    </span>
+  );
+}
+
 export function Voices({ items = TESTIMONIALS, dev = import.meta.env.DEV }: { items?: Testimonial[]; dev?: boolean }) {
   const c = useContent();
   const lang = useUI((s) => s.lang);
@@ -372,6 +385,7 @@ export function Voices({ items = TESTIMONIALS, dev = import.meta.env.DEV }: { it
               <div className="voices-set" key={set} aria-hidden={set > 0 ? "true" : undefined} inert={set > 0}>
                 {shown.map((t) => (
                   <figure className="card voice" key={t.id}>
+                    {t.rating && <Stars n={t.rating} label={c.voices.rating.replace("{n}", String(t.rating))} />}
                     <blockquote>
                       <p>{t.quote[lang]}</p>
                     </blockquote>

@@ -102,7 +102,7 @@ export interface Content {
   industries: { eyebrow: string; title: string; sub: string; items: Industry[] };
   engage: { eyebrow: string; title: string; sub: string; outputLabel: string; items: EngageStep[]; cta: string };
   // the quotes themselves are in src/data/testimonials.ts
-  voices: { eyebrow: string; title: string; linkedin: string };
+  voices: { eyebrow: string; title: string; linkedin: string; rating: string };
   team: {
     eyebrow: string;
     title: string;
@@ -261,6 +261,8 @@ const en: Content = {
     title: "What our clients say",
     // read before the person's name, as the LinkedIn link's accessible name
     linkedin: "LinkedIn profile:",
+    // the accessible name of a card's stars; {n} is the rating
+    rating: "Rated {n} out of 5",
   },
   team: {
     eyebrow: "Team",
@@ -599,6 +601,7 @@ const sk: Content = {
     eyebrow: "Referencie",
     title: "Čo hovoria klienti",
     linkedin: "LinkedIn profil:",
+    rating: "Hodnotenie {n} z 5",
   },
   team: {
     eyebrow: "Tím",
