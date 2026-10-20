@@ -26,11 +26,12 @@ describe("testimonials", () => {
   const real = (c: HTMLElement) => c.querySelectorAll(".voices-set:not([aria-hidden]) figure > blockquote + figcaption");
 
   // Vitest runs with DEV on, so the dev-server branch is the one that warns.
-  it("renders the mocks on the dev server, and says so once", () => {
+  it("renders a mock on the dev server, and says so once", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const { container } = render(<Voices dev />);
-    render(<Voices dev />);
-    expect(real(container)).toHaveLength(MOCK_TESTIMONIALS.length);
+    const items = [quote("a"), { ...quote("m", false), isMock: true }];
+    const { container } = render(<Voices dev items={items} />);
+    render(<Voices dev items={items} />);
+    expect(real(container)).toHaveLength(2);
     expect(warn).toHaveBeenCalledTimes(1);
     expect(warn).toHaveBeenCalledWith("[testimonials] rendering mock data");
     warn.mockRestore();
@@ -40,14 +41,15 @@ describe("testimonials", () => {
     for (const t of MOCK_TESTIMONIALS) expect([t.isMock, t.consent]).toEqual([true, false]);
   });
 
-  // the three invented quotes were removed; the data file must not ship one by accident
-  it("ships with no published quotes, so a production build hides the section", () => {
-    expect(TESTIMONIALS.filter((t) => t.consent && !t.isMock)).toEqual([]);
-    expect(render(<Voices dev={false} />).container.innerHTML).toBe("");
+  // only quotes the clients approved in writing ship; adding one means adding it here too
+  it("ships the five approved quotes, so a production build shows them", () => {
+    const published = TESTIMONIALS.filter((t) => t.consent && !t.isMock);
+    expect(published.map((t) => t.name)).toEqual(["Matej M.", "Michal B.", "Karol K.", "Karolína K.", "Sofia H."]);
+    expect(real(render(<Voices dev={false} />).container)).toHaveLength(5);
   });
 
   it("never shows a mock in production, even one marked as consented", () => {
-    expect(visibleTestimonials(MOCK_TESTIMONIALS.map((t) => ({ ...t, consent: true })), false)).toEqual([]);
+    expect(visibleTestimonials([{ ...quote("m"), isMock: true }], false)).toEqual([]);
   });
 
   it("stays hidden with fewer than two quotes cleared for publication", () => {
