@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useContent } from "../i18n";
 import { TOPICS, type TopicId } from "../i18n/content";
 import { SITE } from "../config";
+import { useUI, type Lang } from "../store";
 import { PRESET_EVENT, readPreset } from "./contactPreset";
 
 type Field = "name" | "email" | "context" | "consent";
@@ -18,15 +19,25 @@ function invalid(f: Field, v: Values): boolean {
   return v[f].trim() === "";
 }
 
-// TODO: wire submission. The site is static and nothing receives the form yet, so this
-// fails on purpose: the visitor gets the error state and a prefilled email, never a fake "sent".
-async function submitInquiry(_inquiry: Values & { topics: string[] }): Promise<void> {
-  throw new Error("Contact form submission is not wired");
+const CONTACT_ENDPOINT = "/api/contact.php";
+
+// Only the script's own {"ok":true} counts as sent: anything that answers 200 without
+// running it (the Vite dev server, PHP switched off) must still end in the email fallback.
+async function submitInquiry(inquiry: Values & { topics: string[]; lang: Lang }): Promise<void> {
+  const res = await fetch(CONTACT_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(inquiry),
+    signal: AbortSignal.timeout(20_000),
+  });
+  const body: unknown = await res.json().catch(() => null);
+  if (!res.ok || (body as { ok?: unknown } | null)?.ok !== true) throw new Error(`Contact form: HTTP ${res.status}`);
 }
 
 export function Contact() {
   const c = useContent();
   const t = c.contact;
+  const lang = useUI((s) => s.lang);
   const [values, setValues] = useState<Values>({ name: "", email: "", company: "", context: "", consent: false, website: "" });
   const [topics, setTopics] = useState<TopicId[]>(() => readPreset(window.location.search));
   const [errors, setErrors] = useState<Partial<Record<Field, boolean>>>({});
@@ -82,7 +93,7 @@ export function Contact() {
     }
     setStatus("sending");
     try {
-      await submitInquiry({ ...values, topics: labels });
+      await submitInquiry({ ...values, topics: labels, lang });
       setStatus("sent");
     } catch {
       setStatus("error");

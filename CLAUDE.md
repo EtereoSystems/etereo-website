@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Marketing site for ETEREO s.r.o. — React 19 + TypeScript + Vite, with a scroll-driven 3D MacBook (react-three-fiber) as the hero. Four pages, bilingual EN/SK, no backend. Tests are Vitest + jsdom under [tests/](tests/) (see Testing below).
+Marketing site for ETEREO s.r.o. — React 19 + TypeScript + Vite, with a scroll-driven 3D MacBook (react-three-fiber) as the hero. Four pages, bilingual EN/SK, no backend beyond one PHP script for the contact form (see Contact form). Tests are Vitest + jsdom under [tests/](tests/) (see Testing below).
 
 There is **no client router**: the second page is a second Vite entry (see Pages below), so each page is its own HTML document.
 
@@ -72,7 +72,7 @@ The suite is not unit coverage of components — it is the invariants this repo'
 | `choreo.test.ts` | `LX` length tracks `PROJECT_COUNT`, every project gets a reachable stretch of scroll, splash/handoff boundaries, `window.__P` override |
 | `projects.test.ts` | `PANELS` per language lines up with `PROJECTS`, each screen spec has what `screenTexture.ts` draws, and every slug's `.webp` is on disk |
 | `blog.test.tsx` | 106 posts have both languages and balanced body HTML, `content.insights.items` mirrors `POSTS` exactly (title, tag, date, newest first), and pagination shows all of them across 11 pages with none repeated |
-| `people-contact.test.tsx` | Testimonials stay hidden below two consented quotes (and the shipped data has none); Team renders its three cards; the contact form's validation, `aria-describedby` wiring, `?type=` / `?product=` preselection, and that an unwired submit ends in the error state, never "sent" |
+| `people-contact.test.tsx` | Testimonials stay hidden below two consented quotes (and the shipped data has none); Team renders its three cards; the contact form's validation, `aria-describedby` wiring, `?type=` / `?product=` preselection, the POST to `/api/contact.php`, and that only the script's own `{"ok":true}` reads as sent — an HTML 200, a 500 or a network error ends in the `mailto:` fallback |
 | `work.test.tsx` | every Projects card renders its tag, title, description and both cells in both languages with no blank `{ sk, en }` string (`src/data/` is outside content-parity); a `url` becomes one new-tab link with `noopener noreferrer` and an `aria-label` that starts with the visible label; a `confidential` project gets the badge and no link, and none is both |
 
 One gap is **recorded in the tests rather than hidden**, with the offending names listed so the assertion still fires on anything new: `ecostruxure-it`, `beumer-localchat` and `aperia` have EN `role`/`challenge`/`approach`/`outcome` with no Slovak counterpart, so their `/projects/?p=<slug>` detail sections are empty in SK (`LONG_FORM_GAP` in `projects.test.ts`). Shrinking the list keeps the suite green; growing it turns it red. `KNOWN_BLANK` in `content-parity.test.ts` is the same mechanism for copy left blank in every language, and is currently empty.
@@ -263,6 +263,12 @@ The first two items are solved — extend them rather than working around them. 
 
 The footer legal line is a placeholder for a newly founded company (see README). There are no testimonials yet: `src/data/testimonials.ts` is empty on purpose, so the section is hidden. There are no client metrics on the home page: the Projects section names four real projects with facts only, and the Danish government work stays under NDA (see Content & i18n).
 
-**The contact form is not wired.** `submitInquiry()` in `Contact.tsx` is a `// TODO` that rejects, so a valid submit ends in the error state with a prefilled `mailto:` link — deliberately not a fake "sent". The consent checkbox's privacy-policy link is plain text until `SITE.privacyUrl` is set; no privacy page exists yet.
+**Contact form.** `submitInquiry()` in `Contact.tsx` POSTs JSON to `/api/contact.php`: [public/api/contact.php](public/api/contact.php), copied into `dist/` as is, the site's only server code. It validates again and `mail()`s the inquiry to `info@etereosystems.com`, with the visitor in `Reply-To`.
+
+- **From and envelope sender (`-f`) are both `info@`.** Websupport sends `mail()` only from a mailbox that exists on the domain, and the domain's DMARC is `p=quarantine`, so the envelope has to align for SPF. Changing the address means using another real mailbox.
+- **Only the script's own `{"ok":true}` counts as sent.** The Vite dev server does not run PHP, so locally every submit ends in the `mailto:` fallback. That is expected. To exercise the script, run it under `php -S` with `sendmail_path` pointed at something that writes stdin to a file.
+- It allows 5 sends per IP and 40 overall per hour (hashed-key files in `sys_get_temp_dir()`), because the From mailbox's 300/h Websupport quota is shared with the people who send from it. The `website` honeypot is checked on both sides. The script is PHP 7.4-compatible and needs no mbstring.
+
+The consent checkbox's privacy-policy link is plain text until `SITE.privacyUrl` is set. No privacy page exists yet, and that matters more now that the form really sends personal data.
 
 Three projects (`ecostruxure-it`, `beumer-localchat`, `aperia`) carry their long-form `challenge`/`approach`/`outcome` in English only, so those detail sections are missing on the Slovak `/projects/?p=<slug>`. Recorded in `projects.test.ts` (see Testing) rather than left to be rediscovered.
