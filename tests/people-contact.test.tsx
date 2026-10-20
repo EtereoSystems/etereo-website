@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Contact } from "../src/components/Contact";
 import { PRESET_EVENT, readPreset } from "../src/components/contactPreset";
 import { Engage, Team, Voices } from "../src/sections/Sections";
-import { TESTIMONIALS, type Testimonial } from "../src/data/testimonials";
+import { MOCK_TESTIMONIALS, TESTIMONIALS, visibleTestimonials, type Testimonial } from "../src/data/testimonials";
 import { content } from "../src/i18n/content";
 import { useUI } from "../src/store";
 
@@ -22,28 +22,63 @@ beforeEach(() => {
 });
 
 describe("testimonials", () => {
+  // the visible set; the rest are the marquee's copies
+  const real = (c: HTMLElement) => c.querySelectorAll(".voices-set:not([aria-hidden]) figure > blockquote + figcaption");
+
+  // Vitest runs with DEV on, so the dev-server branch is the one that warns.
+  it("renders the mocks on the dev server, and says so once", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { container } = render(<Voices dev />);
+    render(<Voices dev />);
+    expect(real(container)).toHaveLength(MOCK_TESTIMONIALS.length);
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalledWith("[testimonials] rendering mock data");
+    warn.mockRestore();
+  });
+
+  it("marks every mock as one, with no consent", () => {
+    for (const t of MOCK_TESTIMONIALS) expect([t.isMock, t.consent]).toEqual([true, false]);
+  });
+
   // the three invented quotes were removed; the data file must not ship one by accident
-  it("ships with no published quotes, so the section is hidden", () => {
-    expect(TESTIMONIALS.filter((t) => t.consent)).toEqual([]);
-    expect(render(<Voices />).container.innerHTML).toBe("");
+  it("ships with no published quotes, so a production build hides the section", () => {
+    expect(TESTIMONIALS.filter((t) => t.consent && !t.isMock)).toEqual([]);
+    expect(render(<Voices dev={false} />).container.innerHTML).toBe("");
+  });
+
+  it("never shows a mock in production, even one marked as consented", () => {
+    expect(visibleTestimonials(MOCK_TESTIMONIALS.map((t) => ({ ...t, consent: true })), false)).toEqual([]);
   });
 
   it("stays hidden with fewer than two quotes cleared for publication", () => {
-    const { container } = render(<Voices items={[quote("a"), quote("b", false)]} />);
+    const { container } = render(<Voices dev={false} items={[quote("a"), quote("b", false)]} />);
     expect(container.innerHTML).toBe("");
   });
 
-  it.each([2, 3])("renders %i consented quotes as figure/blockquote/figcaption", (n) => {
+  it.each([2, 3, 6])("renders %i consented quotes once for assistive tech, as figure/blockquote/figcaption", (n) => {
     const items = Array.from({ length: n }, (_, i) => quote(String(i)));
-    const { container } = render(<Voices items={[...items, quote("hidden", false)]} />);
-    expect(container.querySelectorAll("figure > blockquote + figcaption")).toHaveLength(n);
+    const { container } = render(<Voices dev={false} items={[...items, quote("hidden", false)]} />);
+    expect(real(container)).toHaveLength(n);
     expect(container.textContent).not.toContain("hidden");
-    expect(container.querySelector(".voices--pair") !== null).toBe(n === 2);
+  });
+
+  // an even number of identical sets is what makes translateX(-50%) seamless
+  it("duplicates the loop as aria-hidden, inert copies, padding a short list to fill a run", () => {
+    for (const [n, sets] of [[2, 6], [3, 4], [6, 2]]) {
+      const items = Array.from({ length: n }, (_, i) => quote(String(i)));
+      const { container, unmount } = render(<Voices dev={false} items={items} />);
+      const all = [...container.querySelectorAll(".voices-set")];
+      expect(all).toHaveLength(sets);
+      expect(all.slice(1).every((s) => s.getAttribute("aria-hidden") === "true" && s.hasAttribute("inert"))).toBe(true);
+      expect(all[0].hasAttribute("aria-hidden") || all[0].hasAttribute("inert")).toBe(false);
+      expect(container.querySelector<HTMLElement>(".voices-marquee")!.style.getPropertyValue("--voice-n")).toBe(String((n * sets) / 2));
+      unmount();
+    }
   });
 
   it("links the company and LinkedIn out safely, with a name on the icon", () => {
     const t = { ...quote("x"), companyUrl: "https://firma.sk", linkedin: "https://linkedin.com/in/x" };
-    render(<Voices items={[t, quote("y")]} />);
+    render(<Voices dev={false} items={[t, quote("y")]} />);
     for (const a of [screen.getByRole("link", { name: "Firma s.r.o." }), screen.getByRole("link", { name: /LinkedIn.*Test Person x/ })]) {
       expect(a.getAttribute("target")).toBe("_blank");
       expect(a.getAttribute("rel")).toBe("noopener noreferrer");
@@ -76,10 +111,11 @@ describe("contact form", () => {
   });
 
   it.each([
-    ["?type=assessment", [t.topics.assessment]],
     ["?product=ai", [t.topics.ai]],
-    ["?type=embedded&product=cloud", [t.topics.cloud, t.topics["team-extension"]]],
+    ["?product=cloud&lang=sk", [t.topics.cloud]],
     ["?product=nope", []],
+    // nothing links with ?type= any more, so an old bookmark preselects nothing
+    ["?type=assessment", []],
   ])("preselects from %s", (search, want) => {
     window.history.replaceState(null, "", "/" + search);
     render(<Contact />);
@@ -87,7 +123,8 @@ describe("contact form", () => {
   });
 
   it("ignores inherited object keys in the URL", () => {
-    expect(readPreset("?type=constructor&product=__proto__")).toEqual([]);
+    expect(readPreset("?product=__proto__")).toEqual([]);
+    expect(readPreset("?product=constructor")).toEqual([]);
   });
 
   it("toggles chips as a multi-select", () => {
@@ -212,10 +249,24 @@ describe("contact form", () => {
   });
 });
 
-describe("engagement cards", () => {
-  it("link to the contact form with their own ?type=", () => {
+describe("engagement steps", () => {
+  it.each(["en", "sk"] as const)("renders three numbered steps as an <ol>, with one CTA to #contact (%s)", (lang) => {
+    useUI.setState({ lang });
+    const e = content[lang].engage;
     const { container } = render(<Engage />);
-    const hrefs = [...container.querySelectorAll<HTMLAnchorElement>(".engage__cta")].map((a) => a.getAttribute("href"));
-    expect(hrefs).toEqual(["/?type=assessment#contact", "/?type=team#contact", "/?type=embedded#contact"]);
+    const steps = [...container.querySelectorAll("ol.steps > li")];
+    expect(steps.map((li) => li.querySelector("h3")?.textContent)).toEqual(e.items.map((s) => s.title));
+    for (const [i, li] of steps.entries()) {
+      expect(li.querySelector(".step__n")?.getAttribute("aria-hidden")).toBe("true");
+      expect(li.querySelector(".step__output")?.textContent).toBe(`${e.outputLabel} ${e.items[i].output}`);
+      expect(li.querySelectorAll(".step__points li")).toHaveLength(4);
+    }
+    // a connector between each pair, none after the last
+    expect([...container.querySelectorAll(".step__link")].map((l) => l.getAttribute("aria-hidden"))).toEqual(["true", "true"]);
+    expect(steps.at(-1)!.querySelector(".step__link")).toBeNull();
+    const links = container.querySelectorAll("a");
+    expect(links).toHaveLength(1);
+    expect(links[0].getAttribute("href")).toBe("#contact");
+    expect(links[0].className).toContain("btn--primary");
   });
 });

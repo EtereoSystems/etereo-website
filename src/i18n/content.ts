@@ -53,17 +53,13 @@ export interface Industry {
   title: string;
   body: string;
 }
-/** The `?type=` an engagement card puts in its contact link; see contactPreset.ts. */
-export type EngagementType = "assessment" | "team" | "embedded";
-export interface Engagement {
-  type: EngagementType;
+/** One step of the cooperation process in #engage. */
+export interface EngageStep {
+  n: string;
   title: string;
-  badge: string;
-  cadence: string;
+  output: string;
   body: string;
   points: string[];
-  cta: string;
-  featured?: boolean;
 }
 export interface TeamCard {
   label: string;
@@ -104,7 +100,7 @@ export interface Content {
   // the projects themselves are in src/data/work.ts; `visit` + project title + `newTab` is the link's name
   work: { eyebrow: string; title: string; sub: string; visit: string; newTab: string; confidential: string; all: string };
   industries: { eyebrow: string; title: string; sub: string; items: Industry[] };
-  engage: { eyebrow: string; title: string; sub: string; items: Engagement[] };
+  engage: { eyebrow: string; title: string; sub: string; outputLabel: string; items: EngageStep[]; cta: string };
   // the quotes themselves are in src/data/testimonials.ts
   voices: { eyebrow: string; title: string; linkedin: string };
   team: {
@@ -250,13 +246,15 @@ const en: Content = {
   },
   engage: {
     eyebrow: "Engagement",
-    title: "Three ways to start",
-    sub: "Start with a small, clearly scoped step or go straight to a full team. The scope can change as the project does.",
+    title: "Three steps to a working solution",
+    sub: "From the first call to production. Every step ends with a clear output, so you always know where your project stands.",
+    outputLabel: "Output:",
     items: [
-      { type: "assessment", title: "Assessment", badge: "Fixed fee", cadence: "2–3 weeks", body: "A written review of your systems and processes before you commit to a full project.", points: ["Architecture and code review", "Risk and dependency map", "AI automation opportunities", "Step-by-step plan and cost estimate for leadership"], cta: "Scope an assessment" },
-      { type: "team", title: "Delivery team", badge: "Recommended", cadence: "3–18 months", body: "A complete team – product, design, engineering and infrastructure – accountable for shipped outcomes, not billed hours.", points: ["Senior team with one accountable lead", "Two-week iterations, demoed live", "Ongoing visibility into status, budget and risks", "Tests and documentation built into development"], cta: "Talk about your project", featured: true },
-      { type: "embedded", title: "Embedded engineers", badge: "Flexible", cadence: "Rolling monthly", body: "Senior specialists inside your existing team – on your board and in your standups.", points: ["Specific engineer introduced up front", "30-day rolling commitment", "Knowledge transfer included", "Scale up or down quarterly"], cta: "Check availability" },
+      { n: "01", title: "Contact & proposal", output: "Solution proposal", body: "You reach out, we listen to what you need and review your systems, processes and goals. Then we prepare a solution proposal with scope, timeline and price.", points: ["Intro call with engineers, not salespeople", "Requirements and current-state analysis", "Proposed solution, technology and approach", "Timeline and quote"] },
+      { n: "02", title: "Build & feedback loop", output: "MVP", body: "We build within the agreed timeline in short iterations. You regularly see working software, we incorporate your feedback, and we deliver an MVP you can test with real users as early as possible.", points: ["Development on the agreed timeline", "Regular demos and feedback", "MVP in the hands of real users", "Ongoing visibility into status, budget and risks"] },
+      { n: "03", title: "Production handover", output: "Live solution", body: "Once the solution meets the agreed requirements and acceptance criteria, we deploy it to production and hand it over to your team with everything needed to run it.", points: ["Acceptance against agreed requirements", "Deployment to production", "Documentation and team training", "Testing, monitoring and security checks before launch"] },
     ],
+    cta: "Book an intro call",
   },
   voices: {
     eyebrow: "Testimonials",
@@ -487,7 +485,7 @@ const en: Content = {
     cols: [
       { title: "Products", links: [{ label: "AI automation", href: "/#products" }, { label: "Custom software", href: "/#products" }, { label: "SaaS development", href: "/#products" }, { label: "Web & mobile", href: "/#products" }, { label: "Cloud & DevOps", href: "/#products" }] },
       { title: "Company", links: [{ label: "Work", href: "/projects/" }, { label: "Team", href: "/about/" }, { label: "Blog", href: "/blog/" }] },
-      { title: "Contact", links: [{ label: "Start a project", href: "/#contact" }, { label: "Engagement models", href: "/#engage" }, { label: "FAQ", href: "/#faq" }, { label: "Industries", href: "/#industries" }] },
+      { title: "Contact", links: [{ label: "Start a project", href: "/#contact" }, { label: "Working with us", href: "/#engage" }, { label: "FAQ", href: "/#faq" }, { label: "Industries", href: "/#industries" }] },
     ],
     rights: "© 2026 ETEREO s.r.o. All rights reserved.",
     tagline: "Built for the long run",
@@ -587,13 +585,15 @@ const sk: Content = {
   },
   engage: {
     eyebrow: "Spolupráca",
-    title: "Tri spôsoby, ako začať",
-    sub: "Začnite malým, presne ohraničeným krokom alebo rovno celým tímom. Rozsah sa môže meniť spolu s projektom.",
+    title: "Tri kroky k fungujúcemu riešeniu",
+    sub: "Od prvého hovoru po ostrú prevádzku. Každý krok má jasný výstup, aby ste vždy vedeli, kde projekt stojí.",
+    outputLabel: "Výstup:",
     items: [
-      { type: "assessment", title: "Audit a analýza", badge: "Fixná cena", cadence: "2–3 týždne", body: "Písomné posúdenie vašich systémov a procesov skôr, než sa zaviažete k celému projektu.", points: ["Audit architektúry a kódu", "Mapa rizík a závislostí", "Príležitosti na AI automatizáciu", "Plán krokov a odhad nákladov pre vedenie"], cta: "Naplánovať audit" },
-      { type: "team", title: "Projektový tím", badge: "Odporúčané", cadence: "3–18 mesiacov", body: "Kompletný tím – produkt, dizajn, vývoj a infraštruktúra – zodpovedný za dodané výsledky, nie za odpracované hodiny.", points: ["Seniorný tím a jeden zodpovedný vedúci", "Dvojtýždňové iterácie s ukážkou naživo", "Priebežný prehľad o stave, rozpočte a rizikách", "Testy a dokumentácia ako súčasť vývoja"], cta: "Poďme prebrať váš projekt", featured: true },
-      { type: "embedded", title: "Inžinieri vo vašom tíme", badge: "Flexibilné", cadence: "Mesačne", body: "Seniorní špecialisti priamo vo vašom tíme – na vašej nástenke aj standupoch.", points: ["Konkrétny človek predstavený vopred", "Mesačný záväzok s automatickým predĺžením", "Odovzdanie know-how v cene", "Navýšenie alebo zníženie kapacity po kvartáloch"], cta: "Overiť dostupnosť" },
+      { n: "01", title: "Kontakt a návrh riešenia", output: "Návrh riešenia", body: "Ozvete sa nám, vypočujeme si, čo potrebujete, a preveríme vaše systémy, procesy aj ciele. Na základe toho pripravíme návrh riešenia s rozsahom, harmonogramom a cenou.", points: ["Úvodný hovor s inžiniermi, nie s obchodníkmi", "Analýza požiadaviek a súčasného stavu", "Návrh riešenia, technológií a postupu", "Harmonogram a cenová ponuka"] },
+      { n: "02", title: "Vývoj a priebežná spätná väzba", output: "MVP", body: "Vyvíjame v dohodnutom čase a v krátkych iteráciách. Pravidelne vám ukazujeme funkčný softvér, zapracúvame vašu spätnú väzbu a čo najskôr dodáme MVP, ktoré si vyskúšate s reálnymi používateľmi.", points: ["Vývoj podľa dohodnutého harmonogramu", "Pravidelné ukážky a spätná väzba", "MVP v rukách reálnych používateľov", "Priebežný prehľad o stave, rozpočte a rizikách"] },
+      { n: "03", title: "Odovzdanie do produkcie", output: "Riešenie v prevádzke", body: "Keď riešenie splní dohodnuté požiadavky a akceptačné kritériá, nasadíme ho do ostrej prevádzky a odovzdáme vášmu tímu so všetkým, čo na jeho správu potrebuje.", points: ["Akceptácia podľa dohodnutých požiadaviek", "Nasadenie do ostrej prevádzky", "Dokumentácia a zaškolenie vášho tímu", "Testy, monitoring a bezpečnostná kontrola pred spustením"] },
     ],
+    cta: "Dohodnúť úvodný hovor",
   },
   voices: {
     eyebrow: "Referencie",
@@ -823,7 +823,7 @@ const sk: Content = {
     cols: [
       { title: "Produkty", links: [{ label: "AI automatizácia", href: "/#products" }, { label: "Softvér na mieru", href: "/#products" }, { label: "Vývoj SaaS", href: "/#products" }, { label: "Web a mobil", href: "/#products" }, { label: "Cloud a DevOps", href: "/#products" }] },
       { title: "Firma", links: [{ label: "Projekty", href: "/projects/" }, { label: "Tím", href: "/about/" }, { label: "Blog", href: "/blog/" }] },
-      { title: "Kontakt", links: [{ label: "Začať projekt", href: "/#contact" }, { label: "Modely spolupráce", href: "/#engage" }, { label: "Časté otázky", href: "/#faq" }, { label: "Odvetvia", href: "/#industries" }] },
+      { title: "Kontakt", links: [{ label: "Začať projekt", href: "/#contact" }, { label: "Spolupráca", href: "/#engage" }, { label: "Časté otázky", href: "/#faq" }, { label: "Odvetvia", href: "/#industries" }] },
     ],
     rights: "© 2026 ETEREO s.r.o. Všetky práva vyhradené.",
     tagline: "Postavené na dlhý beh",

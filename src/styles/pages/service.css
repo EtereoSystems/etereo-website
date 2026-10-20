@@ -1,6 +1,6 @@
 /* Service detail pages — generated static pages at /services/<slug>/ (scripts/gen-services.mjs).
    Shares the subpage chrome (.subpage, .page-head, .page-back, .page-intro, .page-cta) and adds
-   the workflow/deliverables/FAQ blocks specific to a service page. */
+   the stepper/deliverables/approach/FAQ blocks specific to a service page. */
 
 .service-page .page-head {
   padding-bottom: 36px;
@@ -32,7 +32,7 @@
 /* shared prose treatment for every HTML body block on the page */
 .svc-intro,
 .svc-approach,
-.svc-flow__body,
+.svc-step__body,
 .svc-faq__a {
   font-size: 17px;
   line-height: 1.75;
@@ -40,27 +40,25 @@
   max-width: 68ch;
 }
 .svc-intro > p,
-.svc-approach > p,
-.svc-flow__body > p,
+.svc-step__body > p,
 .svc-faq__a > p {
   margin: 0 0 18px;
 }
 .svc-intro > p:last-child,
-.svc-approach > p:last-child,
-.svc-flow__body > p:last-child,
+.svc-step__body > p:last-child,
 .svc-faq__a > p:last-child {
   margin-bottom: 0;
 }
 .svc-intro strong,
 .svc-approach strong,
-.svc-flow__body strong,
+.svc-step__body strong,
 .svc-faq__a strong {
   color: var(--text);
   font-weight: 600;
 }
 .svc-intro em,
 .svc-approach em,
-.svc-flow__body em,
+.svc-step__body em,
 .svc-faq__a em {
   color: var(--text);
   font-style: italic;
@@ -74,6 +72,15 @@
   border-top: 1px solid var(--line-soft);
   padding-top: 44px;
 }
+/* no heading or step name ends on a lone short word, at any width */
+.service-page .page-head h1,
+.service-page .page-cta h2,
+.svc-h2,
+.svc-step h3,
+.svc-faq__q h3,
+.svc-steps__name {
+  text-wrap: balance;
+}
 .svc-h2 {
   font-family: var(--font-display);
   font-weight: 600;
@@ -82,61 +89,185 @@
   margin-bottom: 30px;
 }
 
-/* the delivery workflow — a numbered vertical flow with a connecting rail */
-.svc-flow {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.svc-flow__step {
-  position: relative;
-  padding: 0 0 34px 60px;
-}
-.svc-flow__step::before {
-  /* the rail connecting the step numbers */
-  content: "";
-  position: absolute;
-  left: 19px;
-  top: 40px;
-  bottom: -6px;
-  width: 1px;
-  background: var(--line);
-}
-.svc-flow__step:last-child {
-  padding-bottom: 0;
-}
-.svc-flow__step:last-child::before {
+/* ---------- how we deliver: the stepper ----------
+   html[data-js] is set inline in the page head, so the first paint already has the stepper
+   layout. Without JS the tabs and Back / Next stay hidden and every step is listed. */
+.svc-steps__nav,
+.svc-steps__pager {
   display: none;
 }
-.svc-flow__n {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 40px;
-  height: 40px;
+.svc-steps__panels {
+  display: grid;
+  gap: 16px;
+}
+.svc-step {
+  min-width: 0;
+  padding: 28px 30px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+.svc-step__n {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  color: var(--violet-2);
+}
+.svc-step h3 {
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 10px 0 14px;
+}
+.svc-step__body {
+  font-size: 16px;
+  line-height: 1.7;
+}
+.svc-step__out {
+  margin-top: 22px;
+  padding: 14px 18px;
+  border-left: 2px solid var(--violet-2);
+  border-radius: 0 10px 10px 0;
+  background: color-mix(in srgb, var(--violet) 10%, transparent);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.svc-step__out-label {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--violet-2);
+}
+
+/* The list shares a row with the step card, so it is exactly as tall as the card; Back /
+   Next get a row of their own underneath. */
+html[data-js] .svc-steps {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-areas:
+    "nav panel"
+    ". pager";
+  gap: 16px 32px;
+}
+html[data-js] .svc-steps__nav {
+  grid-area: nav;
+  display: flex;
+  flex-direction: column;
+}
+/* every step but the last takes an equal share of that height: 01 sits at the card's top,
+   06 at its bottom, and the circles are evenly spaced between */
+html[data-js] .svc-steps__tab:not(:last-child) {
+  flex: 1 1 0;
+}
+html[data-js] .svc-steps__panels {
+  grid-area: panel;
+}
+/* Every step shares one cell, so the block is as tall as its longest step and switching
+   never moves anything below it. */
+html[data-js] .svc-steps__panels {
+  gap: 0;
+}
+/* The old step leaves at once and only the new one fades in: cross-fading two steps in one
+   cell draws their text over each other. */
+html[data-js] .svc-step {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(6px);
+}
+html[data-js] .svc-step.is-active {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.28s var(--menu-ease), transform 0.28s var(--menu-ease);
+}
+html[data-js] .svc-steps__pager {
+  grid-area: pager;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.svc-steps__go[aria-disabled="true"] {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+.svc-steps__tab {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.svc-steps__tab:hover,
+.svc-steps__tab[aria-selected="true"] {
+  color: var(--text);
+}
+/* centres the name's first line on the 40px circle */
+.svc-steps__name {
+  padding-top: calc((40px - 1.35em) / 2);
+}
+.svc-steps__n {
+  position: relative;
+  z-index: 1;
+  flex: none;
   display: grid;
   place-items: center;
+  width: 40px;
+  height: 40px;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 50%;
   background: var(--panel);
   font-family: var(--font-mono);
   font-size: 13px;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+/* The rail, one segment per tab from its circle to the next, so it meets every circle
+   however many lines a name wraps to. Steps already behind you turn violet. */
+.svc-steps__tab:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 19.5px;
+  top: 48px;
+  bottom: -8px;
+  width: 1px;
+  background: var(--line);
+  transition: background 0.2s ease;
+}
+.svc-steps__tab.done::after {
+  background: var(--violet-2);
+}
+.svc-steps__tab.done .svc-steps__n {
+  border-color: var(--violet-2);
   color: var(--violet-2);
 }
-.svc-flow__step h3 {
-  font-size: 19px;
-  line-height: 1.25;
-  margin: 7px 0 10px;
+.svc-steps__tab[aria-selected="true"] .svc-steps__n {
+  border-color: transparent;
+  background: linear-gradient(180deg, var(--violet-2), var(--violet));
+  color: #fff;
+  box-shadow: 0 8px 24px -10px var(--violet-glow);
 }
-.svc-flow__out {
-  margin-top: 12px;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  letter-spacing: 0.02em;
-  color: var(--text-3);
-}
-.svc-flow__out span[data-en] {
-  color: var(--violet-2);
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-js] .svc-step,
+  html[data-js] .svc-step.is-active {
+    transform: none;
+    transition: none;
+  }
 }
 
 /* what you get */
@@ -167,24 +298,91 @@
   transform: rotate(-45deg);
 }
 
-/* FAQ */
-.svc-faq {
+/* how we think: the approach as numbered points */
+.svc-principle {
   display: grid;
-  gap: 0;
-  max-width: 72ch;
-}
-.svc-faq__item {
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: baseline;
   padding: 22px 0;
   border-top: 1px solid var(--line-soft);
 }
-.svc-faq__item:first-child {
-  border-top: none;
+.svc-principle:first-child {
   padding-top: 0;
+  border-top: 0;
 }
-.svc-faq__item h3 {
-  font-size: 17.5px;
-  line-height: 1.3;
-  margin-bottom: 12px;
+.svc-principle:last-child {
+  padding-bottom: 0;
+}
+.svc-principle__n {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--violet-2);
+}
+.svc-principle p {
+  margin: 0;
+}
+.svc-principle__lead {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* FAQ — the home page's cards and +/× sign (sections/faq.css) on native <details>. The
+   sign is positioned rather than flexed: <summary> as a flex container is not reliable in
+   every browser this site supports. */
+.svc-faq .faq__item {
+  /* the home card clips for its max-height animation; here it would only clip the focus ring */
+  overflow: visible;
+}
+.svc-faq__q {
+  position: relative;
+  display: block;
+  padding: 22px 76px 22px 24px;
+  cursor: pointer;
+  list-style: none;
+}
+.svc-faq__q::-webkit-details-marker {
+  display: none;
+}
+.svc-faq__q h3 {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.4;
+}
+.svc-faq__q .faq__sign {
+  position: absolute;
+  top: 50%;
+  right: 24px;
+  transform: translateY(-50%);
+}
+.svc-faq .faq__sign::before {
+  content: "+";
+}
+.svc-faq .faq__item[open] .faq__sign::before {
+  content: "×";
+}
+.svc-faq__a {
+  padding: 0 24px 24px;
+  font-size: 16px;
+  line-height: 1.7;
+}
+.svc-faq__a > p {
+  margin-bottom: 14px;
+}
+/* Opening animates where the browser can size to auto; elsewhere it simply snaps open. */
+@supports (interpolate-size: allow-keywords) {
+  .svc-faq .faq__item {
+    interpolate-size: allow-keywords;
+  }
+  .svc-faq .faq__item::details-content {
+    height: 0;
+    overflow: clip;
+    transition: height 0.32s ease, content-visibility 0.32s ease allow-discrete;
+  }
+  .svc-faq .faq__item[open]::details-content {
+    height: auto;
+  }
 }
 
 /* other products */
@@ -218,12 +416,95 @@
 .svc-related li a:hover {
   color: var(--violet-2);
 }
+.svc-related__chip {
+  border-color: var(--violet);
+  color: var(--violet-2);
+}
 .svc-related__name {
   font-weight: 500;
+}
+/* a tablet gets the one-row layout too; 44px rows keep each link a comfortable tap */
+@media (pointer: coarse) {
+  .svc-related li a {
+    min-height: 44px;
+  }
+}
+/* The chips share one column as wide as the longest, so every title starts on one line. */
+@supports (grid-template-columns: subgrid) {
+  .svc-related ul {
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: 14px;
+  }
+  .svc-related li,
+  .svc-related li a {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: center;
+  }
+  .svc-related__chip {
+    justify-content: center;
+  }
+}
+
+/* A phone: the tabs become a row of numbered circles over the step, the names left to the
+   step's own heading (and to screen readers, which still get them from the tab). */
+@media (max-width: 720px) {
+  html[data-js] .svc-steps {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "nav"
+      "panel"
+      "pager";
+    gap: 16px;
+  }
+  html[data-js] .svc-steps__nav {
+    flex-direction: row;
+  }
+  /* 48px tall: a 44px tap target with room to spare once page zoom rounds it */
+  .svc-steps__tab {
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+    padding: 4px 0;
+  }
+  .svc-steps__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* equal-width tabs, so centre to centre is exactly one tab across */
+  .svc-steps__tab:not(:last-child)::after {
+    left: 50%;
+    top: 23.5px;
+    bottom: auto;
+    width: 100%;
+    height: 1px;
+  }
+  .svc-step {
+    padding: 22px 20px;
+  }
+  .svc-principle {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
   .svc-deliver {
     grid-template-columns: 1fr;
+  }
+  /* too narrow for a chip column: each chip sits above its title instead */
+  .svc-related ul {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 18px;
+  }
+  .svc-related li a {
+    row-gap: 8px;
+    justify-items: start;
   }
 }

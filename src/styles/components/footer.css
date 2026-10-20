@@ -31,8 +31,17 @@
   margin-bottom: 11px;
 }
 .footer__col a {
+  position: relative;
+  display: inline-block;
   color: var(--text-2);
   font-size: 14.5px;
+}
+/* The links sit closer than 44px, so each tap target fills its own share of the list (half
+   the 11px gap either side) instead of overlapping the next link. */
+.footer__col a::after {
+  content: "";
+  position: absolute;
+  inset: -5.5px 0;
 }
 .footer__col a:hover {
   color: var(--text);
@@ -48,6 +57,14 @@
   font-size: 11.5px;
   color: var(--text-3);
   letter-spacing: 0.06em;
+}
+
+/* The generated blog and service pages have no link grid, so their first bar sits right
+   under the footer's own border and would draw a second hairline 50px below it. */
+.footer > .footer__bar:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
 @media (max-width: 1000px) {

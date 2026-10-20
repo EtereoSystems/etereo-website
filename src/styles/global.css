@@ -86,6 +86,22 @@ a {
   outline-offset: 3px;
 }
 
+/* Small controls get a 44px tap target from an invisible box centred on them, so nothing
+   around them moves. Controls set closer together than that grow outward instead (the
+   EN/SK switch in nav.css, the footer link columns in footer.css). */
+:where(.nav__brand, .page-back, .footer__bar a, .prod__more, .work__link, .project-panel__more, .contact__ch-link, .pager__num, .pager__step) {
+  position: relative;
+}
+:where(.nav__brand, .page-back, .footer__bar a, .prod__more, .work__link, .project-panel__more, .contact__ch-link, .pager__num, .pager__step)::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
 h1,
 h2,
 h3,
