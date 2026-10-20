@@ -47,7 +47,7 @@ src/
 - Testimonials live in `src/data/testimonials.ts`, empty for now. Add only real quotes with written consent (`consent: true`); the section appears once there are two.
 - The Projects section (`src/data/work.ts`) lists real work only. Add a project only once the client is happy to be named; mark NDA work `confidential: true` and leave out its `url`.
 - Contact details (`info@etereosystems.com`, address) and the footer legal line are placeholders — fill in your real IČO / DIČ / registered seat.
-- The contact form is not wired: `submitInquiry()` in `src/components/Contact.tsx` is a TODO, and until it posts somewhere every submit ends in an error message with a prefilled email link. It also needs a privacy policy page (`SITE.privacyUrl` in `src/config.ts`).
+- The contact form posts to `public/api/contact.php`, which mails it to `info@etereosystems.com` from the Websupport host. The dev server does not run PHP, so locally a submit always ends in the error message with a prefilled email link. The form still needs a privacy policy page (`SITE.privacyUrl` in `src/config.ts`).
 
 ## 3D model
 

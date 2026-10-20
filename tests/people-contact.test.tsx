@@ -1,5 +1,5 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Contact } from "../src/components/Contact";
 import { PRESET_EVENT, readPreset } from "../src/components/contactPreset";
 import { Engage, Team, Voices } from "../src/sections/Sections";
@@ -144,19 +144,63 @@ describe("contact form", () => {
     expect(document.activeElement?.getAttribute("type")).toBe("checkbox");
   });
 
-  // Nothing receives the form yet (see submitInquiry). A valid submit must end in the
-  // error state with an email fallback, never in a success message nobody will act on.
-  it("does not claim success while submission is unwired", async () => {
-    render(<Contact />);
-    fireEvent.change(screen.getByLabelText(t.name), { target: { value: "Jane" } });
-    fireEvent.change(screen.getByLabelText(t.email), { target: { value: "jane@company.com" } });
-    fireEvent.change(screen.getByLabelText(t.context), { target: { value: "A legacy ERP" } });
-    fireEvent.click(screen.getByRole("checkbox"));
-    await act(async () => submit());
-    expect(screen.queryByText(t.sent)).toBeNull();
-    const fallback = document.querySelector<HTMLAnchorElement>(".contact__error a")!;
-    expect(fallback.textContent).toBe("info@etereosystems.com");
-    expect(decodeURIComponent(fallback.getAttribute("href")!)).toContain("A legacy ERP");
+  describe("submission", () => {
+    afterEach(() => vi.restoreAllMocks());
+
+    const fill = () => {
+      fireEvent.change(screen.getByLabelText(t.name), { target: { value: "Jane" } });
+      fireEvent.change(screen.getByLabelText(t.email), { target: { value: "jane@company.com" } });
+      fireEvent.change(screen.getByLabelText(t.context), { target: { value: "A legacy ERP" } });
+      fireEvent.click(screen.getByRole("checkbox"));
+    };
+    const reply = (body: string, status = 200) =>
+      vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(body, { status }));
+
+    it("posts the inquiry to the PHP endpoint and thanks the visitor on its ok", async () => {
+      const fetch = reply('{"ok":true}');
+      render(<Contact />);
+      fireEvent.click(screen.getByRole("button", { name: t.topics.ai }));
+      fill();
+      await act(async () => submit());
+      expect(await screen.findByText(t.sent)).toBeTruthy();
+      const [url, init] = fetch.mock.calls[0];
+      expect([url, init?.method]).toEqual(["/api/contact.php", "POST"]);
+      expect(JSON.parse(init?.body as string)).toMatchObject({
+        name: "Jane",
+        email: "jane@company.com",
+        context: "A legacy ERP",
+        consent: true,
+        website: "",
+        topics: [t.topics.ai],
+        lang: "en",
+      });
+    });
+
+    // a 200 from something other than the script (dev server, PHP off) is not "sent"
+    it.each([
+      ["an HTML page served with 200", () => reply("<!doctype html><html></html>")],
+      ["the script reporting a mail failure", () => reply('{"ok":false,"error":"mail"}', 500)],
+      ["a network failure", () => vi.spyOn(globalThis, "fetch").mockRejectedValue(new TypeError("Failed to fetch"))],
+    ])("falls back to a prefilled email on %s", async (_, mock) => {
+      mock();
+      render(<Contact />);
+      fill();
+      await act(async () => submit());
+      await waitFor(() => expect(document.querySelector(".contact__error a")).not.toBeNull());
+      const fallback = document.querySelector<HTMLAnchorElement>(".contact__error a")!;
+      expect(screen.queryByText(t.sent)).toBeNull();
+      expect(fallback.textContent).toBe("info@etereosystems.com");
+      expect(decodeURIComponent(fallback.getAttribute("href")!)).toContain("A legacy ERP");
+    });
+
+    it("sends nothing when the honeypot is filled", async () => {
+      const fetch = reply('{"ok":true}');
+      render(<Contact />);
+      fill();
+      fireEvent.change(document.getElementById("contact-website")!, { target: { value: "spam.example" } });
+      await act(async () => submit());
+      expect(fetch).not.toHaveBeenCalled();
+    });
   });
 
   it("has no English left in the Slovak form", () => {
