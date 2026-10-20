@@ -52,12 +52,30 @@ body[data-scrolled="true"] .nav {
   padding: 5px 11px;
 }
 .lang button {
+  position: relative;
   background: none;
   border: none;
   color: var(--text-3);
   cursor: pointer;
   font: inherit;
   padding: 0 2px;
+}
+/* EN and SK are ~20px apart, so each 44px tap target grows outward, away from the other,
+   and the two never overlap across the dot. */
+.lang button::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  height: 44px;
+  transform: translateY(-50%);
+}
+.lang button:first-of-type::after {
+  left: -18px;
+  right: -9px;
+}
+.lang button:last-of-type::after {
+  left: -9px;
+  right: -18px;
 }
 .lang button.on {
   color: var(--text);

@@ -1,7 +1,8 @@
 // Generates a self-contained, bilingual static page for every service at services/<slug>/index.html.
 // These are Vite inputs (see vite.config.ts) so Vite injects the hashed CSS and substitutes
 // %VITE_SITE_URL%. The full text of BOTH languages ships in the HTML (crawlers and AI read it
-// without running JS); src/blog-post.ts (reused) only toggles language and the menu.
+// without running JS); src/service-page.ts reuses blog-post.ts for language and the menu, and
+// adds the delivery stepper and the scroll reveal.
 // Run by predev/prebuild — the output dirs are gitignored and regenerated on every build.
 
 import { fileURLToPath } from "node:url";
@@ -107,24 +108,67 @@ function jsonLd(svc) {
   return JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
 }
 
+const num = (n) => String(n).padStart(2, "0");
+
+// WAI-ARIA tabs once src/service-steps.ts runs; without JS (no html[data-js]) the tabs and
+// the Back / Next buttons stay hidden and every step is listed in order instead.
 function phases(svc) {
+  const n = svc.phases.length;
+  const tabs = svc.phases
+    .map(
+      (p, i) =>
+        `<button type="button" class="svc-steps__tab" role="tab" id="svc-tab-${i + 1}" aria-controls="svc-step-${i + 1}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}"><span class="svc-steps__n" aria-hidden="true">${num(i + 1)}</span>${i18nSpan(p.name.en, p.name.sk, "svc-steps__name")}</button>`,
+    )
+    .join("\n            ");
+  const panels = svc.phases
+    .map(
+      (p, i) =>
+        `<section class="svc-step${i === 0 ? " is-active" : ""}" role="tabpanel" id="svc-step-${i + 1}" aria-labelledby="svc-tab-${i + 1}" tabindex="0">
+                <span class="svc-step__n" aria-hidden="true">${num(i + 1)} / ${num(n)}</span>
+                <h3>${i18nSpan(p.name.en, p.name.sk)}</h3>
+                ${i18nBody(p.body.en, p.body.sk, "svc-step__body")}
+                <p class="svc-step__out"><span class="svc-step__out-label">${i18nSpan("Output", "Výstup")}</span>${i18nSpan(p.output.en, p.output.sk)}</p>
+              </section>`,
+    )
+    .join("\n              ");
   return `
-        <ol class="svc-flow" role="list">
-          ${svc.phases
-            .map(
-              (p, i) =>
-                `<li class="svc-flow__step">
-            <span class="svc-flow__n" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
-            <h3>${i18nSpan(p.name.en, p.name.sk)}</h3>
-            ${i18nBody(p.body.en, p.body.sk, "svc-flow__body")}
-            <p class="svc-flow__out"><span class="sr-only">${i18nSpan("Output:", "Výstup:")} </span>${i18nSpan(
-                  p.output.en,
-                  p.output.sk,
-                )}</p>
-          </li>`,
-            )
-            .join("\n          ")}
-        </ol>`;
+        <div class="svc-steps">
+          <div class="svc-steps__nav" role="tablist" aria-labelledby="svc-steps-title">
+            ${tabs}
+          </div>
+          <div class="svc-steps__panels">
+            ${panels}
+          </div>
+          <div class="svc-steps__pager">
+            <button type="button" class="btn btn--ghost svc-steps__go" data-step-go="-1" aria-disabled="true"><span aria-hidden="true">←</span>${i18nSpan("Back", "Späť")}</button>
+            <button type="button" class="btn btn--ghost svc-steps__go" data-step-go="1">${i18nSpan("Next step", "Ďalší krok")}<span aria-hidden="true">→</span></button>
+          </div>
+        </div>`;
+}
+
+// A paragraph's first sentence, set apart so the three points can be skimmed. Left alone when
+// the sentence would end inside <strong>/<em> rather than produce broken markup.
+function withLead(inner) {
+  const end = inner.search(/[.!?](?=\s+[A-ZÁÄČĎÉÍĹĽŇÓÔŔŠŤÚÝŽ])/);
+  if (end < 0) return inner;
+  const lead = inner.slice(0, end + 1);
+  const balanced = ["strong", "em"].every((t) => lead.split(`<${t}>`).length === lead.split(`</${t}>`).length);
+  return balanced ? `<span class="svc-principle__lead">${lead}</span>${inner.slice(end + 1)}` : inner;
+}
+
+// The approach is three short essays. Set as numbered points it reads as an argument rather
+// than a wall of prose; only bare <p> blocks split cleanly, so anything else fails the build.
+function principles(html) {
+  const paras = html.match(/<p>[\s\S]*?<\/p>/g) ?? [];
+  if (paras.join("").replace(/\s+/g, "") !== html.replace(/\s+/g, "")) {
+    throw new Error("gen-services: an approach must be <p> blocks only");
+  }
+  return paras
+    .map(
+      (p, i) =>
+        `<div class="svc-principle"><span class="svc-principle__n" aria-hidden="true">${num(i + 1)}</span><p>${withLead(p.slice(3, -4))}</p></div>`,
+    )
+    .join("");
 }
 
 function deliverables(svc) {
@@ -137,16 +181,18 @@ function deliverables(svc) {
         </ul>`;
 }
 
+// Native <details>, so the answers open without JS and stay in the HTML for crawlers; a shared
+// `name` keeps one open at a time, like the home page FAQ.
 function faq(svc) {
   return `
-        <div class="svc-faq">
+        <div class="faq svc-faq">
           ${svc.faq
             .map(
-              (f) =>
-                `<div class="svc-faq__item">
-            <h3>${i18nSpan(f.q.en, f.q.sk)}</h3>
+              (f, i) =>
+                `<details class="faq__item" name="svc-faq"${i === 0 ? " open" : ""}>
+            <summary class="svc-faq__q"><h3>${i18nSpan(f.q.en, f.q.sk)}</h3><span class="faq__sign" aria-hidden="true"></span></summary>
             ${i18nBody(f.a.en, f.a.sk, "svc-faq__a")}
-          </div>`,
+          </details>`,
             )
             .join("\n          ")}
         </div>`;
@@ -161,7 +207,7 @@ function related(svc) {
             ${others
               .map(
                 (s) =>
-                  `<li><a href="/services/${s.slug}/"><span class="chip" style="border-color:var(--violet);color:var(--violet-2)">${i18nSpan(
+                  `<li><a href="/services/${s.slug}/"><span class="chip svc-related__chip">${i18nSpan(
                     s.tag.en,
                     s.tag.sk,
                   )}</span>${i18nSpan(s.title.en, s.title.sk, "svc-related__name")}</a></li>`,
@@ -212,6 +258,8 @@ function page(svc) {
     <style>
       html { background: #060811; color-scheme: dark; }
     </style>
+    <!-- before first paint, so the stepper's layout is right from the start -->
+    <script>document.documentElement.setAttribute("data-js", "");</script>
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/inter-latin.woff2" />
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/space-grotesk-latin.woff2" />
 
@@ -257,7 +305,7 @@ function page(svc) {
 
         <section class="section--tight svc-section">
           <div class="container container--narrow">
-            <h2 class="svc-h2">${i18nSpan(svc.phasesTitle.en, svc.phasesTitle.sk)}</h2>
+            <h2 class="svc-h2" id="svc-steps-title">${i18nSpan(svc.phasesTitle.en, svc.phasesTitle.sk)}</h2>
             ${phases(svc)}
           </div>
         </section>
@@ -272,7 +320,7 @@ function page(svc) {
         <section class="section--tight svc-section">
           <div class="container container--narrow">
             <h2 class="svc-h2">${i18nSpan(svc.approachTitle.en, svc.approachTitle.sk)}</h2>
-            ${i18nBody(svc.approach.en, svc.approach.sk, "svc-approach")}
+            ${i18nBody(principles(svc.approach.en), principles(svc.approach.sk), "svc-approach")}
           </div>
         </section>
 
@@ -293,7 +341,7 @@ ${related(svc)}
         </section>
       </main>${footer()}
     </div>
-    <script type="module" src="/src/blog-post.ts"></script>
+    <script type="module" src="/src/service-page.ts"></script>
   </body>
 </html>
 `;

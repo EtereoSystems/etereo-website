@@ -44,7 +44,7 @@ export function Contact() {
   const [status, setStatus] = useState<Status>("idle");
   const sentRef = useRef<HTMLParagraphElement>(null);
 
-  // an engagement card or product CTA on this page asked for a chip
+  // a product CTA on this page asked for a chip
   useEffect(() => {
     const onPreset = () => {
       const want = readPreset(window.location.search);

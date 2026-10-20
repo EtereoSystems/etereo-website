@@ -44,7 +44,7 @@ src/
 
 ## Notes / honest-content reminders
 
-- Testimonials live in `src/data/testimonials.ts`, empty for now. Add only real quotes with written consent (`consent: true`); the section appears once there are two.
+- Testimonials live in `src/data/testimonials.ts`. The real list (`REAL`) is empty for now. Add only real quotes with written consent (`consent: true`); the section appears in production once there are two. The dev server shows draft client quotes meanwhile (awaiting approval), and they never reach a production build. An approved one moves into `REAL`.
 - The Projects section (`src/data/work.ts`) lists real work only. Add a project only once the client is happy to be named; mark NDA work `confidential: true` and leave out its `url`.
 - Contact details (`info@etereosystems.com`, address) and the footer legal line are placeholders — fill in your real IČO / DIČ / registered seat.
 - The contact form posts to `public/api/contact.php`, which mails it to `info@etereosystems.com` from the Websupport host. The dev server does not run PHP, so locally a submit always ends in the error message with a prefilled email link. The form still needs a privacy policy page (`SITE.privacyUrl` in `src/config.ts`).

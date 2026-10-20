@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { useContent } from "../i18n";
 import { useUI } from "../store";
-import { TESTIMONIALS, type Testimonial } from "../data/testimonials";
+import { TESTIMONIALS, visibleTestimonials, type Testimonial } from "../data/testimonials";
 import { WORK_PROJECTS } from "../data/work";
 import { Avatar, LinkedInLink, TeamIcon, type TeamIconKind } from "../components/Person";
 import { contactHref, openContact } from "../components/contactPreset";
@@ -282,8 +282,8 @@ export function Industries() {
 
 export function Engage() {
   const c = useContent();
-  const lang = useUI((s) => s.lang);
   const en = c.engage;
+  const last = en.items.length - 1;
   return (
     <section id="engage" className="section engagement">
       <div className="container">
@@ -292,74 +292,131 @@ export function Engage() {
           <h2>{en.title}</h2>
           <p>{en.sub}</p>
         </div>
-        <div className="engage-grid">
-          {en.items.map((e) => (
-            <article className={"card engage reveal" + (e.featured ? " engage--featured" : "")} key={e.title}>
-              <div className="engage__head">
-                <h3>{e.title}</h3>
-                <span className={"engage__badge" + (e.featured ? " on" : "")}>{e.badge}</span>
+        {/* The <ol> carries the order, so the drawn numbers are hidden. role="list" because
+            Safari drops list semantics from a list styled with list-style: none. */}
+        <ol className="steps" role="list">
+          {en.items.map((s, i) => (
+            <li className="step reveal" key={s.n}>
+              <div className="card step__card">
+                <span className="step__n" aria-hidden="true">
+                  {s.n}
+                </span>
+                <h3>{s.title}</h3>
+                <p className="step__output">
+                  {en.outputLabel} {s.output}
+                </p>
+                <p className="step__body">{s.body}</p>
+                <ul className="step__points" role="list">
+                  {s.points.map((p) => (
+                    <li key={p}>{p}</li>
+                  ))}
+                </ul>
               </div>
-              <div className="engage__cadence">{e.cadence}</div>
-              <p className="engage__body">{e.body}</p>
-              <ul className="engage__points" role="list">
-                {e.points.map((p) => (
-                  <li key={p}>{p}</li>
-                ))}
-              </ul>
-              {/* the contact form preselects the matching topic from ?type= */}
-              <a
-                href={contactHref(lang, { type: e.type })}
-                onClick={(ev) => openContact(ev, { type: e.type })}
-                className={"btn engage__cta " + (e.featured ? "btn--primary" : "btn--ghost")}
-              >
-                {e.cta}
-              </a>
-            </article>
+              {/* outside the card, so the card's hover lift does not drag it off the next one */}
+              {i < last && <span className="step__link" aria-hidden="true" />}
+            </li>
           ))}
+        </ol>
+        <div className="engage__action reveal">
+          <a href="#contact" className="btn btn--primary engage__cta">
+            {/* one flex item with a no-break space, so a wrapped label keeps its arrow */}
+            <span>
+              {en.cta}
+              {"\u00a0"}
+              <span aria-hidden="true">→</span>
+            </span>
+          </a>
         </div>
       </div>
     </section>
   );
 }
 
-export function Voices({ items = TESTIMONIALS }: { items?: Testimonial[] }) {
+// One run of the loop has to be wider than the 1200px container, or the seam shows as a
+// gap; a short list repeats within the run until it is.
+const MIN_RUN = 6;
+let warnedMock = false;
+
+// one labelled image, so a screen reader hears the rating once rather than five glyphs
+function Stars({ n, label }: { n: number; label: string }) {
+  return (
+    <span className="voice__stars" role="img" aria-label={label}>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <svg key={i} className={"voice__star" + (i < n ? "" : " voice__star--off")} viewBox="0 0 20 18.2" aria-hidden="true">
+          <polygon points="10,0.5 12.35,6.76 19.04,7.06 13.8,11.24 15.58,17.69 10,14 4.42,17.69 6.2,11.24 0.96,7.06 7.65,6.76" />
+        </svg>
+      ))}
+    </span>
+  );
+}
+
+export function Voices({ items = TESTIMONIALS, dev = import.meta.env.DEV }: { items?: Testimonial[]; dev?: boolean }) {
   const c = useContent();
   const lang = useUI((s) => s.lang);
-  const shown = items.filter((t) => t.consent);
+  const shown = visibleTestimonials(items, dev);
+  const mock = shown.some((t) => t.isMock);
+  useEffect(() => {
+    if (!mock || warnedMock) return;
+    warnedMock = true;
+    console.warn("[testimonials] rendering mock data");
+  }, [mock]);
   // a single quote reads as cherry-picked, so the section waits for a second one
   if (shown.length < 2) return null;
+  // an even number of identical sets, so -50% lands exactly on a seam
+  const perRun = Math.ceil(MIN_RUN / shown.length);
+  const sets = 2 * perRun;
   return (
     <section id="testimonials" className="section section--tight voices-section">
       <div className="container">
         <div className="section-head reveal">
           <div className="eyebrow">{c.voices.eyebrow}</div>
-          <h2>{c.voices.title}</h2>
+          <h2 id="voices-title">{c.voices.title}</h2>
         </div>
-        <div className={"voices" + (shown.length === 2 ? " voices--pair" : "")}>
-          {shown.map((t) => (
-            <figure className="card voice reveal" key={t.id}>
-              <blockquote>
-                <p>{t.quote[lang]}</p>
-              </blockquote>
-              <figcaption>
-                <Avatar name={t.name} photo={t.photo} className="voice__av" />
-                <span className="voice__id">
-                  <strong>{t.name}</strong>
-                  <span className="voice__role">
-                    {t.role[lang]},{" "}
-                    {t.companyUrl ? (
-                      <a href={t.companyUrl} target="_blank" rel="noopener noreferrer">
-                        {t.company}
-                      </a>
-                    ) : (
-                      t.company
-                    )}
-                  </span>
-                </span>
-                {t.linkedin && <LinkedInLink href={t.linkedin} label={`${c.voices.linkedin} ${t.name}`} />}
-              </figcaption>
-            </figure>
-          ))}
+        {/* focusable so a keyboard user can pause it (and scroll it, under reduced motion) */}
+        <div
+          className="voices-marquee reveal"
+          role="region"
+          aria-labelledby="voices-title"
+          tabIndex={0}
+          style={{ "--voice-n": shown.length * perRun } as CSSProperties}
+        >
+          <div className="voices-track">
+            {Array.from({ length: sets }, (_, set) => (
+              <div className="voices-set" key={set} aria-hidden={set > 0 ? "true" : undefined} inert={set > 0}>
+                {shown.map((t) => (
+                  <figure className="card voice" key={t.id}>
+                    {t.rating && <Stars n={t.rating} label={c.voices.rating.replace("{n}", String(t.rating))} />}
+                    <blockquote>
+                      <p>{t.quote[lang]}</p>
+                    </blockquote>
+                    <figcaption>
+                      <Avatar name={t.name} photo={t.photo} className="voice__av" />
+                      <span className="voice__id">
+                        <strong>{t.name}</strong>
+                        <span className="voice__role">
+                          {t.role[lang]}
+                          {t.company && (
+                            <>
+                              {", "}
+                              {t.companyUrl ? (
+                                <a href={t.companyUrl} target="_blank" rel="noopener noreferrer">
+                                  {t.company}
+                                </a>
+                              ) : (
+                                t.company
+                              )}
+                            </>
+                          )}
+                        </span>
+                        {t.industry && <span className="voice__industry">{t.industry[lang]}</span>}
+                      </span>
+                      {t.linkedin && <LinkedInLink href={t.linkedin} label={`${c.voices.linkedin} ${t.name}`} />}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

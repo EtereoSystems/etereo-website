@@ -127,11 +127,11 @@ Financial services, healthcare, logistics & transport, energy & utilities, retai
 
 TypeScript, React / Next.js, Vue / Nuxt, Astro; Node.js, .NET, Python, Go; PostgreSQL, ClickHouse, Kafka; Swift/SwiftUI, Kotlin/Compose, React Native; AWS, Azure, GCP, Docker, Kubernetes, Terraform, OpenTelemetry; LLM APIs (OpenAI, Anthropic, Azure OpenAI), RAG and vector databases, AI agents, document processing and OCR, LLM evaluation and monitoring.
 
-## Ways to engage
+## How we work together
 
-- **Assessment** — fixed fee, 2–3 weeks: a written review of systems and processes before committing to a full project.
-- **Delivery team** — 3–18 months, the recommended model: a complete team accountable for shipped outcomes, in two-week iterations.
-- **Embedded engineers** — rolling monthly: senior specialists inside an existing team.
+1. **Contact & proposal** — an intro call with engineers, a review of systems, processes and goals, then a solution proposal with scope, timeline and price.
+2. **Build & feedback loop** — short iterations on the agreed timeline, regular demos, and an MVP tested with real users as early as possible.
+3. **Production handover** — acceptance against the agreed requirements, deployment to production, documentation and training for the client's team.
 
 ## Selected work
 

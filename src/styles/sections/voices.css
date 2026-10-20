@@ -4,22 +4,68 @@
 .voices-section h2 {
   text-wrap: balance;
 }
-.voices {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+
+/* Unitless so the loop's duration can be computed from them: one run is --voice-n cards,
+   and dividing its width by --voice-speed (px/s) keeps the same pixel speed whatever the
+   card width. Six 360px cards at 57px/s is the 40s loop. */
+.voices-marquee {
+  --voice-w: 360;
+  --voice-gap: 20;
+  --voice-speed: 57;
+  overflow: hidden;
+  /* room for the card hover lift and glow, which the mask would otherwise cut off */
+  padding: 8px 0 44px;
+  margin: -8px 0 -44px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
-/* two quotes sit centred at card width rather than stretched across three columns */
-.voices--pair {
-  grid-template-columns: repeat(2, minmax(0, 380px));
-  justify-content: center;
+/* the mask would fade the shared focus ring out at both ends */
+.voices-marquee:focus-visible {
+  -webkit-mask-image: none;
+  mask-image: none;
 }
+.voices-track {
+  display: flex;
+  width: max-content;
+  animation: voices-marquee calc(var(--voice-n) * (var(--voice-w) + var(--voice-gap)) / var(--voice-speed) * 1s) linear infinite;
+}
+.voices-marquee:hover .voices-track,
+.voices-marquee:focus-within .voices-track {
+  animation-play-state: paused;
+}
+/* the trailing gap makes every set exactly equal, so -50% lands on a seam */
+.voices-set {
+  display: flex;
+  gap: calc(var(--voice-gap) * 1px);
+  padding-right: calc(var(--voice-gap) * 1px);
+}
+@keyframes voices-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 .voice {
+  flex: none;
+  width: calc(var(--voice-w) * 1px);
   min-width: 0;
   padding: 28px;
   margin: 0;
   display: flex;
   flex-direction: column;
+}
+.voice__stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 16px;
+}
+.voice__star {
+  width: 16px;
+  height: 16px;
+  fill: var(--star);
+}
+.voice__star--off {
+  fill: var(--line);
 }
 .voice blockquote {
   margin: 0;
@@ -60,7 +106,9 @@
   font-weight: 500;
   font-size: 15px;
 }
-.voice__role {
+.voice__role,
+.voice__industry {
+  display: block;
   color: var(--text-2);
   font-size: 13.5px;
 }
@@ -73,16 +121,43 @@
   color: var(--text);
 }
 
+/* No motion: the real set only, as a row the visitor scrolls themselves. */
+@media (prefers-reduced-motion: reduce) {
+  .voices-marquee {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .voices-track {
+    animation: none;
+  }
+  .voices-set[aria-hidden="true"] {
+    display: none;
+  }
+  .voices-set {
+    padding-right: 0;
+  }
+  .voice {
+    scroll-snap-align: start;
+  }
+}
+
 @media (max-width: 1023px) {
-  .voices,
-  .voices--pair {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .voices-marquee {
+    --voice-w: 320;
   }
 }
 
 @media (max-width: 767px) {
-  .voices,
-  .voices--pair {
-    grid-template-columns: minmax(0, 1fr);
+  .voices-marquee {
+    --voice-w: 280;
+    --voice-gap: 16;
+  }
+  .voice {
+    padding: 24px;
+  }
+  .voice blockquote {
+    font-size: 17px;
   }
 }
