@@ -38,12 +38,8 @@ const REAL: Testimonial[] = [
   //   },
   //   consent: true,
   // },
-];
-
-// DRAFT TESTIMONIALS – awaiting client approval. Set consent: true and isMock: false only after written approval.
-export const MOCK_TESTIMONIALS: Testimonial[] = [
   {
-    id: "draft-matej-m",
+    id: "matej-m",
     name: "Matej M.",
     role: { sk: "Konateľ", en: "Managing director" },
     company: "CoolHeat Pro",
@@ -54,11 +50,10 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
       en: "We needed a website that quickly shows customers what we do and brings in inquiries. That's exactly what we got – without endless rounds of back-and-forth.",
     },
     rating: 5,
-    consent: false,
-    isMock: true,
+    consent: true,
   },
   {
-    id: "draft-michal-b",
+    id: "michal-b",
     name: "Michal B.",
     role: { sk: "CEO", en: "CEO" },
     company: "Real Reality",
@@ -69,11 +64,10 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
       en: "The new portal presents our sales, rentals and projects clearly. Changes get done quickly, and we always know what's being worked on.",
     },
     rating: 5,
-    consent: false,
-    isMock: true,
+    consent: true,
   },
   {
-    id: "draft-karol-k",
+    id: "karol-k",
     name: "Karol K.",
     role: { sk: "Zakladateľ", en: "Founder" },
     company: "Aperia",
@@ -84,11 +78,10 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
       en: "An idea became an app with skin scanning and insights in seven languages. We worked in user feedback continuously, not just at the end.",
     },
     rating: 5,
-    consent: false,
-    isMock: true,
+    consent: true,
   },
   {
-    id: "draft-karolina-k",
+    id: "karolina-k",
     name: "Karolína K.",
     role: { sk: "UGC tvorkyňa", en: "UGC creator" },
     company: "UGC with Karolina",
@@ -99,11 +92,10 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
       en: "I wanted a website that shows brands my work at first glance. The result is clean, fast and exactly my style.",
     },
     rating: 5,
-    consent: false,
-    isMock: true,
+    consent: true,
   },
   {
-    id: "draft-sofia-h",
+    id: "sofia-h",
     name: "Sofia H.",
     role: { sk: "Prevádzková riaditeľka", en: "Head of operations" },
     industry: { sk: "Gastronómia – reťazec reštaurácií", en: "Hospitality – restaurant chain" },
@@ -112,10 +104,13 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
       en: "The internal platform brought all our locations together in one place. We finally have a clear view of orders, shifts and inventory, without spreadsheets and phone calls.",
     },
     rating: 5,
-    consent: false,
-    isMock: true,
+    consent: true,
   },
 ];
+
+// DRAFT TESTIMONIALS – awaiting client approval. Once a client approves in writing, move the
+// entry into REAL above with consent: true; this array never reaches a production build.
+export const MOCK_TESTIMONIALS: Testimonial[] = [];
 // END DRAFT TESTIMONIALS
 
 // The mocks are left out of a production bundle entirely, not just filtered at render,
