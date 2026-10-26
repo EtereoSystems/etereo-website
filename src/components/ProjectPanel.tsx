@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useUI } from "../store";
-import { PANELS, PROJECTS, PROJECT_COUNT } from "../i18n/projects";
+import { PANELS, PROJECTS, HERO_COUNT } from "../i18n/projects";
 import { computeShow, currentProgress, type ShowState } from "../three/choreo";
 
 export function ProjectPanel({ running }: { running: boolean }) {
@@ -36,7 +36,7 @@ export function ProjectPanel({ running }: { running: boolean }) {
     return () => cancelAnimationFrame(raf);
   }, [running]);
 
-  const i = Math.max(0, Math.min(PROJECT_COUNT - 1, st.index));
+  const i = Math.max(0, Math.min(HERO_COUNT - 1, st.index));
   const panel = PANELS[lang][i];
   const proj = PROJECTS[i];
   // TODO: move this label into content.ts alongside the /projects/ detail copy
@@ -47,7 +47,7 @@ export function ProjectPanel({ running }: { running: boolean }) {
     <div className={"project-panel " + (mobile ? "mobile " : "") + st.side + (st.active ? " on" : "")} aria-hidden>
       <div className="project-panel__inner" key={st.active ? i : "idle"}>
         <div className="project-panel__eyebrow">
-          Project {proj.id} <span>/ 0{PROJECT_COUNT}</span>
+          Project {proj.id} <span>/ 0{HERO_COUNT}</span>
         </div>
         <h3 className="project-panel__name">{panel.name}</h3>
         <div className="project-panel__tags">

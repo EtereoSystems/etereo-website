@@ -6,7 +6,10 @@
 
 .hero {
   position: relative;
-  height: 940vh;
+  /* Scroll length is tuned to HERO_COUNT: travel is (height - 100vh), and the carousel
+     spans 78% of it across HERO_COUNT-1 beats. 520vh over 5 projects keeps the same
+     ~82vh-per-project pace the 940vh/9-project sequence had. Change this with HERO_COUNT. */
+  height: 520vh;
 }
 .hero__sticky {
   position: sticky;
@@ -130,7 +133,7 @@
   text-transform: uppercase;
   color: var(--text-2);
   white-space: nowrap;
-  /* The arrow is the only sign that a 940vh opening sequence is still running, so it
+  /* The arrow is the only sign that the tall opening sequence is still running, so it
      outlives --hero-fade and leaves with the handoff instead. */
   opacity: calc(1 - var(--handoff));
 }

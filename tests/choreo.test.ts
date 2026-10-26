@@ -10,7 +10,7 @@ import {
   interpArr,
   seg,
 } from "../src/three/choreo";
-import { PROJECT_COUNT } from "../src/i18n/projects";
+import { HERO_COUNT } from "../src/i18n/projects";
 import { heroScroll } from "../src/store";
 
 /** Progress samples dense enough that no beat can hide between two of them. */
@@ -18,19 +18,19 @@ const SAMPLES = Array.from({ length: 2001 }, (_, i) => i / 2000);
 
 describe("choreo timeline", () => {
   it("has one laptop x per project, with the last centred for the zoom", () => {
-    expect(LX).toHaveLength(PROJECT_COUNT);
+    expect(LX).toHaveLength(HERO_COUNT);
     expect(LX.at(-1)).toBe(0);
   });
 
   it("spans one beat fewer than the project count", () => {
-    expect(BEATS).toBe(PROJECT_COUNT - 1);
+    expect(BEATS).toBe(HERO_COUNT - 1);
   });
 
   it("never returns an index outside PROJECTS", () => {
     for (const p of SAMPLES) {
       const { index } = computeShow(p);
       expect(index, `at p=${p}`).toBeGreaterThanOrEqual(0);
-      expect(index, `at p=${p}`).toBeLessThan(PROJECT_COUNT);
+      expect(index, `at p=${p}`).toBeLessThan(HERO_COUNT);
     }
   });
 
@@ -39,7 +39,7 @@ describe("choreo timeline", () => {
   it("gives every project a stretch of scroll", () => {
     const seen = new Set(SAMPLES.filter((p) => computeShow(p).active).map((p) => computeShow(p).index));
     expect([...seen].sort((a, b) => a - b)).toEqual(
-      Array.from({ length: PROJECT_COUNT }, (_, i) => i),
+      Array.from({ length: HERO_COUNT }, (_, i) => i),
     );
   });
 
@@ -49,13 +49,13 @@ describe("choreo timeline", () => {
     expect(computeShow(INTRO_END).active).toBe(true);
     expect(computeShow(SHOW_END).active).toBe(true);
     expect(computeShow(SHOW_END + 0.001).active).toBe(false);
-    expect(computeShow(1).index).toBe(PROJECT_COUNT - 1);
+    expect(computeShow(1).index).toBe(HERO_COUNT - 1);
   });
 
   it("puts the text opposite the laptop", () => {
     for (const p of SAMPLES) {
       const { index, side } = computeShow(p);
-      if (index >= PROJECT_COUNT - 1) continue; // last beat is centred, side is fixed
+      if (index >= HERO_COUNT - 1) continue; // last beat is centred, side is fixed
       expect(side, `at p=${p}`).toBe(LX[index] < 0 ? "right" : "left");
     }
   });

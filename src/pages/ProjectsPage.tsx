@@ -4,6 +4,7 @@ import { Footer } from "../components/Footer";
 import { SeoHead } from "../seo/SeoHead";
 import { useLangSync } from "../components/useLangSync";
 import { useReveal } from "../components/useReveal";
+import { useScrolled } from "../components/useScrolled";
 import { useContent } from "../i18n";
 import { useUI } from "../store";
 import { PROJECTS, PANELS, PROJECT_COUNT } from "../i18n/projects";
@@ -55,6 +56,7 @@ export default function ProjectsPage() {
   useLangSync();
   // re-run per view (hub ⇄ detail render different trees) so their .reveal nodes get observed
   useReveal();
+  useScrolled();
   const t = L[lang];
   const labels = c.casePage.labels;
 
