@@ -72,6 +72,18 @@
     grid-template-columns: 1fr 1fr;
     gap: 28px;
   }
+  /* Touch widths: the tight inline links become full-width rows with a ~44px tap target,
+     so the hand-sized hit area replaces the 34px ::after pad used on the desktop list. */
+  .footer__col li {
+    margin-bottom: 2px;
+  }
+  .footer__col a {
+    display: block;
+    padding: 11px 0;
+  }
+  .footer__col a::after {
+    content: none;
+  }
 }
 
 @media (max-width: 720px) {

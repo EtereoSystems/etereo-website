@@ -3,6 +3,7 @@ import { Footer } from "../components/Footer";
 import { SeoHead } from "../seo/SeoHead";
 import { useLangSync } from "../components/useLangSync";
 import { useReveal } from "../components/useReveal";
+import { useScrolled } from "../components/useScrolled";
 import { useContent } from "../i18n";
 import { TeamIcon, type TeamIconKind } from "../components/Person";
 
@@ -13,6 +14,7 @@ export default function AboutPage() {
   const a = c.aboutPage;
   useLangSync();
   useReveal();
+  useScrolled();
 
   return (
     <>

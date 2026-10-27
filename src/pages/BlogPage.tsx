@@ -3,6 +3,7 @@ import { Nav } from "../components/Nav";
 import { Footer } from "../components/Footer";
 import { SeoHead } from "../seo/SeoHead";
 import { useLangSync } from "../components/useLangSync";
+import { useScrolled } from "../components/useScrolled";
 import { useContent } from "../i18n";
 import { useUI } from "../store";
 
@@ -13,6 +14,7 @@ export default function BlogPage() {
   const b = c.blogPage;
   const lang = useUI((s) => s.lang);
   useLangSync();
+  useScrolled();
 
   const withLang = (p: string) => (lang === "sk" ? `${p}?lang=sk` : p);
 

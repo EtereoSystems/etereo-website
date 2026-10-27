@@ -4,7 +4,7 @@ import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { motionPref, useUI } from "../store";
 import { makeScreenTexture } from "./screenTexture";
-import { PROJECT_COUNT } from "../i18n/projects";
+import { HERO_COUNT } from "../i18n/projects";
 import { INTRO_END, SHOW_END, LX, lerp, seg, clamp, interpArr, currentProgress } from "./choreo";
 
 const TWO_PI = Math.PI * 2;
@@ -134,6 +134,15 @@ export function Macbook() {
     // the choreography is the user's own scrolling, the float/sway is not.
     const idle = motionPref.reduced ? 0 : 1;
 
+    // The screen glows from its emissive map. The final zoom fades it to black (below);
+    // restore full brightness here each frame so scrolling back lights it again.
+    const sm = screenMat.mat;
+    if (sm) {
+      sm.emissiveIntensity = 1.2;
+      sm.roughness = 0.3;
+      if (sm.color.r !== 1) sm.color.setScalar(1);
+    }
+
     if (p < INTRO_END) {
       // splash. Desktop: laptop rests on the LEFT (LX[0]) with the wordmark on the
       // right. Mobile: laptop is centred and lifted, with the wordmark below it.
@@ -174,8 +183,8 @@ export function Macbook() {
       // spin carousel: each project faces at an integer beat; span is N-1 so project 0
       // sits at the very start (flowing straight out of the splash) and the last lands at SHOW_END.
       const phase = clamp((p - INTRO_END) / (SHOW_END - INTRO_END));
-      const beatFloat = phase * (PROJECT_COUNT - 1);
-      const proj = Math.min(PROJECT_COUNT - 1, Math.round(beatFloat));
+      const beatFloat = phase * (HERO_COUNT - 1);
+      const proj = Math.min(HERO_COUNT - 1, Math.round(beatFloat));
 
       g.rotation.y = -beatFloat * TWO_PI; // faces (y≡0) at each integer beat, back between
       g.rotation.x = 0.12 + Math.sin(t * 0.6) * 0.02 * idle;
@@ -203,10 +212,17 @@ export function Macbook() {
       root.setProperty("--handoff", "0");
     } else {
       // final zoom into the screen → hand off to the site. The last project already
-      // faces us, centred (LX[7]=0), so we continue straight in with no re-spin.
+      // faces us, centred (LX[last]=0), so we continue straight in with no re-spin.
+      // Its screen fades to black as we zoom in, so the hero ends on a black screen.
       const zt = seg(p, SHOW_END, 1);
-      setScreen("final");
+      setScreen(HERO_COUNT - 1);
       bind(screenTex);
+      const black = seg(p, SHOW_END, 0.95); // 0 at SHOW_END (project visible) → 1 fully black
+      if (sm) {
+        sm.emissiveIntensity = lerp(1.2, 0, black);
+        sm.roughness = lerp(0.3, 1, black); // kill the glass specular so no highlight survives
+        sm.color.setScalar(1 - black);
+      }
       g.rotation.y = 0;
       g.rotation.x = lerp(0.12, 0.045, zt);
       g.rotation.z = 0;

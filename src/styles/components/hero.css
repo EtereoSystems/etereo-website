@@ -6,7 +6,10 @@
 
 .hero {
   position: relative;
-  height: 940vh;
+  /* Scroll length is tuned to HERO_COUNT: travel is (height - 100vh), and the carousel
+     spans 78% of it across HERO_COUNT-1 beats. 520vh over 5 projects keeps the same
+     ~82vh-per-project pace the 940vh/9-project sequence had. Change this with HERO_COUNT. */
+  height: 520vh;
 }
 .hero__sticky {
   position: sticky;
@@ -130,7 +133,7 @@
   text-transform: uppercase;
   color: var(--text-2);
   white-space: nowrap;
-  /* The arrow is the only sign that a 940vh opening sequence is still running, so it
+  /* The arrow is the only sign that the tall opening sequence is still running, so it
      outlives --hero-fade and leaves with the handoff instead. */
   opacity: calc(1 - var(--handoff));
 }
@@ -273,5 +276,40 @@ body[data-scrolling="true"] .hero__hint-arrow {
   .hero__overlay {
     align-items: flex-start;
     padding-top: 44svh;
+  }
+}
+
+/* A phone held sideways has almost no height: the mobile layout's tall bottom-pinned text
+   block fills the whole viewport and runs into the lifted laptop. Shrink the splash copy
+   into a compact band at the very bottom so the laptop reads clearly above it, and drop the
+   badge and scroll cue, which there is no room for. Must follow the mobile query to win. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .hero__overlay {
+    padding: 0 22px calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+  .hero__badge {
+    display: none;
+  }
+  .hero__wordmark {
+    margin-top: 0;
+  }
+  .hero__wordmark .wordmark__text {
+    width: clamp(120px, 20vw, 180px);
+  }
+  .hero__tag {
+    font-size: clamp(15px, 3.4vw, 20px);
+    max-width: 40ch;
+    margin-top: 8px;
+  }
+  .hero__cta {
+    margin-top: 12px;
+    flex-direction: row;
+    width: auto;
+  }
+  .hero__cta .btn {
+    width: auto;
+  }
+  .hero__hint {
+    display: none;
   }
 }

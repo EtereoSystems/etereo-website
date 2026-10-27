@@ -62,4 +62,11 @@
   .subpage {
     padding-top: 88px;
   }
+  /* A comfortable tap target for the back link on touch, without moving it visually: the
+     extra height is padding, pulled back by an equal negative margin on the text side. */
+  .page-back {
+    padding: 10px 0;
+    margin-top: -10px;
+    margin-bottom: 16px;
+  }
 }

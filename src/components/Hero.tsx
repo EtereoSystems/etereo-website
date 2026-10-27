@@ -36,8 +36,8 @@ export function Hero() {
     };
   }, []);
 
-  // The hero is 940vh with ~10 sections after it. Left alone the 3D keeps drawing
-  // at 60fps long after it has scrolled away, so park it once it is out of sight.
+  // The hero is several screens tall with ~10 sections after it. Left alone the 3D keeps
+  // drawing at 60fps long after it has scrolled away, so park it once it is out of sight.
   useEffect(() => {
     const el = sticky.current;
     if (!el || !("IntersectionObserver" in window)) return;

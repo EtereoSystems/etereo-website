@@ -1,12 +1,13 @@
 import { heroScroll } from "../store";
-import { PROJECT_COUNT } from "../i18n/projects";
+import { HERO_COUNT } from "../i18n/projects";
 
 export const INTRO_END = 0.08;
 export const SHOW_END = 0.86;
 // laptop x per project (one per beat): zig-zags left/right, last centred so the
-// final zoom is on-axis. Generated from PROJECT_COUNT so adding a project needs no edit here.
-export const LX = Array.from({ length: PROJECT_COUNT }, (_, i) =>
-  i === PROJECT_COUNT - 1 ? 0 : i % 2 === 0 ? -1.2 : 1.2,
+// final zoom is on-axis. The hero shows only HERO_COUNT projects (the rest live on
+// /projects/), so the timeline is generated from that, not the full PROJECT_COUNT.
+export const LX = Array.from({ length: HERO_COUNT }, (_, i) =>
+  i === HERO_COUNT - 1 ? 0 : i % 2 === 0 ? -1.2 : 1.2,
 );
 
 export const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -36,7 +37,7 @@ export interface ShowState {
 
 // projects face at integer beats; span is N-1 so project 0 sits at the start (flowing
 // straight out of the splash) and the last project lands exactly at SHOW_END.
-export const BEATS = PROJECT_COUNT - 1;
+export const BEATS = HERO_COUNT - 1;
 
 /** which project (and text side) should be shown for a given progress */
 export function computeShow(p: number): ShowState {
@@ -46,10 +47,10 @@ export function computeShow(p: number): ShowState {
   }
   if (p <= SHOW_END) {
     const phase = clamp((p - INTRO_END) / (SHOW_END - INTRO_END));
-    const index = Math.min(PROJECT_COUNT - 1, Math.round(phase * BEATS));
+    const index = Math.min(HERO_COUNT - 1, Math.round(phase * BEATS));
     const side: "left" | "right" =
-      index >= PROJECT_COUNT - 1 ? "left" : LX[index] < 0 ? "right" : "left";
+      index >= HERO_COUNT - 1 ? "left" : LX[index] < 0 ? "right" : "left";
     return { index, side, active: true };
   }
-  return { index: PROJECT_COUNT - 1, side: "left", active: false };
+  return { index: HERO_COUNT - 1, side: "left", active: false };
 }

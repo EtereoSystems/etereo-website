@@ -80,7 +80,7 @@ describe("PANELS", () => {
    * only their structure. A project whose optional long form is filled in on one side only
    * renders a detail page with empty sections in the other language.
    */
-  const LONG_FORM_GAP = new Set(["ecostruxure-it", "beumer-localchat", "aperia"]);
+  const LONG_FORM_GAP = new Set<string>();
 
   it("gives each project the same panel structure in every language", () => {
     PROJECTS.forEach((project, i) => {
