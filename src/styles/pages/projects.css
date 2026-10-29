@@ -62,12 +62,10 @@
 .case__body {
   max-width: 68ch;
 }
+/* The write-up's section labels (problem / what we did / where it landed) are h2 — the main
+   sections under the project's h1 — but styled as small violet eyebrows, not big headings, so
+   the heading outline is correct for a screen reader while the page reads as designed. */
 .case__body h2 {
-  margin: 18px 0 0;
-  font-size: clamp(26px, 3vw, 36px);
-  line-height: 1.16;
-}
-.case__body h3 {
   margin: 38px 0 12px;
   color: var(--violet-2);
   font-size: 15px;

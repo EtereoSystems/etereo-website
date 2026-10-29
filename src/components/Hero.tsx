@@ -49,7 +49,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section id="top" className="hero">
+    <section id="top" className="hero" aria-label={c.hero.badge}>
       <div className="hero__sticky" ref={sticky}>
         <div className="grid-bg" />
         <div className="hero__glow" />

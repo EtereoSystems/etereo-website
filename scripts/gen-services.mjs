@@ -1,6 +1,7 @@
 // Generates a self-contained, bilingual static page for every service at services/<slug>/index.html.
-// These are Vite inputs (see vite.config.ts) so Vite injects the hashed CSS and substitutes
-// %VITE_SITE_URL%. The full text of BOTH languages ships in the HTML (crawlers and AI read it
+// These are Vite inputs (see vite.config.ts) so Vite injects the hashed CSS. The absolute SEO
+// URLs are resolved here from VITE_SITE_URL (see SITE_URL below), not left for Vite to swap.
+// The full text of BOTH languages ships in the HTML (crawlers and AI read it
 // without running JS); src/service-page.ts reuses blog-post.ts for language and the menu, and
 // adds the delivery stepper and the scroll reveal.
 // Run by predev/prebuild — the output dirs are gitignored and regenerated on every build.
@@ -9,6 +10,9 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { SERVICES } from "./services.mjs";
+// Resolved domain (env → .env → default). Substituted into each page below so the absolute
+// SEO URLs are correct even without a .env, instead of leaving %VITE_SITE_URL% for Vite.
+import { SITE_URL } from "./site-url.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -351,7 +355,7 @@ let n = 0;
 for (const svc of SERVICES) {
   const dir = join(ROOT, "services", svc.slug);
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, "index.html"), page(svc));
+  writeFileSync(join(dir, "index.html"), page(svc).replace(/%VITE_SITE_URL%/g, SITE_URL));
   n++;
 }
 console.log(`gen-services: wrote ${n} service pages`);

@@ -1,6 +1,7 @@
 // Generates a self-contained, bilingual static page for every post at blog/<slug>/index.html.
-// These are Vite inputs (see vite.config.ts) so Vite injects the hashed CSS and substitutes
-// %VITE_SITE_URL%. The full article text of BOTH languages ships in the HTML (crawlers and AI
+// These are Vite inputs (see vite.config.ts) so Vite injects the hashed CSS. The absolute SEO
+// URLs are resolved here from VITE_SITE_URL (see SITE_URL below), not left for Vite to swap.
+// The full article text of BOTH languages ships in the HTML (crawlers and AI
 // read it without running JS); src/blog-post.ts only toggles language and the menu.
 // Run by predev/prebuild — the output dirs are gitignored and regenerated on every build.
 
@@ -8,6 +9,9 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { POSTS } from "./blog-posts.mjs";
+// Resolved domain (env → .env → default). Substituted into each page below so the absolute
+// SEO URLs are correct even without a .env, instead of leaving %VITE_SITE_URL% for Vite.
+import { SITE_URL } from "./site-url.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -112,8 +116,8 @@ function jsonLd(post) {
 function moreLinks(current) {
   const others = POSTS.filter((p) => p.slug !== current.slug).slice(0, 3);
   return `
-        <nav class="article__more">
-          <div class="article__more-title">${i18nSpan("More from the blog", "Ďalšie z blogu")}</div>
+        <nav class="article__more" aria-labelledby="article-more-title">
+          <div class="article__more-title" id="article-more-title">${i18nSpan("More from the blog", "Ďalšie z blogu")}</div>
           <ul>
             ${others
               .map(
@@ -244,7 +248,7 @@ let n = 0;
 for (const post of POSTS) {
   const dir = join(ROOT, "blog", post.slug);
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, "index.html"), page(post));
+  writeFileSync(join(dir, "index.html"), page(post).replace(/%VITE_SITE_URL%/g, SITE_URL));
   n++;
 }
 console.log(`gen-blog: wrote ${n} post pages`);

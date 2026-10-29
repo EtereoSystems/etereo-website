@@ -7,10 +7,26 @@
   transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
   border-bottom: 1px solid transparent;
 }
+/* The scrolled bar is opaque by default — cheap, and it reads the same over this dark page.
+   A blurred fixed bar repaints its whole strip on every scroll frame, the single biggest
+   cause of scroll jank on phones, so the blur is added back only where there is a precise
+   pointer (a mouse, i.e. a desktop with the GPU headroom for it). Declaring the blur only
+   inside that query — rather than setting it everywhere and clearing it on touch — keeps a
+   CSS minifier from dropping the reset and leaving the blur live on mobile Chrome. */
 body[data-scrolled="true"] .nav {
-  background: rgba(6, 8, 17, 0.72);
-  backdrop-filter: blur(16px) saturate(140%);
+  /* Solid --bg (not a near-opaque tint): with no blur to hide it, any translucency lets the
+     scrolling content ghost through behind the links. The bar is the page's own colour, so
+     it reads seamlessly and the border is what sets it off. */
+  background: var(--bg);
   border-bottom-color: var(--line);
+}
+@media (pointer: fine) {
+  body[data-scrolled="true"] .nav {
+    background: rgba(6, 8, 17, 0.72);
+    /* unprefixed only — the build adds the -webkit- prefix; writing both by hand makes the
+       minifier keep just the prefixed one, which would drop the blur in Firefox. */
+    backdrop-filter: blur(16px) saturate(140%);
+  }
 }
 .nav__inner {
   max-width: 1260px;

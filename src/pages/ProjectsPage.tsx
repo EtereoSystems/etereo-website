@@ -294,13 +294,13 @@ function ProjectDetail({
               <>
                 {text.challenge && (
                   <>
-                    <h3>{labels.challenge}</h3>
+                    <h2>{labels.challenge}</h2>
                     <p>{text.challenge}</p>
                   </>
                 )}
                 {text.approach && text.approach.length > 0 && (
                   <>
-                    <h3>{labels.approach}</h3>
+                    <h2>{labels.approach}</h2>
                     <ul className="case__steps">
                       {text.approach.map((step) => (
                         <li key={step}>{step}</li>
@@ -310,7 +310,7 @@ function ProjectDetail({
                 )}
                 {text.outcome && (
                   <>
-                    <h3>{labels.outcome}</h3>
+                    <h2>{labels.outcome}</h2>
                     <p>{text.outcome}</p>
                   </>
                 )}
@@ -322,7 +322,7 @@ function ProjectDetail({
         </div>
       </article>
 
-      <nav className="pnav">
+      <nav className="pnav" aria-label={lang === "sk" ? "Ďalšie projekty" : "More projects"}>
         <div className="container pnav__grid">
           <a className="pnav__side" href={withLang(`/projects/?p=${prev.slug}`)}>
             <span className="pnav__dir">← {t.prev}</span>

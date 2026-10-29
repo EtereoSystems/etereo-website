@@ -117,12 +117,13 @@
     right: auto;
   }
   .project-panel.mobile .project-panel__inner {
-    background: rgba(10, 12, 24, 0.62);
+    /* A solid card, not a blurred one: the laptop travels behind this panel through the
+       whole hero scroll, so a backdrop blur would repaint every frame on exactly the phones
+       least able to afford it. An opaque fill reads the same over the dark scene and is free. */
+    background: rgba(9, 11, 22, 0.92);
     border: 1px solid var(--line-soft);
     border-radius: 20px;
     padding: 20px 20px 22px;
-    backdrop-filter: blur(16px) saturate(130%);
-    -webkit-backdrop-filter: blur(16px) saturate(130%);
     box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.8);
   }
   .project-panel.mobile .project-panel__eyebrow {
