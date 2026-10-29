@@ -26,6 +26,11 @@ export default function App() {
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Lenis smooths the wheel, which only a mouse has. On a touch device it adds nothing the
+    // finger doesn't already do, while its always-on rAF competes with the browser's native,
+    // GPU-driven scroll — so phones get the native path, which is what makes them buttery.
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    const smooth = !reduce && !touch;
     const hero = () => document.getElementById("top")?.closest(".hero") as HTMLElement | null;
 
     // The hero's geometry only moves when the viewport does, so read it on resize rather
@@ -70,7 +75,7 @@ export default function App() {
     let raf = 0;
     let stop: () => void;
 
-    if (!reduce) {
+    if (smooth) {
       lenis = new Lenis({ duration: 1.1, smoothWheel: true, touchMultiplier: 1.4 });
       const loop = (time: number) => {
         lenis!.raf(time);
@@ -83,7 +88,17 @@ export default function App() {
         lenis?.destroy();
       };
     } else {
-      const onScroll = () => update();
+      // Native scroll: coalesce the burst of scroll events into one update per frame, so the
+      // hero progress and the flags stay frame-aligned without a loop running while idle.
+      let ticking = false;
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          ticking = false;
+          update();
+        });
+      };
       window.addEventListener("scroll", onScroll, { passive: true });
       stop = () => window.removeEventListener("scroll", onScroll);
     }

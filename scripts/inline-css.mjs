@@ -15,9 +15,15 @@
 import { readFileSync, writeFileSync, rmSync, existsSync } from "node:fs";
 import { readdir } from "node:fs/promises";
 import { join, relative } from "node:path";
+import { SITE_URL } from "./site-url.mjs";
 
 const DIST = new URL("../dist/", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
 const LINK = /[ \t]*<link rel="stylesheet"[^>]*href="([^"]+\.css)"[^>]*>\n?/g;
+// The hand-authored MPA entry documents (index.html, about/, blog/, projects/) carry raw
+// %VITE_SITE_URL% placeholders that only Vite substitutes, and only when VITE_SITE_URL is set.
+// Resolve them here on the final output so a build without a .env never ships the placeholder
+// in a canonical/og/JSON-LD tag. (The generated blog and service pages already resolve theirs.)
+const SITE_URL_RE = /%VITE_SITE_URL%/g;
 
 async function htmlFiles(dir) {
   const out = [];
@@ -35,24 +41,31 @@ let bytes = 0;
 
 for (const file of await htmlFiles(DIST)) {
   const html = readFileSync(file, "utf8");
-  const hrefs = [...html.matchAll(LINK)].map((m) => m[1]);
-  if (!hrefs.length) continue;
+  // Resolve any leftover domain placeholder first, on every document.
+  let out = html.replace(SITE_URL_RE, SITE_URL);
 
-  const css = hrefs
-    .map((href) => {
-      const asset = join(DIST, href.replace(/^\//, ""));
-      used.add(asset);
-      return readFileSync(asset, "utf8");
-    })
-    .join("");
+  const hrefs = [...out.matchAll(LINK)].map((m) => m[1]);
+  let css = "";
+  if (hrefs.length) {
+    css = hrefs
+      .map((href) => {
+        const asset = join(DIST, href.replace(/^\//, ""));
+        used.add(asset);
+        return readFileSync(asset, "utf8");
+      })
+      .join("");
 
-  // The first link becomes the <style>; the rest just go, so the cascade order holds.
-  let first = true;
-  const out = html.replace(LINK, () => (first ? ((first = false), `    <style>${css}</style>\n`) : ""));
-  writeFileSync(file, out);
-  pages++;
-  bytes = css.length;
-  console.log(`  inlined ${(css.length / 1024).toFixed(1)} kB into ${relative(DIST, file)}`);
+    // The first link becomes the <style>; the rest just go, so the cascade order holds.
+    let first = true;
+    out = out.replace(LINK, () => (first ? ((first = false), `    <style>${css}</style>\n`) : ""));
+  }
+
+  if (out !== html) writeFileSync(file, out);
+  if (hrefs.length) {
+    pages++;
+    bytes = css.length;
+    console.log(`  inlined ${(css.length / 1024).toFixed(1)} kB into ${relative(DIST, file)}`);
+  }
 }
 
 // Nothing links them any more, and no JS chunk imports them — see the CSS note in CLAUDE.md.
