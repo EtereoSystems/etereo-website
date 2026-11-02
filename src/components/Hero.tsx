@@ -18,15 +18,47 @@ export function Hero() {
   // for it in the idle period after that paint instead; on a fast connection this is
   // a frame or two, on a slow one it is the whole point.
   useEffect(() => {
+    const arm = () => setArmed(true);
+
+    // On a phone the 3D chunk is the heaviest thing on the page: downloading and running
+    // three.js on a slow CPU dominates Total Blocking Time, and the laptop canvas is what
+    // the browser picks as the Largest Contentful Paint — so loading it during the first
+    // screen is what drags the mobile score down. Hold it until the first interaction
+    // (they almost always scroll — the hint asks them to), which is exactly when the laptop
+    // starts to matter, with a timed fallback so a visitor who never scrolls still gets it.
+    // The static splash (wordmark, tagline, CTAs) is already painted, so nothing looks empty
+    // but the laptop, and LCP falls back to that text, which is on screen from the first frame.
+    const touch = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 900;
+    if (touch) {
+      const events = ["scroll", "pointerdown", "touchstart", "keydown"] as const;
+      let timer = 0;
+      const onFirst = () => {
+        window.clearTimeout(timer);
+        events.forEach((e) => window.removeEventListener(e, onFirst));
+        arm();
+      };
+      events.forEach((e) => window.addEventListener(e, onFirst, { once: true, passive: true }));
+      // Fallback for a visitor who never scrolls: late enough to clear the first render (the
+      // splash text is the LCP, so we let it settle before three.js takes the main thread),
+      // but soon enough that an idle hero still comes alive on its own.
+      timer = window.setTimeout(onFirst, 3500);
+      return () => {
+        window.clearTimeout(timer);
+        events.forEach((e) => window.removeEventListener(e, onFirst));
+      };
+    }
+
+    // Desktop: bring it in during the idle period right after the first paint — on a fast
+    // connection that is a frame or two, on a slow one it is the whole point.
     let cancel = () => {};
     const raf = requestAnimationFrame(() => {
       // still missing on Safari < 16.4, so this is a real branch, not a formality
       const ric: typeof window.requestIdleCallback | undefined = window.requestIdleCallback;
       if (ric) {
-        const h = ric(() => setArmed(true), { timeout: 600 });
+        const h = ric(arm, { timeout: 600 });
         cancel = () => cancelIdleCallback(h);
       } else {
-        const h = window.setTimeout(() => setArmed(true), 60);
+        const h = window.setTimeout(arm, 60);
         cancel = () => clearTimeout(h);
       }
     });
