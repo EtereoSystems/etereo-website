@@ -53,6 +53,10 @@ export function Macbook() {
   const fit = useRef(1);
   const drawn = useRef<number | "final" | null>(null);
   const warmed = useRef(false);
+  // Last value pushed to each CSS channel. Writing a custom property invalidates style even
+  // when the value is unchanged, and through the whole carousel both of these hold at "0" —
+  // so the guard turns ~120 pointless style recalcs a second into none while scrolling.
+  const cssVar = useRef({ fade: "", handoff: "" });
 
   const { model, screenTex, termTex, screenMat, draw, drawTerminal, shotReady } = useMemo(() => {
     const src = scene.clone(true);
@@ -128,6 +132,13 @@ export function Macbook() {
     const p = currentProgress();
     const t = state.clock.elapsedTime;
     const root = document.documentElement.style;
+    // Push a CSS channel only when it actually moves — see cssVar above.
+    const setFade = (v: string) => {
+      if (cssVar.current.fade !== v) ((cssVar.current.fade = v), root.setProperty("--hero-fade", v));
+    };
+    const setHandoff = (v: string) => {
+      if (cssVar.current.handoff !== v) ((cssVar.current.handoff = v), root.setProperty("--handoff", v));
+    };
     const { width: w, height: h } = state.size;
     const mobile = w < MOBILE_MAX || (w < PORTRAIT_STACK_MAX && h >= w);
     // Under prefers-reduced-motion the laptop holds wherever the scroll put it:
@@ -177,8 +188,8 @@ export function Macbook() {
       }
       camera.position.set(0, 0.12, 6.4);
       camera.lookAt(0, 0.05, 0);
-      root.setProperty("--hero-fade", (1 - seg(p, INTRO_END * 0.55, INTRO_END)).toFixed(3));
-      root.setProperty("--handoff", "0");
+      setFade((1 - seg(p, INTRO_END * 0.55, INTRO_END)).toFixed(3));
+      setHandoff("0");
     } else if (p <= SHOW_END) {
       // spin carousel: each project faces at an integer beat; span is N-1 so project 0
       // sits at the very start (flowing straight out of the splash) and the last lands at SHOW_END.
@@ -208,8 +219,8 @@ export function Macbook() {
       bind(screenTex);
       camera.position.set(0, 0.12, 6.4);
       camera.lookAt(0, 0.05, 0);
-      root.setProperty("--hero-fade", "0");
-      root.setProperty("--handoff", "0");
+      setFade("0");
+      setHandoff("0");
     } else {
       // final zoom into the screen → hand off to the site. The last project already
       // faces us, centred (LX[last]=0), so we continue straight in with no re-spin.
@@ -238,8 +249,8 @@ export function Macbook() {
       }
       camera.position.set(0, 0.12, 6.4);
       camera.lookAt(0, 0.05, 0);
-      root.setProperty("--hero-fade", "0");
-      root.setProperty("--handoff", seg(p, 0.92, 1).toFixed(3));
+      setFade("0");
+      setHandoff(seg(p, 0.92, 1).toFixed(3));
     }
 
     // The blob tracks the laptop along the ground plane, thinning as it lifts away from

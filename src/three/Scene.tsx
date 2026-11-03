@@ -63,26 +63,39 @@ function Pacer({ running }: { running: boolean }) {
   return null;
 }
 
+// What caps the framerate on a phone is per-pixel shading, not the geometry: six dynamic
+// lights on a PBR material, multisampled, at 1.5× the CSS resolution is more fragment work
+// than a mobile GPU can finish in 16 ms, which is why the scroll ran at ~20fps. The mobile
+// tier below spends far less per pixel — a lower drawing buffer, no MSAA, and three of the
+// six lights — and desktop keeps the full-quality look untouched. Read once (like SS in
+// screenTexture): a resize does not switch tiers, and nobody rotates a desktop into a phone.
+const MOBILE = window.innerWidth < 900;
+
 /** `running` false parks the render loop entirely — see Hero. */
 export default function Scene({ running }: { running: boolean }) {
   return (
     <Canvas
       frameloop="demand"
       camera={{ position: [0, 0.15, 6.4], fov: 34, near: 0.1, far: 100 }}
-      dpr={[1, window.innerWidth < 900 ? 1.5 : 1.8]}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      // A lower cap on the phone: dpr is quadratic in fragment cost, so 1.25 instead of 1.5
+      // is ~30% fewer pixels to shade every frame, and the dark, stylised scene hides the
+      // softening the browser's upscale adds.
+      dpr={MOBILE ? [1, 1.25] : [1, 1.8]}
+      // MSAA is one of the costliest things a mobile GPU does; the dpr keeps edges clean
+      // enough without it. Stencil buffer is unused either way.
+      gl={{ antialias: !MOBILE, alpha: true, stencil: false, powerPreference: "high-performance" }}
       style={{ pointerEvents: "none" }}
     >
       <Pacer running={running} />
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={MOBILE ? 0.62 : 0.5} />
       <directionalLight position={[4, 6, 5]} intensity={2.3} color="#eef2ff" />
       <directionalLight position={[-6, 2, -3]} intensity={1.35} color="#6d54f0" />
-      <pointLight position={[0, -2, 3]} intensity={0.75} color="#9db4ff" />
-      {/* Stands in for the studio panels the env map used to reflect: a directional
-          light shades a flat lid one uniform colour, while a positional one with the
-          falloff switched off still varies across it, which is what reads as sheen. */}
-      <pointLight position={[-3.2, 3.2, 4.6]} intensity={1.15} decay={0} color="#dfe6ff" />
-      <pointLight position={[3.4, -1.4, 3.2]} intensity={0.6} decay={0} color="#8b78ff" />
+      {/* The three positional lights stand in for the studio panels an env map used to
+          reflect — the priciest part of the fragment shader. Desktop keeps all three; a
+          phone keeps only the brightest, turned up to make up for the two it drops. */}
+      {!MOBILE && <pointLight position={[0, -2, 3]} intensity={0.75} color="#9db4ff" />}
+      <pointLight position={[-3.2, 3.2, 4.6]} intensity={MOBILE ? 1.5 : 1.15} decay={0} color="#dfe6ff" />
+      {!MOBILE && <pointLight position={[3.4, -1.4, 3.2]} intensity={0.6} decay={0} color="#8b78ff" />}
 
       <Suspense fallback={null}>
         <Macbook />
