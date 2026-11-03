@@ -13,7 +13,12 @@ const SIZE = 1200;
 // It is flat text on a panel, so it needs far less than a screenshot does — and sized to
 // the viewport for the same reason as SS below, since a phone holds the laptop smaller on
 // screen than a desktop does and pays the upload just as often.
-const TERM_PX = window.innerWidth < 900 ? 512 : 1024;
+const MOBILE = window.innerWidth < 900;
+const TERM_PX = MOBILE ? 512 : 1024;
+// 16× anisotropic filtering is near-free on a desktop GPU and expensive on a phone, for a
+// screen that mostly faces the camera and gains little from it. Keep it high on desktop,
+// drop it on mobile where the per-pixel budget is what we are protecting.
+const ANISO = MOBILE ? 4 : 16;
 const CANVAS_ROT = (3 * Math.PI) / 2;
 const MIRROR = true;
 const FIT = 0.72;
@@ -76,7 +81,7 @@ export function makeScreenTexture(): {
   termCtx.imageSmoothingQuality = "high";
   const termTexture = new THREE.CanvasTexture(termCanvas);
   termTexture.colorSpace = THREE.SRGBColorSpace;
-  termTexture.anisotropy = 16;
+  termTexture.anisotropy = ANISO;
 
   let texture: THREE.CanvasTexture | undefined;
   let currentIdx: number | "final" = 0;
@@ -637,7 +642,7 @@ export function makeScreenTexture(): {
   draw(0);
   texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 16;
+  texture.anisotropy = ANISO;
   texture.needsUpdate = true;
   return { texture, termTexture, draw, drawTerminal, shotReady };
 }
